@@ -1,0 +1,56 @@
+{
+    "NGSO_SAT_01": {
+        "name": "NGSO_SAT_01",
+        "orbit_type": "LEO",
+        "tx_eirp_dBW": 35.0,
+        "tx_losses_dB": 1.0,
+        "tx_antenna_id": "ANT_NGSO_01",
+        "frequency_Hz": 14500000000.0,
+        "polarization": "RHCP",
+        "keplerian": {
+            "a_km": 7000.0,
+            "e": 0.001,
+            "i_deg": 53.0,
+            "raan_deg": 0.0,
+            "argp_deg": 90.0,
+            "M0_deg": 0.0,
+            "epoch": "2025-10-11T00:00:00Z"
+        }
+    },
+    "NGSO_SAT_02": {
+        "name": "NGSO_SAT_02",
+        "orbit_type": "LEO",
+        "tx_eirp_dBW": 37.0,
+        "tx_losses_dB": 1.2,
+        "tx_antenna_id": "ANT_NGSO_02",
+        "frequency_Hz": 14500000000.0,
+        "polarization": "RHCP",
+        "keplerian": {
+            "a_km": 7200.0,
+            "e": 0.002,
+            "i_deg": 87.0,
+            "raan_deg": 45.0,
+            "argp_deg": 270.0,
+            "M0_deg": 120.0,
+            "epoch": "2025-10-11T00:00:00Z"
+        }
+    },
+    "NGSO_SAT_03": {
+        "name": "NGSO_SAT_03",
+        "orbit_type": "MEO",
+        "tx_eirp_dBW": 40.0,
+        "tx_losses_dB": 1.5,
+        "tx_antenna_id": "ANT_NGSO_03",
+        "frequency_Hz": 12750000000.0,
+        "polarization": "LHCP",
+        "keplerian": {
+            "a_km": 26560.0,
+            "e": 0.01,
+            "i_deg": 56.0,
+            "raan_deg": 180.0,
+            "argp_deg": 0.0,
+            "M0_deg": 300.0,
+            "epoch": "2025-10-11T00:00:00Z"
+        }
+    }
+}
