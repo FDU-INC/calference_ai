@@ -13,42 +13,42 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# ==========================================
+# 配置模板文件
+# ==========================================
+# 使用说明：
+# 1. 复制此文件为 config.py: cp config.py.example config.py
+# 2. 根据实际情况修改下面的配置项
+# 3. 或者使用环境变量进行配置（推荐用于生产环境）
+#
+# 环境变量优先级高于配置文件中的值
+
 import os
 from pathlib import Path
 
 # ----------------- 模型配置 -----------------
-# 指定你的Qwen2.5-VL模型的存放路径
-# 可通过环境变量 QWEN_MODEL_PATH 设置，否则使用默认路径
-MODEL_PATH = os.getenv(
-    "QWEN_MODEL_PATH",
-    str(Path.home() / "models" / "Qwen2.5-VL-7B-Instruct")
-)
+# Qwen2.5-VL 模型的存放路径
+# 环境变量: QWEN_MODEL_PATH
+MODEL_PATH = "/path/to/your/Qwen2.5-VL-7B-Instruct"
 
 # ----------------- 路径配置 -----------------
-# 使用相对于项目根目录的路径，可通过环境变量覆盖
 BASE_DIR = Path(__file__).parent
 
 # 输入的干扰图存放目录
-INPUT_IMAGE_DIR = os.getenv(
-    "INPUT_IMAGE_DIR",
-    str(BASE_DIR / "data" / "total")
-)
+# 环境变量: INPUT_IMAGE_DIR
+INPUT_IMAGE_DIR = str(BASE_DIR / "data" / "total")
 
 # 生成的Word报告输出目录
-OUTPUT_REPORT_DIR = os.getenv(
-    "OUTPUT_REPORT_DIR",
-    str(BASE_DIR / "data" / "output_reports")
-)
+# 环境变量: OUTPUT_REPORT_DIR
+OUTPUT_REPORT_DIR = str(BASE_DIR / "data" / "output_reports")
 
 # ----------------- 报告元数据 -----------------
 # 在报告中显示的公司或机构名称
-# 可通过环境变量 ORGANIZATION_NAME 设置
-ORGANIZATION_NAME = os.getenv(
-    "ORGANIZATION_NAME",
-    "Your Organization Name"
-)
+# 环境变量: ORGANIZATION_NAME
+ORGANIZATION_NAME = "Your Organization Name"
 
 # ----------------- 网络配置 -----------------
-# 代理服务器配置（可选）
-# 可通过环境变量 PROXY 设置，不设置则不使用代理
-PROXY = os.getenv("PROXY", None)
+# 代理服务器配置（可选，不需要代理时设置为 None）
+# 环境变量: PROXY
+PROXY = None  # 示例: "http://proxy.example.com:8080"
+

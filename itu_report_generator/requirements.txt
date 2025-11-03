@@ -1,0 +1,17 @@
+# ITU Report Generator - Python Dependencies
+# 
+# Copyright (C) 2025 FDU-INC
+# This program is free software under GPL-3.0 license
+
+# Core dependencies
+transformers>=4.40.0
+torch>=2.0.0
+qwen-vl-utils>=1.0.0
+python-docx>=1.0.0
+pillow>=10.0.0
+numpy>=1.24.0
+
+# Optional but recommended
+accelerate>=0.20.0
+sentencepiece>=0.1.99
+
