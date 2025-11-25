@@ -153,9 +153,10 @@ async def main():
     current_date = datetime.now().strftime("%Y-%m-%d")
     prompt_text = build_prompt(image_path, image_info, current_date)
 
-    api_key = os.environ.get("OPENAI_API_KEY", "AIzaSyD2OboIM2cPVERwAETpfbRvkKfE3-6crZ4")
-    base_url = os.environ.get("OPENAI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
-    model_name = os.environ.get("OPENAI_MODEL", "gemini-2.0-flash")
+    api_key = os.environ.get("OPENAI_API_KEY", "sk-poVFrR7aculYhRKykwkuLuHcDlSBjjfRzBYqu4xoNqpIGZFz")
+    #base_url = os.environ.get("OPENAI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
+    base_url = "https://api.aikeji.vip/v1"
+    model_name = os.environ.get("OPENAI_MODEL", "gemini-2.5-flash-image")
 
     model_client = OpenAIChatCompletionClient(
         model=model_name,
@@ -212,7 +213,6 @@ async def main():
     final_text = result.messages[-1].content if result.messages else ""
     final_text = final_text.replace("```markdown", "").replace("```", "").strip()
     final_text = final_text.replace("TERMINATE", "").strip()
-    import pdb;pdb.set_trace()
     # Inject figure into Markdown before section "## 2. Data Analysis"
     try:
         
