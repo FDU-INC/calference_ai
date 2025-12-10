@@ -1,0 +1,596 @@
+Foreword
+The role of the Radiocommunication Sector is to ensure the rational, equitable, efficient and economical use of the radio-frequency spectrum by all radiocommunication services, including satellite services, and carry out studies without limit of frequency range on the basis of which Recommendations are adopted.
+The regulatory and policy functions of the Radiocommunication Sector are performed by World and Regional Radiocommunication Conferences and Radiocommunication Assemblies supported by Study Groups.
+Policy on Intellectual Property Right (IPR)
+ITU-R policy on IPR is described in the Common Patent Policy for ITU-T/ITU-R/ISO/IEC referenced in Resolution ITU-R 1. Forms to be used for the submission of patent statements and licensing declarations by patent holders are available from http://www.itu.int/ITU-R/go/patents/en where the Guidelines for Implementation of the Common Patent Policy for ITU-T/ITU-R/ISO/IEC and the ITU-R patent information database can also be found.
+Electronic Publication
+, 2019
+ITU 2019
+All rights reserved. No part of this publication may be reproduced, by any means whatsoever, without written permission of ITU.
+RECOMMENDATION  ITU-R  F.1336-5*
+Reference radiation patterns of omnidirectional, sectoral and other antennas for the fixed and mobile services for use in sharing studies in the frequency range from 400 MHz to about 70 GHz
+(Question ITU-R 242-2/5)
+(1997-2000-2007-2012-2014-2019)
+Scope
+This Recommendation gives reference models of antennas used in the fixed service and in the mobile service. It gives peak and average patterns of omnidirectional and sectoral antennas in the frequency range 400 MHz to about 70 GHz, as well as of low gain directional antennas in the frequency range 1 GHz to about 3 GHz, to be used in sharing studies in the relevant frequency range. The reference radiation patterns should be used in interference assessments, when particular information concerning the real antennas are not available.
+Keywords
+Fixed service, land mobile service, reference radiation pattern, sectoral antenna, omni-directional antenna, peak side-lobe pattern, average side-lobe pattern, azimuth and elevation beamwidths, cross polarization, RF sharing studies
+The ITU Radiocommunication Assembly,
+considering
+a)	that, for coordination studies and for the assessment of mutual interference between point-to-multipoint (P-MP) fixed wireless systems (FWSs) or systems in the land mobile service (LMS), and between stations of such systems and stations of space radiocommunication services sharing the same frequency band, it may be necessary to use reference radiation patterns for FWS or LMS base station antennas;
+b)	that, depending on the sharing scenario, it may be appropriate to consider the peak envelope or average side-lobe patterns in the sharing studies;
+c)	that it may be appropriate to use the antenna radiation pattern representing average side-lobe levels in the following cases:
+–	to predict the aggregate interference to a geostationary or non-geostationary satellite from numerous fixed wireless stations or LMS base stations;
+–	to predict the aggregate interference to a fixed wireless station or LMS base stations from many geostationary satellites;
+–	to predict interference to a fixed wireless station or LMS base stations from one or more non-geostationary-satellites under continuously varying angles;
+–	in any other cases where the use of the radiation pattern representing average side-lobe levels is appropriate;
+d)	that reference radiation patterns may be required in situations where information concerning the actual radiation pattern is not available;
+e)	that the use of antennas with the best available radiation patterns will lead to the most efficient use of the radio-frequency spectrum;
+f)	that at large angular distances from the main beam pattern gain may not fully represent the antenna emissions because of local ground reflections,
+noting
+that Recommendations ITU-R F.699 and ITU-R F.1245 provide the peak and average reference patterns respectively, for directional antennas to be used in coordination studies and interference assessment in cases not referred to in recommends 1 to 4 below,
+recommends
+1	that, in the absence of particular information concerning the radiation pattern of the P-MP FWS or LMS base station antenna involved (see Note 1), the reference radiation pattern as stated below should be used for:
+1.1	interference assessment between P-MP FWSs or LMS base stations;
+1.2	interference assessment between P-MP FWSs or LMS base stations and other stations of services sharing the same frequency band;
+2	that, in the frequency range from 400 MHz to about 70 GHz, the following reference radiation patterns should be used in cases involving stations that use omnidirectional (in azimuth) antennas:
+2.1	in the case of peak side-lobe patterns referred to in considering b), the following equations should be used for elevation angles that range from −90° to 90° (see Annex 1):
+(1a)
+with:
+(1b)
+(1c)
+where:
+G():	gain relative to an isotropic antenna (dBi)
+G0:	the maximum gain in the azimuth plane (dBi)
+:	elevation angle relative to the angle of the maximum gain (degrees)
+3:	the 3 dB beamwidth in the elevation plane (degrees)
+k:	parameter which accounts for increased side-lobe levels above what would be expected for an antenna with improved side-lobe performance (see recommends 2.3 and 2.4).
+Figure 13 in Annex 1 compares (1a) equations with elevation measurement of omnidirectional (azimuth) antenna, with improved side-lobe performance (k = 0).
+2.2	in the case of average side-lobe patterns referred to in considering c), the following equations should be used for elevation angles that range from −90° to 90° (see Annex 1 and Annex 4):
+(1d)
+with:
+where , 3, G0 and k are defined and expressed in recommends 2.1;
+2.3	in cases involving typical antennas operating in the 400 MHz to 3 GHz range, the parameter k should be 0.7;
+2.4	in cases involving antennas with improved side-lobe performance in the 400 MHz to 3 GHz range, and for all antennas operating in the 3-70 GHz range, the parameter k should be 0;
+2.5	in cases where the antennas in recommends 2.1 through 2.2 operate with a downward electrical tilt, all of the equations in those recommends are valid with the definitions of the following variables (see § 3 in Annex 5):
+e:	elevation angle (degrees) by which the tilted radiation patterns are calculated using equations in recommends 2.1 and 2.2
+h:	elevation angle (degrees) measured from the horizontal plane at the site of the antenna (−90° ≤ h ≤ 90°: where 90° is the zenith and −90° is the nadir)
+:	downward tilt angle, the positive angle (degrees) that the main beam axis is below the horizontal plane at the site of the antenna.
+These are interrelated as follows:
+for 	(1e)
+for
+An electrically tilted radiation gain at h is calculated by using e of equation (1e) instead of  at the equations in recommends 2.1 and 2.2, respectively;
+3	that, in the frequency range from 400 MHz to about 70 GHz, the following reference radiation patterns should be used in cases involving stations that use sectoral antennas;
+3.1	in the frequency range from 400 MHz to about 6 GHz (see Annex 7):
+3.1.1	in the case of peak side-lobe patterns referred to in considering b), the following equations should be used for elevation angles that range from −90° to 90° and for azimuth angles that range from −180° to 180°:
+G(,) = G0 + Ghr(xh) + R·Gvr(xv)                (dBi)	(2a1)
+where:
+Ghr(xh):	relative reference antenna gain in the azimuth plane at the normalized direction of (xh,0) (dB)
+xh = 	|φ|/φ3
+: 	azimuth angle relative to the angle of the maximum gain in the horizontal plane (degrees)
+3: 	the 3 dB beamwidth in the azimuth plane (degrees) (generally equal to the sectoral beamwidth)
+Gvr(xv): 	relative reference antenna gain in the elevation plane at the normalized direction of (0, xv) (dB)
+xv = 	|θ|/θ3
+R: 	horizontal gain compression ratio as the azimuth angle is shifted from 0° to , as shown below:
+(2a2)
+Other variables are as defined in recommends 2.1;
+3.1.1.1	the relative minimum gain (dB), G180, can be calculated as follows:
+(2b1)
+where:
+kp: 	parameter which accomplishes the relative minimum gain for peak side-lobe patterns
+3.1.1.1.1	in cases involving typical antennas the parameter kp should be 0.7 (see Note 2);
+3.1.1.1.2	in cases involving antennas with improved side-lobe performance the parameter kp should be also 0.7, which also applies for IMT base station antennas (see Note 2);
+3.1.1.2	the relative reference antenna gain in the azimuth plane;
+for	xh  0.5
+for	0.5 < xh 	(2b2)
+Ghr(xh)  G180
+where:
+kh: 	azimuth pattern adjustment factor based on leaked power (0 ≤ kh ≤ 1)
+3.1.1.2.1	in cases involving typical antennas the parameter kh should be 0.8 (see Note 2);
+3.1.1.2.2	in cases involving antennas with improved side-lobe performance the parameter kh should be 0.7, which also applies for IMT base station antennas (see Note 2);
+3.1.1.3	the relative reference antenna gain in the elevation plane:
+for  xv < xk
+for  xk ≤ xv < 4	(2b3)
+for  4 ≤ xv < 90°/3
+Gvr (xv) = G180	for  xv ≥90°/3
+where:
+kv: 	elevation pattern adjustment factor based on leaked power (0 ≤ kv ≤ 1)
+xk =
+λkv =	12 – Clog(4) –10log(4–1.5 + kv)
+the attenuation incline factor of C is represented as follows (see Note 3):
+3.1.1.3.1	in cases involving typical antennas the parameter kv should be 0.7 (see Note 2);
+3.1.1.3.2	in cases involving antennas with improved side-lobe performance the parameter kv should be 0.3, which also applies for IMT base station antennas (see Note 2);
+3.1.2	in the case of average side-lobe patterns referred to in considering c), for use in a statistical interference assessment, the following equations should be used for elevation angles that range from −90° to 90° and for azimuth angles that range from −180° to 180°:
+G(,) = G0 + Ghr(xh) + R·Gvr(xv)                (dBi)
+3.1.2.1	the relative minimum gain, G180, calculated as follows:
+(2c1)
+where:
+ka: 	parameter which accomplishes the relative minimum gain for average side-lobe patterns
+3.1.2.1.1	in cases involving typical antennas the parameter ka should be 0.7 (see Note 2);
+3.1.2.1.2	in cases involving antennas with improved side-lobe performance the parameter ka should be also 0.7, which also applies for IMT base station antennas (see Note 2);
+3.1.2.2	the relative reference antenna gain in the azimuth plane:
+for	xh  0.5
+for	0.5 < xh	(2c2)
+Ghr(xh) ≥ G180
+where:
+.
+3.1.2.2.1	in cases involving typical antennas the parameter kh should be 0.8 (see Note 2);
+3.1.2.2.2	in cases involving antennas with improved side-lobe performance the parameter kh should be 0.7, which also applies for IMT base station antennas (see Note 2);
+3.1.2.3	the relative reference antenna gain in the elevation plane:
+for  xv < xk
+for  xk ≤ xv < 4	(2c3)
+for  4 xv < 90°/3
+Gvr (xv)  = G180	for  xv ≥ 90°/3
+where:
+λkv = 12 – Clog(4) –10log(4–1.5 + kv)
+the attenuation incline factor of C is represented as follows (see Note 3):
+3.1.2.3.1	in cases involving typical antennas the parameter kv should be 0.7 (see Note 2):
+3.1.2.3.2	in cases involving antennas with improved side-lobe performance the parameter kv should be 0.3, which also applies for IMT base station antennas (see Note 2);
+3.2 	in the frequency range from 6 GHz to about 70 GHz (see Annex 6):
+3.2.1	in the case of peak side-lobe patterns referred to in considering b), the following equations should be used for elevation angles that range from −90° to 90° and for azimuth angles that range from –180° to 180°:
+(2d1)
+(2d2)
+for    	(2d3)
+for
+,      	(2d4)
+(2d5)
+where:
+3m:	the equivalent 3 dB beamwidth in the azimuth plane for an adjustment of horizontal gains (degrees)
+for   	(2d6)
+for   	(2d7)
+th: 	the boundary azimuth angle (degrees)
+th = 3
+Other variables and parameters are as defined in recommends 2.1 and 3.1.1;
+for	0 ≤ x < 1	(2e)
+for	1 ≤ x
+3.2.2	in the case of average side-lobe patterns referred to in considering c), for use in a statistical interference assessment, the following equations should be used for elevation angles that range from –90° to 90° and for azimuth angles that range from –180° to 180° (see Note 4):
+for	0 ≤ x  < 1.152	(2f)
+for	1.152 ≤ x
+In this case, as for th in equations (2d6) and (2d7), th = 1.1523.
+3.3	in cases involving sectoral antennas with a 3 dB beamwidth in the azimuth plane less than about 120°, the relationship between the maximum gain and the 3 dB beamwidth in both the azimuth plane and the elevation plane, on a provisional basis, is (see Annex 2 and Notes 5 and 6):
+(3a)
+where all parameters are as defined under recommends 3.1;
+3.4	in cases where the antennas in recommends 3.1 through 3.2 operate with a downward mechanical tilt, all of the equations in those recommends are valid with the definitions and redefinitions of the following variables (see § 2 in Annex 5):
+:	elevation angle (degrees) measured from the plane defined by the axis of maximum gain of the antenna and the axis about which the pattern is tilted (3 is also measured from this plane)
+φ:	azimuth (degrees) measured from the azimuth of maximum gain in the plane defined by the axis of maximum gain of the antenna and the axis about which the pattern is tilted
+h:	elevation angle (degrees) measured from the horizontal plane at the site of the antenna (−90°≤ h ≤ 90°)
+φh:	azimuth angle (degrees) in the horizontal plane at the site of the antenna measured from the azimuth of maximum gain (−180° ≤ h ≤ 180°)
+:	downward tilt angle, the positive angle (degrees) that the main beam axis is below the horizontal plane at the site of the antenna
+These are interrelated as follows:
+,     	(3b)
+, (see Note 1 in Annex 5)	(3c)
+3.5	in cases where the antennas in recommends 3.1 through 3.2 operate with a downward electrical tilt, an electrically tilted radiation gain at h is also calculated by using e of equation (1e) in recommends 2.5 instead of  at the equations in recommends 3.1 and 3.2, respectively;
+4	that, in the frequency range from 1 GHz to about 3 GHz, the following reference radiation patterns should be used in cases involving stations that use low-gain antennas with circular symmetry about the 3 dB beamwidth and with a main lobe antenna gain less than about 20 dBi; see Recommendation ITU-R F.699 for cases where the antenna gain is above 20 dBi.
+4.1	the following equations should be used in the case of peak side-lobe patterns referred to in considering b) (see Note 7):
+(4)
+where:
+G():	gain relative to an isotropic antenna (dBi)
+G0:	the main lobe antenna gain (dBi)
+:	off-axis angle (degrees) (0° ≤  ≤ 180°)
+3:	the 3 dB beamwidth in azimuth and elevation of the low-gain antenna (degrees):
+(degrees)
+1	 1.9 3 (degrees);
+2	 1  10(G0 – 6)/32 (degrees)
+4.2	in the case of average side-lobe patterns referred to in considering c), the antenna pattern given in Recommendation ITU-R F.1245 should be used;
+5	that the following Notes should be regarded as part of this Recommendation:
+Note 1 – It is essential that every effort be made to utilize the actual antenna pattern in coordination studies and interference assessment.
+NOTE 2 – The values of parameter kh, kv, ka and kp in recommends 3.1 were based on statistical data which were derived from many measured sectoral antenna patterns in the 700 MHz to around 6 GHz frequency range.
+NOTE 3 – The formula for the calculation of the incline factor C can be applied only for a 3 dB beamwidth lower than 20 degrees in the elevation plane.
+NOTE 4 – Measured results of a specially designed sectoral antenna for use around 20 GHz indicate the possibility of compliance with a more restrictive reference side-lobe radiation pattern. Further studies are required to develop such an optimized pattern.
+NOTE 5 – In a case involving an antenna whose 3 dB beamwidth in the elevation or azimuth plane is already known, it is recommended to use the known 3 or φ3 as an input parameter.
+NOTE 6 – As discussed in Annex 2, an exponential factor has been replaced by unity. As a result, the theoretical error introduced by this approximation will be less than 6% for 3 dB beamwidths in the elevation plane less than 45 degrees.
+NOTE 7 – The reference radiation pattern given in recommends 4.1 primarily applies in situations where the main lobe antenna gain is less than or equal to 20 dBi and the use of Recommendation ITU-R F.699 may produce in some cases inadequate results. Further study is required to establish the full range of frequencies and gain over which the equations are valid.
+Annex 1
+
+Reference radiation pattern for omnidirectional antennas
+as used in P-MP fixed wireless systems
+1	Introduction
+An omnidirectional antenna is frequently used for transmitting and receiving signals at central stations of P-MP fixed wireless systems. Studies involving sharing between these types of fixed-wireless systems and space service systems in the 2 GHz bands have used the reference radiation pattern described here.
+2	Analysis
+The reference radiation pattern is based on the following assumptions concerning the omnidirectional antenna:
+–	that the antenna is an n-element linear array radiating in the broadside mode;
+–	the elements of the array are assumed to be dipoles;
+–	the array elements are spaced 3/4.
+The 3 dB beamwidth 3 (degrees) of the array in the elevation plane is related to the directivity D, where the directivity is the ratio of the radiation intensity in a given direction from the antenna to the radiation intensity averaged over all directions (see Annex 2 for more information):
+(5a)
+Equation (5a) may be solved for 3 when the directivity is known:
+(5b)
+(5c)
+The relationship between the 3 dB beamwidth in the elevation plane and the directivity was derived on the assumption that the radiation pattern in the elevation plane was adequately approximated by:
+where m is an arbitrary parameter used to relate the 3 dB beamwidth and the radiation pattern in the elevation plane. At the 3 dB beamwidth the numeric gain f(θ) equals 0.5; therefore, the above equation and exponent m can be calculated as:
+and
+Using this approximation, the directivity was obtained by integrating the pattern over the elevation and azimuth planes.
+The intensity of the far-field of a linear array is given by:
+(6)
+where:
+ET () :	total E-field at an angle of  normal to the axis of the array
+Ee() :	E-field at an angle of  normal to the axis of the array caused by a single array element
+AF() :	array factor at an angle  normal to the axis of the array.
+The normalized E-field of a dipole element is:
+(7)
+The array factor is:
+(8)
+where:
+N :	number of elements in the array
+d :	spacing of the radiators
+:	wavelength.
+The following procedure has been used to estimate the number of elements N in the array. It is assumed that the maximum gain of the array is identical to the directivity of the array.
+–	Given the maximum gain of the omnidirectional antenna in the elevation plane, compute the 3 dB beamwidth, 3, using equations (5b) and (5c);
+–	Ignore the small reduction in off-axis gain caused by the dipole element, and note that the array factor, AFN, evaluates to 0.707 (–3 dB) when  and
+–	N is then determined as the integer value of:
+(9)
+where | x | means the maximum integer value not exceeding x.
+The normalized off-axis discrimination D is given by:
+dB	(10)
+Equation (10) has been evaluated as a function of the off-axis angle (i.e. the elevation angle) for several values of maximum gain. For values in the range of 8 dBi to 13 dBi, it has been found that the envelope of the radiation pattern in the elevation plane may be adequately approximated by the following equations:
+(11a)
+dBi	(11b)
+dBi	(11c)
+k is a parameter which accounts for increased side-lobe levels above what would be expected for an antenna with improved side-lobe performance.
+Figures 1 to 4 compare the reference radiation envelopes with the theoretical antenna patterns generated from equation (11), for gains from 8 dBi to 13 dBi, using a factor of k = 0. Figures 5 to 8 compare the reference radiation envelopes with actual measured antenna patterns using a factor of k = 0. In Figs 7 and 8, it can be seen that the side lobes are about 15 dB or more below the level of the main lobe, allowing for a small percentage of side-lobe peaks which might exceed this value. However practical factors such as the use of electrical downtilt, pattern degradations at band-edges and production variations would further increase the side lobes to about 10 dB below the main lobe in actual field installations. The k factor, mentioned above, in equation (11), is intended to characterize this variation in side-lobe levels. Figures 9 and 10 provide a comparison of a 10 dBi and a 13 dBi gain antenna, at 2.4 GHz, with the reference radiation pattern envelope, using k = 0.5. A factor of k = 0.5 represents side-lobe levels about 15 dB below the main-lobe peak. However, to account for increases in side-lobe levels which may be found in field installations, for typical antennas a factor of k = 0.7 should be used, representing side-lobe levels about 13.5 dB below the level of the main lobe. Finally, Figs 11 and 12 illustrate the effect on elevation patterns of using various values of k.
+FIGURE 1
+Normalized radiation pattern of a linear array of dipole elements compared
+with the approximate envelope of the radiation pattern
+G0  10 dBi, k  0
+FIGURE 2
+Normalized radiation pattern of a linear array of dipole elements compared
+with the approximate envelope of the radiation pattern
+G0  11 dBi, k  0
+FIGURE 3
+Normalized radiation pattern of a linear array of dipole elements compared
+with the approximate envelope of the radiation pattern
+G0  12 dBi, k  0
+FIGURE 4
+Normalized radiation pattern of a linear array of dipole elements compared
+with the approximate envelope of the radiation pattern
+G0  13 dBi, k  0
+FIGURE 5
+Comparison of measured pattern and reference radiation pattern envelope for an omnidirectional
+antenna with 11 dBi gain and operating in the band 928-944 MHz, k = 0
+FIGURE 6
+Comparison of measured pattern and the reference radiation pattern envelope for an omnidirectional
+antenna with 8 dBi gain and operating in the band 1 850-1 990 MHz, k = 0
+FIGURE 7
+Comparison of measured pattern and the reference radiation pattern envelope with k = 0 
+for an omnidirectional antenna with 10 dBi gain and operating in the 1.4 GHz band
+FIGURE 8
+Comparison of measured pattern and the reference radiation pattern envelope with k = 0 
+for an omnidirectional antenna with 13 dBi gain and operating in the 1.4 GHz band
+figure 9
+Comparison of measured pattern and the reference radiation pattern envelope with k = 0.5 
+for an omnidirectional antenna with 10 dBi gain and operating in the 2.4 GHz band
+figure 10
+Comparison of measured pattern and the reference radiation pattern envelope with k = 0.5 
+for an omnidirectional antenna with 13 dBi gain and operating in the 2.4 GHz band
+FIGURE 11
+Reference radiation pattern envelopes for various values of k for an omnidirectional antenna with 10 dBi gain
+FIGURE 12
+Reference radiation pattern envelopes for various values of k for an omnidirectional antenna with 13 dBi gain
+For an antenna with improved side-lobe performance k = 0, Fig. 13 compares the measured elevation pattern of the MT-482016 omnidirectional antenna 5.8 GHz 9.4 dBi (= 8.7) gain, to recommends 2.1 (equation (1a)):  = .
+FIGURE 13
+Measured elevation pattern versus the reference radiation envelope,
+for omnidirectional (in azimuth) antenna, 9.4 dBi gain
+3	Summary, conclusions and further analyses
+A reference radiation pattern has been presented for omnidirectional antennas exhibiting a gain between 8 dBi and 13 dBi. The reference radiation pattern has been derived on the basis of theoretical considerations of the radiation pattern of a collinear array of dipoles. The proposed pattern has been shown to adequately represent the theoretical patterns and measured patterns over the range from 8 dBi to 13 dBi. Further work is required to determine the range of gain over which the reference radiation pattern is appropriate especially with regard to antennas operating in frequency bands above 3 GHz.
+Annex 2
+
+Relationship between gain and beamwidth for omnidirectional
+and sectoral antennas
+1	Introduction
+The purpose of this Annex is to derive the relationship between the gain of omnidirectional and sectoral antennas and their beamwidth in the azimuthal and elevation planes. Section 2 is an analysis of the directivity of omnidirectional and sectoral antennas assuming two different radiation intensity functions in the azimuthal plane. For both cases, the radiation intensity in the elevation plane was assumed to be an exponential function. Section 3 provides a comparison between the gain-beamwidth results obtained using the methods of § 2 and results contained in the previous versions of this Recommendation for omnidirectional antennas. Section 4 summarizes the results, proposes a provisional equation for gain-beamwidth for omnidirectional and sectoral antennas, and suggests areas for further study.
+2	Analysis
+The far-field pattern of the sectoral antenna in the elevation plane is assumed to conform to an exponential function, whereas the far-field pattern in the azimuth plane is assumed to conform to either a rectangular function or an exponential function. With these assumptions, the directivity, D, of the sectoral antenna may be derived from the following formulation in (spherical coordinates):
+(12)
+(13)
+where:
+UM:	maximum radiation intensity
+U0:	radiation intensity relative to an isotropic source
+:	angle in the azimuthal plane
+:	angle in the elevation plane
+F():	radiation intensity in the azimuthal plane
+F():	radiation intensity in the elevation plane.
+The directivity of omnidirectional and sector antennas is evaluated in the following sub-sections assuming the radiation intensity in the azimuthal plane is either a rectangular function or an exponential function.
+2.1	Rectangular sectoral radiation intensity
+Rectangular sectoral radiation intensity function, F(), is assumed to be:
+(14)
+where:
+s:	beamwidth of the sector
+U(x) = 1         for    x  0
+(15)
+		U(x) = 0         for   x < 0
+For either rectangular or exponential sectoral radiation intensity functions, it is assumed that the radiation intensity in the elevation plane is given by:
+(16)
+where:
+(17)
+3:	3 dB beamwidth of the antenna in the elevation plane (degrees).
+Substituting equations (14) and (16) into equation (13) results in:
+(18)
+This double integral may be solved as the product of two independent integrals. The integral over  is evaluated in a straightforward way. However, evaluating the integral over  is somewhat more difficult. The integral over  could be evaluated numerically with the results either tabulated or a polynomial fitted to the data. However, it is noted that if the limits of integration are changed to  , the integral over  is given in closed-form by:
+(19)
+This is a rather simple and flexible formulation that, depending on its accuracy, could be quite useful in evaluating the directivity of sector antennas as well as omnidirectional antennas.
+The accuracy with which the infinite integral approximates the finite integral has been evaluated. The finite integral, i.e. the integral on the left-hand side of equation (19), has been evaluated for several values of 3 dB beamwidth using the 24 point Gaussian Quadrature method and compared with the value obtained using the formula corresponding to the infinite integral on the right-hand side of equation (19). (Actually, because of its symmetry, the finite integral has been numerically evaluated over the range 0 to /2 and the result doubled.) The results for a range of example values of the 3 dB beamwidth in the elevation plane are shown in Table 1. The Table shows that for a 3 dB beamwidth of 45°, the difference between the values produced by the finite integral and the infinite integral approximation is less than 0.03%. At 25° and below, the error is essentially zero. Equation (18) is now readily evaluated:
+(20)
+TABLE 1
+Relative accuracy of the infinite integral in equation (19) in the evaluation
+of the average radiation intensity
+From equations (14) and (16), UM = 1. Substituting these values and equation (20) into equation (12) yields the directivity of a sector antenna given the beamwidth in the elevation and azimuthal planes:
+(21)
+where the angles are given in radians. When the angles are expressed in degrees, equation (21) becomes:
+(22)
+Note that for an omnidirectional antenna, equation (22) reduces to:
+(23a)
+If it is assumed that the radiation efficiency is 100% and that the antenna losses are negligible, then the gain, , and the directivity, D, of the omnidirectional antenna are identical. Additionally, for omnidirectional antennas with a 3 dB elevation beamwidth less than about 45°, the relationship between the gain and the 3 dB beamwidth in the elevation plane may be simplified by setting the exponential factor equal to unity. The resulting error is less than 6%.
+(23b)
+2.2	Exponential sectoral radiation intensity
+The second case considered for the sectoral radiation intensity is that of an exponential function. Specifically:
+(24)
+where:
+(25)
+and s is the 3 dB beamwidth of the sector.
+Substituting equations (16) and (24) into equation (13), changing the limits of integration so that the finite integrals become infinite integrals, integrating and then substituting the result into equation (12) yields the following approximation:
+(26)
+where the angles are as defined previously and are expressed in radians. Converting the angles to degrees transforms equation (26) into:
+(27)
+Comparing equations (22) and (27), it is seen that the difference between the directivity computed using either of the equations is less than 0.3 dB.
+The results given by equation (27) should be compared to a number of measured patterns to determine the inherent effect of the radiation efficiency of the antenna and other losses on the coefficient. At this time, only two sets of measurements are available for sectoral antennas designed to operate in the 25.25 GHz to 29.5 GHz band. Measured patterns in the azimuthal and elevation planes are given, respectively, in Figs 14 and 15 for one set of antennas and Figs 16 and 17, respectively, for the second set. From Figs 14 and 15, the 3 dB beamwidth in the azimuthal plane is 90° and the 3 dB beamwidth in the elevation plane is 2.5°. From equation (27), the directivity is 22.1 dBi. This is to be compared with a measured gain of 20.5-21.4 dBi for the antenna over the range 25.5-29.5 GHz. Assuming the gain G0 of the antenna in the band around 28 GHz is 0.7 dB less than its directivity, and the exponential factor is replaced by unity which introduces an increasing error with increasing beamwidth. The error reaches 6% at 45°. A larger beamwidth leads to a larger error. Based on these considerations, the semi-empirical relationship between the gain and the beamwidth of a sectoral antenna is given by:
+(28a)
+Similarly, from Figs 16 and 17, the semi-empirical relationship between the gain and the beamwidth of that sectoral antenna is:
+(28b)
+FIGURE 14
+Measured pattern in the azimuthal plane of a 90° sector antenna. 
+Pattern measured over the band 27.5 GHz to 29.5 GHz.
+The band drawn cross marks on the left side of the Figure correspond to values obtained from equation (24)
+(when expressed in dB) for an assumed 3 dB beamwidth of 90° in the azimuthal plane
+FIGURE 15
+Measured pattern in the elevation plane of a 90° sector antenna.
+Pattern measured over the band 27.5 GHz to 29.5 GHz
+FIGURE 16
+Azimuth pattern of typical 90° sectoral antenna (V-polarization)
+15 dBi half-value angle: 90° (horn type antenna at 26 GHz)
+FIGURE 17
+Elevation pattern of typical 90° sectoral antenna (V-polarization)
+15 dBi half-value angle: 12° (horn type antenna at 26 GHz)
+3	Comparison with previous results for omnidirectional antennas
+The purpose of this section is to compare the results obtained for an omnidirectional antenna given by equation (23) with previous results reported in and summarized in Annex 1 of this Recommendation.
+The radiation intensity in the elevation plane used in for an omnidirectional antenna was of the form:
+(29)
+Substituting equation (29) into equation (13), and assuming that F() = 1, yields:
+(30)
+This double integral evaluates to:
+(31)
+where (2N)!! is the double factorial defined as (246...(2N)), and (2N + 1)!! is also a double factorial defined as (135...(2N + 1)).
+Thus, the directivity becomes:
+(32)
+The 3 dB beamwidth in the elevation plane is given by:
+(33)
+A comparison between the directivity computed using the assumptions and methods embodied in equation (23) and those used in the derivation of equations (32) and (33) is given in Table 2. It is shown that results obtained using equation (23a) compare favourably with the results using equations (32) and (33). In all cases equation (23a) slightly underestimates the directivity obtained using equations (32) and (33). The relative error (%) of the estimates, when expressed in dB, is greatest for a 3 dB beamwidth in the elevation plane of 65°, amounting to −2.27%. The error (dB) for this case, expressed in dB, is −0.062 dB. For 3 dB beamwidth angles less than 65°, the relative error (%) and the error (dB), are monotonically decreasing functions as the 3 dB beamwidth decreases. For a 16° 3 dB beamwidth, the relative error (%) is about −0.01% and the error (dB) is less than about −0.0085 dB. An evaluation similar to that shown in Table 2 for values of 2N up to 10 000 (corresponds to a 3 dB beamwidth of 1.35° and a directivity of 19.02 dB) confirms that the results of the two approaches converge.
+TABLE 2
+Comparison of the directivity of omnidirectional antennas computed using equation (23a)
+with the directivity computed using equations (32) and (33)
+TABLE 2 (end)
+4	Summary and conclusions
+Equations have been developed that permit easy calculation of the directivity and the relationship between the beamwidth and gain of omnidirectional and sectoral antennas as used in P-MP radio-relay systems. It is proposed to use the following equations to determine the directivity of sectoral antennas:
+(34)
+where:
+(35)
+and s = 3 dB beamwidth of the sectoral antenna in the azimuthal plane (degrees) for an assumed exponential radiation intensity in azimuth and 3 is the 3 dB beamwidth of the sectoral antenna in the elevation plane (degrees).
+For omnidirectional antennas, it is proposed to use the following simplified equation to determine the 3 dB beamwidth in the elevation plane given the gain in dBi (see equation (23b)):
+It is proposed to use, on a provisional basis, the following semi-empirical equation relating the gain of a sectoral antenna (dBi) to the 3 dB beamwidths in the elevation plane and the azimuthal plane, where the sector is on the order of 120° or less and the 3 dB beamwidth in the elevation plane is less than about 45° (see equation (28a)):
+Further study is required to determine how to handle the transition region implicit in equation (35), and to determine the accuracy of these approximations as they apply to measured patterns of sectoral and omnidirectional antennas designed for use in P-MP radio-relay systems for bands in the range from 1 GHz to about 70 GHz.
+Annex 3
+
+Procedure for determining the gain of a sectoral antenna at an arbitrary 
+off-axis angle specified by an azimuth angle and an elevation angle 
+referenced to the boresight of the antenna
+1	Analysis
+The basic geometry for determining the gain of a sectoral antenna at an arbitrary off-axis angle is shown in Fig. 18. It is assumed that the antenna is located at the centre of the spherical coordinate system; the direction of maximum radiation is along the x-axis; the x-y plane is the local horizontal plane; the elevation plane contains the z-axis; and, u0 is a unit vector whose direction is used to determine the gain of the sectoral antenna. In analysing sectoral antennas in particular, it is important to observe the range of validity of the azimuth and elevation angles:
+Also observe that the range of validity of the angle  is
+Figure 18
+Determining the off-boresight angle given the azimuth and elevation angle of interest
+The two fundamental assumptions regarding this procedure are that:
+–	the –3 dB gain contour of the far-field pattern when plotted in two-dimensions as a function of the azimuth and elevation angles will be an ellipse as shown in Fig. 19; and
+–	the gain of the sectoral antenna at an arbitrary off-axis angle is a function of the 3 dB beamwidth and the beamwidth of the antenna when measured in the plane containing the x-axis and the unit vector u0 (see Fig. 18).
+Given the 3 dB beamwidth (degrees) of the sectoral antenna in the azimuth and elevation planes, 3 and 3, the numerical value of the boresight gain is given, on a provisional basis, by (see recommends 3.3 and equation (28a)).
+(36)
+The first step in evaluating the gain of the sectoral antenna at an arbitrary off-axis angle,  and , is to determine the value of . Referring to Fig. 18 and recognizing that abc is a right-spherical triangle,  is given by:
+,       	(37a)
+and the off-axis angle in the plane adc is given by:
+,      	(37b)
+Figure 19
+Determination of the 3 dB beamwidth of an elliptical beam at an arbitrary inclination angle
+Given that the beam is elliptical, the 3 dB beamwidth of the sectoral antenna in the plane adc in Fig. 18 is determined from:
+(38)
+Based on this calculation method, the alternative approach (see Annex 6) provides the reference radiation pattern in the frequency range from 6 GHz to about 70 GHz (see recommends 3.2).
+2	Conclusion
+A procedure has been given to evaluate the gain of a sectoral antenna at an arbitrary off-axis angle as referenced to the direction of the maximum gain of the antenna. The importance of observing the range of validity of the azimuth and elevation angles in modelling the radiation pattern of a sectoral antenna has been emphasized. Further study is required to demonstrate the range of gain and beamwidths in the azimuth and elevation planes over which the reference gain representation used here; equations in the main part (2d1)-(2f), (3a) and (36) are valid for sectoral antennas.
+Annex 4
+
+Mathematical model of generic average radiation patterns of omnidirectional for P-MP FWSs for use in statistical interference assessment
+1	Introduction
+The main text of this Recommendation (in recommends 2.2) gives reference radiation patterns, representing average side-lobe levels for omnidirectional (in azimuth) antennas, which can be applied in the case of multiple interference entries or time-varying interference entries.
+On the other hand, for use in spatial statistical analysis of the interference, e.g. from a few GSO satellite systems into a large number of interfered-with FWS, a mathematical model is required for generic radiation patterns as given in the later sections in this Annex.
+It should be noted that these mathematical models based on the sinusoidal functions, when applied in multiple entry interference calculations, may lead to biased results unless the interference sources are distributed over a large range of azimuth/elevation angles. Therefore, use of these patterns is recommended only in the case stated above.
+2	Mathematical model for omnidirectional antennas
+In case of spatial analysis of the interference from one or a few GSO satellite systems into a large number of FS stations, the following average side-lobe patterns should be used for elevation angles that range from −90° to 90° (see Annex 1):
+(39a)
+with:
+(39b)
+where , 3, 4, G0 and k are defined and expressed in recommends 2.1 in the main text.
+The parameter 0.1 is introduced in equation (39b) in order to avoid the situation that F(θ) falls below −10 dB.
+NOTE 1 – In cases involving typical antennas operating in the 1-3 GHz range, the parameter k should be 0.7.
+NOTE 2 – In cases involving antennas with improved side-lobe performance in the 1-3 GHz range, and for all antennas operating in the 3-70 GHz range, the parameter k should be 0.
+Annex 5
+
+Procedure for determining the radiation pattern of an antenna at an arbitrary
+off-axis angle when the boresight of the antenna is mechanically
+or electrically tilted downward
+1	Introduction
+This Annex presents methods to account for the radiation pattern of a sectoral antenna when tilted downwardly by either mechanical or electrical means. The analysis of the mechanical means is presented in § 2 and the electrical means in § 3.
+2	Analysis of mechanical tilt
+The basic geometry for determining the gain of a sectoral antenna at an arbitrary off-axis angle is shown in Fig. 20. It is assumed that the antenna is located at the centre of the spherical coordinate system; the direction of maximum radiation is along the x-axis. If the antenna is tilted downward, it becomes necessary to distinguish between the antenna-based coordinates (, ) and the coordinates referenced to the horizontal plane (h, h). The relationship between these coordinate systems is best determined by considering the rectangular coordinate systems attached to them.
+If the antenna is down-tilted to a specified tilt angle by rotating the coordinate system about the y-axis, the x-y plane contains the main beam axis of the sectoral antenna, and this plane intersects the local horizontal plane along the y-axis. The tilt angle β is defined as the positive angle (degrees) that the main beam axis is below the horizontal plane at the site of the antenna.
+Figure 20
+Right-handed coordinate systems used to account for the radiation pattern
+of a tilted sectoral antenna
+In a rectangular coordinate system located at the antenna, with its x-axis in the vertical plane containing the maximum gain of the antenna, the coordinates of the unit vector are given as follows:
+(40)
+Note that this is a non-standard spherical coordinate system in that the elevation is measured in the range from –90 to +90 degrees. This is the same convention that was used in recommends in the main text and in the previous annexes.
+Consider the rectangular coordinate system of Fig. 20, which contains the main beam axis of the antenna and is rotated downward about the y-axis by an angle of  degrees. The unit vector in this system has the coordinates x, y, and z given by:
+(41)
+In the corresponding spherical coordinate system referenced to the plane defined by the main beam axis and the y-axis, the spherical angles are related to the coordinates x, y and z by sin = z and tan = y/x. The determination of the value of , which lies between –180 and +180 degrees, is given by the arctan(y/x) with possible corrections depending on the algebraic sign of x and y.
+Alternatively, making use of the fact that the sum of the squares of x, y and z is unity, it can be shown that cos = x/cos over a restricted range of values of . Substituting equations (40) into (41) and then substituting the resultant values of z and x for the relationships z = sin and x = coscos, the following expressions for the values of the spherical coordinates are obtained (see Note 1):
+(42)
+NOTE 1 – The range of the function “arccos” is from 0° to 180°. However, this does not limit the applicability of the methodology because the antenna patterns used exhibit mirror symmetry with respect to the x-z plane and the x-y plane.
+The equations in recommends 3.4 come from equation (42).
+3	Application of the radiation pattern equations in recommends 2.5 and 3.5 to electrical tilt antennas
+In the case of the electrical tilt, the radiation pattern equations should be theoretically a function of the tilt angle , which depends on the phase shift amount of the flux radiated from the vertically placed antenna elements. However, taking into account that  is actually a small value in general (e.g., within 15°), the following assumption could be applied for simplification.
+Since the tilted radiation gains at the zenith and the nadir have to remain the same values respectively regardless of the tilt angle  (see Fig. 21), the actual radiation pattern, compared to the pattern before tilting, slightly expands or contracts above the maximum gain axis or below that axis, respectively, as shown in the solid line pattern in Fig. 21.
+This radiation pattern’s gains (illustrated by the solid line) could be approximated by those of another pattern (illustrated by the broken line in Fig. 21) using a parameter conversion. This broken line pattern is derived from an ideal uniform elevation angle shift of  for the original pattern calculated from the equations in recommends 2.1, 2.2, 3.1 and 3.2 in the respective cases.
+Thus, the electrically tilted radiation patterns are derived using the parameter conversion in the equations in recommends (in 2.1, 2.2, 3.1 and 3.2) as follows:
+The elevation angle  from the maximum gain axis can be described as:
+= h + 	(43)
+where:
+h:	elevation angle (degrees) measured from the horizontal plane at the site of the antenna for the tilted radiation pattern (−90° ≤ h ≤ 90°)
+:	electrical tilt angle as defined in § 2 of this Annex or recommends 2.5 and 3.4.
+In order to apply the reference radiation pattern equations in recommends 2.1, 2.2, 3.1 and 3.2 to the electrically tilt antennas, based on the above assumption, a compression/extension ratio RCE is introduced. The compression/extension ratio can be defined as:
+(44)
+Elevation angle e, by which the tilted radiation gain at h are calculated using equations in recommends 2.1, 2.2, 3.1, and 3.2, can be expressed as follows:
+for
+for   	(45)
+The electrically tilted radiation patterns are calculated by using e of equations of (45) instead of  in the equations in recommends 3.1 and 3.2 for sectoral antennas and also in recommends 2.1 and 2.2 for omnidirectional antennas.
+Figure 21
+Approximation of the reference radiation pattern for an electrically tilted antenna
+Annex 6
+
+The approach to calculate the sectoral antenna reference patterns
+for the frequency range from 6 GHz to about 70 GHz
+defined in recommends 3.2 in the main part
+1	Introduction
+This Annex provides the definition and supplementary explanation of the parameters used in equations for the sectoral antenna reference radiation patterns for the frequency range from 6 GHz to about 70 GHz specified in recommends 3.2 in the main text of this Recommendation. The equations presented in this Annex have been derived from the practical analysis based on the measured data of the sectoral antennas.
+2	Consideration
+The sectoral antenna reference radiation patterns specified in the former versions of this Recommendation did not well fit to the measured patterns in particular outside the main lobe in the azimuth plane, while for the elevation plane the specified patterns represent fairly good approximation to the measured data.
+Due to a difference between the 3 dB beamwidth values, i.e. 3 and 3, in the azimuth and the elevation planes, the calculated patterns based on these values result in different gains at the cross point of (, ) = (±180, 0), although the gain values in the both planes should be theoretically equal at this cross point.
+It is therefore noted that, as a cause of such inconsistency, the basic mathematical model and the associated assumptions (as illustrated in Figs. 18 and 19 in Annex 3), which is adopted in the algorithm deriving the sectoral antenna patterns, may not applicable to the entire 3-dimension angles.
+Taking into account the above points, the current algorithms, as explained below, has been adopted to overcome the inconsistency between the calculated and the measured patterns.
+In the angle range where  is greater than about 90°, it is proposed to modify the 3 dB beamwidth values, 3 and 3, to variable parameters 3m and 3m, respectively, so as to gradually get to a single value 3(180) at the cross point (±180, 0) since the inconsistency at this point is caused by the difference between 3 and 3.
+As a possible value of 3(180), the existing constant 3 could be adopted assuming that there is no more discrimination at the cross point between elevation and azimuth planes, and it is the simplest selection as far as we consider the cross point being included in the elevation plane.
+Therefore,
+3(180)  θ3 (see Note 1)	(46)
+NOTE 1 – When a front-to-back ratio (FBR) of the reference antenna is available, it may also be possible to adopt 3(180) as follows:
+3(180)  	(47)
+Regarding the azimuth plane, since the difference of the patterns starts from the angle corresponding to x = 1 for the peak side-lobe patterns and x = 1.152 for the average side-lobe, the azimuth angle at this point th is expressed as follows:
+(for peak side-lobe patterns)	(48a)
+(for average side-lobe patterns) 	(48b)
+The newly defined 3 dB beamwidth variable 3m gradually changes from 3 at ±th to 3(180) at the azimuth angle of ±180°. Given that the changing locus is a part of ellipse, the difference between azimuth angles of || and th is compressed by the factor of 90/(180 − th) as shown in Fig. 22. Then 3m is generally expressed by the following equation, i.e. equation (2d7) in the main part:
+for     	(49)
+Figure 22
+Determining the compression factor for the ellipse equation
+Since the value of 3m in the range  is described as equation (49), a consequential modification to equation (2a3) in recommends 3.1 of the previous versions of this Recommendation is required as follows:
+for     	(50)
+where:
+for
+Furthermore, within the angle  between 90° and 180° in the elevation plane (in this case  = 180 − ), the following new variable 3m is defined which gradually changes from 3 at 90° to 3(180) at 180°. Given that the changing locus is a part of ellipse, 3m is generally expressed by the following equation (it is noted that, in the case of 3(180)  3, 3m is a constant value 3):
+for   	(51)
+In the same manner, taking into account equation (51), in the range  greater than 90°, the value of  is not dependent on  but on  and is represented by the following equation:
+for   	(52)
+The above equations (50) and (52) are referred to by equation (2d3) in the main text.
+Annex 7
+
+The approach to calculate the sectoral antenna reference patterns 
+for the frequency range from 400 MHz to about 6 GHz 
+defined in recommends 3.1 in the main part
+1	Introduction
+This Annex provides the definition and supplementary explanation of the equations and the parameters for the sectoral antenna reference radiation patterns for the frequency range from 400 MHz to about 6 GHz specified in recommends 3.1.
+The former versions of this Recommendation adopted the algorithm which calculated the reference radiation patterns by using the same equations and the same k parameter in both azimuth and elevation planes. Consequently, it was difficult for the reference radiation patterns to fit well those of measured data in both azimuth and elevation planes.
+In order to overcome this problem, the current version has adopted a new approach, where calculation of each reference radiation pattern in the azimuth or the elevation plane uses separate equations which are not based on the assumption of the 3 dB beamwidth of an elliptical beam defined in Annex 3 of this Recommendation.
+2	Consideration
+In order to introduce new fundamental equations of the reference radiation patterns, the following points are assumed for sectoral antenna structure:
+–	antenna elements are put in an array in the vertical direction like omnidirectional antennas;
+–	the antenna elements are sectoral directional in the horizontal direction.
+On the basis of omnidirectional antenna structure, the vertical overall radiation pattern of radiating elements in an array is as a function of the only elevation angle since the array orientation is exactly vertical. Accordingly, vertical radiation patterns are not affected by the variation of the azimuth angle. For omnidirectional antennas using dipole radiating elements, the vertical antenna patterns are identical regardless of azimuth angles. On the other hand, for sectoral antennas whose radiating elements are directional, the radiation pattern at an arbitrary azimuth angle, , is relatively reduced from the radiation pattern at  = 0° by a compression ratio, R, which means an extent of horizontal gain compression as the azimuth angle is shifted from 0° to .
+Meanwhile, horizontal radiation patterns are not affected by the variation of the elevation angle and then a relative horizontal antenna dB gain (a negative gain) is the same value at an arbitrary azimuth angle in spite of any elevation angles. Accordingly, a relative horizontal gain at an arbitrary point, Gar(,), is expressed as follows:
+Gar(,) = Gar(,0°)                (dB)	(53)
+where:
+:	azimuth angle relative to the angle of the maximum gain in the horizontal plane (degrees) (–180° ≤  ≤ 180°)
+:	elevation angle relative to the local horizontal plane when the maximum gain is in that plane (degrees) (–90° ≤  ≤ 90°).
+Therefore, the above-mentioned compression ratio, R, could be described as:
+R:	horizontal gain compression ratio as the azimuth angle is shifted from 0° to ,
+and a vertical relative gain at an arbitrary point, Ger(,), is expressed as follows:
+Ger(,) = R·Ger(0°,)                (dB)	(54)
+As a result, the relative gain of the sectoral antenna at an arbitrary point is described as the dB sum of equations (53) and (54), and the gain relative to an isotropic antenna, G(,), as a function of normalised direction by the 3 dB beamwidths, i.e. equation (2a1) in the main part, is shown as the following equation:
+G(,) = G0 + Ghr(xh) +R·Gvr(xv)                (dBi)	(55)
+where:
+G0:	the maximum gain in the azimuth plane (dBi)
+Ghr(xh):	relative antenna gain in the azimuth plane at the normalized direction of (xh, 0) (dB)
+xh:	|φ|/φ3
+3:	the 3 dB beamwidth in the azimuth plane (degrees) (generally estimated by the sectoral beamwidth)
+Gvr(xv):	relative antenna gain in the elevation plane at the normalized direction of (0, xv) (dB)
+xv:	|θ|/θ3
+θ3:	the 3 dB beamwidth in the elevation plane (degrees).
+in this case, R, i.e. equation (2a2) in the main text, can be depicted below:
+(56)
+Moreover, by using antenna elements with sectoral direction, radiation patterns of the main-lobe in the azimuth plane can be especially revealed as  in dB since this equation has shown a good approximation within the 3 dB beamwidth to measured antenna radiation data in the azimuth plane in the past study.
+Furthermore, it is assumed that the relative reference radiation gains, Ghr(xh) and Gvr(xv), have the relative minimum value. The minimum is revealed in the vicinity of ±180° in the azimuth plane and at ±90° in the elevation plane on the basis of sectoral antenna structures, and both values of the minimum gain are theoretically the same. As for the relative minimum gain, G180, it should be appropriate to select a value calculated at the point of (,) = (0°, 180°) in the elevation plane using the following equations, since the calculated value had fitted very well elevation patterns of many sets of measured data in the past study:
+G180 = k  15log(180°/3)   (dB)     for peak side-lobe patterns	(57)
+where:
+k = 	12  10log(1 + 8kp)
+kp: 	parameter which accomplishes the relative minimum gain for peak side-lobe patterns
+G180 = k  3  15log(180°/3)   (dB)   for average side-lobe patterns	(58)
+where:
+k = 	12  10log(1 + 8ka)
+ka: 	parameter which accomplishes the relative minimum gain for average side-lobe patterns.
+3	Derivation of the reference pattern equations
+In this section, the relative reference radiation gains, Ghr(xh) and Gvr(xv), are revealed particularly in the case of peak side-lobe patterns in the frequency range from 400 MHz to about 6 GHz. On the other hand, regarding the average side-lobe patterns, the relevant equations can be easily derived from the method below:
+–	equation (59) is replaced with equation (58) which is decreased by 3 dB from equation (57);
+–	equation (60) is the same and equation (61) is used almost as it is except for –3 dB difference outside the main-lobe part.
+These reference gains have the relative minimum value, G180, and based on equation (57), the value, i.e. equation (2b1) in the main part, is expressed as the following equation:
+(59)
+where:
+kp: 	parameter which accomplishes the relative minimum gain for peak side-lobe patterns.
+3.1	Relative reference antenna equations in the azimuth plane
+The relative reference antenna gain, Ghr(xh), i.e. equation (2b2) in the main text, is expressed as follows:
+for     xh  0.5
+for      0.5 < xh	(60)
+Ghr(xh)  ≥  G180
+where:
+xh 	= |φ|/φ3
+kh: 	azimuth pattern adjustment factor based on leaked power (0 ≤ kh ≤ 1)
+kh = 	.
+3.2	Relative reference antenna equations in the elevation plane
+The equations for the relative reference antenna gain mostly follow the equations specified in the former version of this Recommendation since the calculated reference patterns mostly had shown a good approximation to measured antenna radiation data by around the first side-lobe in the elevation plane in the past study. However, the relative reference gain is not also smaller than G180 as well as Ghr(xh) and the minimum value is located at the point of  = 90°. Regarding the equation calculating around the minimum point, therefore, the attenuation incline factor of 15 is changed to C so as to reach the minimum point.
+The relative reference antenna gain, Gvr(xv), i.e. equation (2b3) in the main part, is expressed as follows:
+for  xv < xk
+for  xk ≤ xv < 4	(61)
+Gvr(xv)  = – kv – Clog(xv)		for   4 ≤ xv < 90°/3
+Gvr(xv)  = G180		for  xv ≥ 90°/3
+where:
+xv = 	|θ|/θ3
+kv: 	elevation pattern adjustment factor based on leaked power (0 ≤ kv ≤ 1)
+xk =
+kv = 	12 – Clog(4) –10log(4–1.5+ kv);
+the attenuation incline factor of C is presented as follows (see Note 3):
+4	Comparison between measured data and calculated reference patterns
+In order to select the appropriate values of kh, kv, kp and ka above-mentioned for typical antennas, comparisons for peak and average patterns were made between the calculated reference patterns by using the equations above-mentioned in § 3 and the measured side-lobe patterns. The antenna side-lobe patterns were measured for different set-ups by varying tilt and transmission frequency.
+Such measurements were statistically analysed and the 95th percentile of the measurements is presented as the peak side-lobe measured data and the average performance of the measurements is shown as the average side-lobe measured data. When tilt was used during measurements, these data were compensated for in the figures by a translation of the measurement data in the angular dimension to place the maximum gain at the elevation angle zero.
+During the development of the latest revision of this Recommendation, a number of measured data for sectoral antennas were reported to the ITU-R in the frequency range down to 698 MHz. Through the examination of calculated data which indicated the applicability of these reference radiation patterns down to 400 MHz, it is also noted that there is no physical reason that the antenna characteristics would drastically change in the lower band.
+The comparisons for typical antenna patterns are shown in Figs 23 through 26.
+The measured pattern characteristics are represented in Table 3.
+TABLE 3
+The measured pattern characteristics
+Figure 23
+Comparison between the statistical peak measured patterns and the calculated peak side-lobe patterns
+(f: 790-960 MHz)
+Figure 24
+Comparison between the statistical peak measured patterns and the calculated peak side-lobe patterns
+(f: 1.71-2.7 GHz)
+Figure 25
+Comparison between the statistical average measured patterns and the calculated average side-lobe
+(f: 790-960 MHz)
+Figure 26
+Comparison between the statistical average measured patterns and the calculated average side-lobe
+(f: 1.71-2.7 GHz)
+5	Summary of various k parameter values
+The selected values of appropriate kh, kv, kp, and ka parameters are presented in the following Table 4 (see the relevant parts of recommends 3.1.1 and 3.1.2 in the main text).
+TABLE 4
+The values of kh, kv, kp and ka parameters for reference peak/average
+side-lobe patterns

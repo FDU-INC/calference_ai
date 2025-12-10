@@ -1,0 +1,144 @@
+RECOMMENDATION  ITU-R  S.1528
+Satellite antenna radiation patterns for non-geostationary orbit satellite antennas operating in the fixed-satellite service below 30 GHz
+(Question ITU-R 231/4)
+(2001)
+The ITU Radiocommunication Assembly,
+considering
+a)	that the use of space station antennas with the best available radiation patterns will lead to the most efficient use of the radio-frequency spectrum;
+b)	that both elliptical and circular beam antennas are used on operational space stations;
+c)	that although improvements are being made in the design of space station antennas, further information is still required before a reference radiation pattern can be adopted for coordination purposes;
+d)	that the adoption of a design objective radiation pattern for space station antennas will encourage the fabrication and use of orbit-efficient antennas;
+e)	that it is only necessary to specify space-station antenna radiation characteristics in directions of potential interference for coordination purposes;
+f)	that for wide applicability the mathematical expressions should be as simple as possible consistent with effective predictions;
+g)	that nevertheless, the expressions should account for the characteristics of practical antenna systems and be adaptable to emerging technologies;
+h)	that measurement difficulties lead to inaccuracies in the modelling of spacecraft antennas at large off-axis angles;
+j)	that the size constraints of launch vehicles lead to limitations in the D/ values of spacecraft antennas;
+k)	that a multiple beam antenna on the non-geostationary-satellite orbit (non-GSO) has to provide an earth coverage field-of-view (FOV) of up to  30 half-cone angle from a medium earth orbit (MEO) satellite, and up to  60 from a low earth orbit (LEO) satellite;
+l)	that most non-GSO fixed-satellite service (FSS) satellites are planned to use a large number of beams per satellite with either steerable or fixed beams;
+m)	that the peak gain of a multiple beam antenna decreases while the side-lobe level increases as a function of the off-axis beam pointing angle;
+n)	that the 1st and 2nd side lobes of a multiple beam antenna may be merged into the main beam when the beam is pointed toward or close to the edge of the Earth;
+o)	that for a practical antenna, spill-over from the main reflector, subreflector, or diffraction from the supporting structure may significantly affect the accuracy of our estimates in the near-in and far-out side lobe regions;
+p)	that actual radiation patterns of some kinds of multiple beam antennas may be significantly different from beam to beam,
+recommends
+1	that for multiple-beam non-GSO satellite antennas in the FSS having either circular or elliptical beams, the following radiation patterns should be used as a design objective or to perform interference analysis:
+1.1	measured antenna patterns
+Measured antenna patterns should be used in performing interference analysis whenever they are available.
+When a measured pattern is not available, one or other of reference patterns given in the remaining sections may be used:
+1.2	the reference pattern given by:
+G()  Gm  3 ( /b)                      dBi	for	0	   ab	(1)
+G()  Gm  LN  20 log (z)                       dBi	for	ab	   0.5 bb	(2a)
+G()  Gm  LN                      dBi	for	0.5 bb	   bb	(2b)
+G()  X – 25 log ()                      dBi	for	bb	   Y	(3)
+G()  LF                      dBi	for	Y	   90	(4a)
+G()  LB                      dBi	for	90	   180	(4b)
+where:
+X 	Gm + LN  25 log (bb)     and     Y  bb 100.04 (Gm  LN – LF )
+b :	one-half the 3 dB beamwidth in the plane of interest (3 dB below Gm) (degrees)
+b :	 for minor axis (use actual values if known) (degrees)
+b :	(major axis / minor axis)  for major axis (use actual values if known) (degrees)
+G() :	gain at the angle  from the main beam direction (dBi)
+Gm :	maximum gain in the main lobe (dBi)
+LN :	near-in-side-lobe level (dB) relative to the peak gain required by the system design
+LF 	0 dBi far-out side-lobe level (dBi)
+LB :	back-lobe level (dBi)
+z :	(major axis/minor axis) for the radiated beam
+LB  15  LN  0.25 Gm  5 log z dBi or 0 dBi, whichever is higher
+D :	diameter of the antenna (m)
+:	wavelength of the lowest band edge of interest (m).
+The numeric values of a, b, and  for LN  –15 dB, –20 dB, –25 dB, and –30 dB side-lobe levels are given in Table 1. The values of a and  for LN  –30 dB require further study. Administrations are invited to provide data to enable the values of a and  for LN  –30 dB to be refined.
+NOTE 1 – Patterns applicable to elliptical beams require experimental verification. The values of a and  in Table 1 are provisional.
+TABLE  1
+The radiation pattern in relative gain vs. /b is shown in Fig. 1.
+1.3	the reference pattern given by:
+For D /   35:
+G()  Gm – 3 ( /b)2                   dBi	for	b	   Y
+G()  Gm  Ls – 25 log ( /Y )                   dBi	for	Y	   Z
+G()  LF                   dBi	for	Z	   180°
+For MEO:
+Ls  –12;     Y  2 b
+G()  20 log (D / )  3.5 – 25 log ( /b)                   dBi	for	2 b	<   Z
+For LEO:
+Ls  –6.75;     Y  1.5 b
+G()  20 log (D / )  5.65 – 25 log ( /b)                    dBi	for	1.5 b	<  < Z
+where:
+ :	off-axis angle (degrees)
+G() :	gain at the angle  from the main beam direction (dBi)
+Gm :	maximum gain in the main lobe (dBi)
+b :	one half the 3 dB beamwidth in the plane of interest at the largest off-axis angle
+Ls :	main beam and near-in side-lobe mask cross point (dB) below peak gain
+LF :	far-out side-lobe level (dBi), ~ 0 dBi for ideal patterns
+Y 	b (– Ls / 3)1/2
+Z 	Y  100.04 (Gm  Ls – LF )
+:	wavelength at the lower band edge of interest (m)
+D :	diameter of antenna (m).
+The reference pattern is shown in Fig. 2.
+Recommended antenna patterns for non-GSO satellite multiple beam antennas operating in the FSS below 30 GHz are given in Annex 1;
+1.4	the reference pattern given by an analytical function which models the side lobes of the non-GSO satellite.
+In the study of frequency sharing between non-GSO systems, taking into account a non-GSO satellite antenna diagram as realistic as possible allows a more accurate analysis of the interference, while limiting the overestimation of it.
+It is proposed to use a circular Taylor illumination function which gives the maximum flexibility to adapt the theoretical pattern to the real one. It takes into account the side-lobes effect of an antenna diagram.
+To simplify the function, the peaks of the side lobes have been considered symmetrical which is a conservative assumption in the analysis of the interference.
+where:
+G(u) :	gain in the direction of the considered point (dB)
+Gmax :	maximum gain of the diagram (dB)
+1, 2, 3 :	three primary roots of the J1 Bessel function (rad).
+where SLR is the side-lobe ratio of the pattern (dB), the difference in gain between the maximum gain and the gain at the peak of the first side lobe.
+where l is the number of secondary lobes to consider in the pattern; J0( ) is the Bessel function.
+u is a function of both the antenna characteristics and the angle between the sub-satellite point (S is the sub-satellite point) and the illuminated beam as seen from the non-GSO satellite.
+where:
+(, ) :	coordinates of the test point with respect to the centre of the illuminated beam in the satellite reference (see Fig. 4)
+Lr and Lt :	radial and transverse sizes of the effective radiating area of the satellite transmit antenna (m).
+The parameters Lr and Lt are to be provided by the non-GSO system as input parameters.
+An example of pattern obtained with this analytical function is given in Annex 2.
+Further studies are needed to define the bounds of the antenna gain for the nulls that appear when using a Bessel type of function.
+ANNEX  1
+Examples for recommends 1.3
+Example:
+LM-MEO satellite antennas (USAMEO-1)
+A typical non-steerable MEO satellite antenna has an earth FOV of   22.5
+Lens diameter, D /  :	22.6 wavelength at 18.8 GHz
+Half power beamwidth, 2 b :	3.2 at 18.8 GHz, scanned 21 off-axis
+Gain at 21 off-axis, Gm :	35 dBi
+MEO reference radiation pattern
+b		1.6			Gm		35
+Ls		12			Y		2 b  3.2
+LF		3			Z		20.0
+G()		Gm – 3 ( /b)2                   dBi	for	b		  Y
+	35 – 3 ( /1.6)2		1.6		  3.2
+G()		Gm  Ls – 25 log ( /Y )                   dBi	for	Y		  Z
+	23 – 25 log ( /3.2)		3.2		  20.0
+	35.6 – 25 log ()
+G() 	3                   dBi	for	20.0		  180
+LEO reference radiation pattern
+b		1.6			Gm		35
+Ls		6.75			Y		1.5 b  2.4
+LF		5			Z		20.4
+G()		Gm – 3 ( /b)2                   dBi	for	b		  Y
+=	35 – 3 ( /1.6)2
+G()		Gm  Ls – 25 log ( /Y )                   dBi	for	Y		  Z
+	28.25 – 25 log ( /2.4)		2.4		  20.4
+	37.76 – 25 log ()
+G()		5                   dBi	for	20.4		  180
+Using Recommendation ITU-R S.672
+b		1.6			Gm		35
+Ls		25			Y		2.887 b  4.62
+LF		0			Z		25.4
+G()		Gm – 3 ( /b)2                   dBi	for	b	   Y
+=	35 – 3 ( /1.6)2		1.6	   4.62
+G()		Gm  Ls                   dBi	for 	Y	<   6.32 b
+	10			4.62	   10.1
+G()		Gm  Ls  20 – 25 log ( /b)                   dBi	for	6.32 b	   Z
+	35.1 – 25 log 		10.1	   25.4
+G() 	0                   dBi	for	25.4	   180
+ANNEX  2
+Examples for recommends 1.4
+The antenna pattern presented is applicable to a non-GSO satellite system at an altitude of 1 469 km, generating beams on the ground covering a 350 km radius cell (see Fig. 5).
+The study is performed at a frequency of 12 GHz.
+The three primary roots of the J1 Bessel function are:
+1  1.2
+2  2.233
+3  3.238
+In each case, the SLR considered is 20 dB and the number of secondary lobes is four. These two parameters give A  0.95277 and   1.1692.
+Lr and Lt are distances on the ground and depend on the beam roll-off (difference between the maximum gain and the gain at the edge of the illuminated beam). The calculation has been performed using roll-off of 7 dB, 5 dB and 3 dB.
+The Lr and Lt input parameters to be used are given in Table 2.
+TABLE  2*
+For a pointing angle 0 of 0, relative to sub-satellite points (see Fig. 5) the results are plotted on the graph in Fig. 6.

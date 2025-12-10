@@ -1,0 +1,654 @@
+RECOMMENDATION  ITU-R  S.1325-3
+Simulation methodologies for determining statistics of short-term interference between co-frequency, codirectional non-geostationary-satellite orbit
+fixed-satellite service systems in circular orbits and other
+non-geostationary fixed-satellite service systems in
+circular orbits or geostationary-satellite orbit
+fixed-satellite service networks
+(Questions ITU-R 206/4 and ITU-R 231/4)
+(1997-2000-2001-2003)
+The ITU Radiocommunication Assembly,
+considering
+a)	that emissions from the earth stations as well as from the space station of a satellite network (GSO FSS; non-GSO FSS; non-GSO mobile-satellite service (MSS) feeder links) in the FSS may result in interference to another such network when both networks operate in the same bands;
+b)	that it is desirable to have a common methodology of simulation for assessing interference between systems that have co-frequency, codirectional feeder links when one of the systems is non-GSO;
+c)	that it is possible to make some simplifying assumptions for these systems;
+d)	that the simplifications in considering c) should not adversely affect the output results;
+e)	that it would be desirable to have a common set of input parameters for each of the two communication systems;
+f)	that it is necessary for the methodology to consider the type of fade compensation to counteract signal fading such as adaptive power control;
+g)	that the methodology should have the ability to accurately calculate the time dependence of a single interference event in order to more accurately assess the impact on the interfered system;
+h)	that the vast majority of the non-GSO FSS systems are in circular orbits;
+j)	that information on the numbers and precise locations of earth stations is usually unavailable from ITU sources,
+recommends
+1	that the methodology given in Annex 1 may be used to obtain cumulative probability statistics for assessing short-term interference between systems that have co-frequency, codirectional links with one system employing a non-GSO MSS feeder link or non-GSO FSS system;
+2	that the output should be evaluated against an agreed set of common output statistics;
+3	that the methodology given in Annex 2 may be used to compute the aggregate total interference produced by a non-GSO system into a GSO satellite network and may be used to calculate the cumulative density function of the equivalent power flux-density (epfd) for a given antenna diameter of the GSO earth station or the epfd of the non-GSO system in the uplink direction;
+4	that the methodology given in Annex 2 may be used to compute the epfd produced by a non-GSO system into an operational GSO earth station to assess compliance with additional operational limits contained in Article 22 of the Radio Regulations (RR);
+5	that the following Notes should be regarded as part of this Recommendation.
+NOTE 1 – Short-term interference refers to cumulative probability distribution of those bit error ratios (or C/N values) that are calculated for 1% of the time or less.
+NOTE 2 – The methodology of Annex 1 also can be used to evaluate the time dependent nature of the interference during a single near in-line event.
+NOTE 3 – Annex 2 provides a methodology for computing the epfd and epfd of a non-GSO system. Annex 3 provides approaches to relate the methodology of Annex 1 to compute epfd and epfd of a non-GSO system.
+NOTE 4 – It should be assumed that the noise is thermal in nature and is referenced to the total system noise power including the antenna thermal noise at the input to the demodulator.
+NOTE 5 – There is need to develop a methodology for characterizing and calculating the long-term interference between non-GSO FSS systems and GSO FSS networks.
+NOTE 6 – Annex 3 is the description and example of computational methodology.
+NOTE 7 – Annex 4 provides a list of subjects for continuing work on this Recommendation.
+NOTE 8  Software meeting Recommendation ITU-R S.1503 would be used by the Radiocommunication Bureau to validate compliance with epfd limits in Article 22 of the RR.
+NOTE 9  The Annexes to this Recommendation apply to non-GSO systems having circular orbit.
+Annex  1
+
+Methodology for determining statistics of short-term interference between
+co-frequency, codirectional non-GSO FSS systems in circular orbits and 
+other non-GSO FSS systems in circular orbits or GSO FSS networks
+1	Method and simulation approach description
+The framework for this methodology is to model the satellite systems in their orbits and allow each space station and earth station to track their respective aimpoints while taking into account the Earth's rotation. A simulation of this framework is sampled over a period of time at a relatively fine rate. At each sample the range gain product is computed. The raw data is a time history of the interference level versus time. It can be shown that if power control is not used on either system then the range gain product (defined in equation (2)) can be directly related to the interference level. The raw data can be evaluated to compute the per cent of time that the range gain product for all interference paths is above a certain level. The interference geometry is shown in Fig. 1, and the interference paths considered are those below:
+To compute the interference to noise ratio, I0/N0, the following equation can be used:
+(1)
+where:
+Pt :	available transmit power (W)
+BWtx :	transmit bandwidth (Hz)
+Gt (1) :	transmit gain (relative intensity) (numerical ratio)
+Gr (2) :	receiver gain (relative intensity) (numerical ratio)
+1 :	off bore-sight angle of the transmitter in the direction of the receiver (degrees)
+2 :	off bore-sight angle of the receiver in the direction of the transmitter (degrees)
+:	wavelength of transmitter (m)
+Ri :	length of the interfering path (m)
+k :	Boltzmann's constant (1.38  10–23 W/(Hz · K))
+T :	noise temperature (K)
+Lp :	polarization isolation factor (numerical ratio  1).
+If there is no range compensating power control on the links between the space station and the earth station, the only elements of equation (1) that are dependent variables for the time varying simulation are the receiver gain angle, the transmitter gain angle and the range between transmitter and receiver. To compute I0/N0 the range gain product can be multiplied by the constant:
+For example the range gain product for space station 1 downlink into earth station 2 downlink is computed as (Fig. 1):
+(2)
+For interference assessment from satellite networks with multiple ground terminals, the interference from all of the ground terminals (for the uplink case) or from all of the space stations (for the  downlink case) must be combined to determine the total interference. The interference data can be combined at each simulation time step during the simulation, or by combining the data from a set of individual simulations. In either case the receive satellite antenna discrimination in the direction of each earth terminal must be considered when calculating the total uplink interference, epfd, and the receive earth station antenna discrimination in the direction of each non-GSO space station must be considered when calculating the total downlink interference epfd.
+The epfd is defined as the sum of the power flux-densities produced at a receive station of the interfered system, on the Earth's surface or in an orbit, as appropriate, by all the transmit stations within the interfering system, taking into account the off-axis discrimination of a reference receiving antenna assumed to be pointing in its nominal direction.
+(2a)
+where:
+Na :	number of transmit stations in the interfering satellite system that are visible from the receive station of the interfered satellite system, considered on the Earth's surface or in an orbit as appropriate
+i :	the index of the transmit station considered in the interfering satellite system
+Pi :	RF power at the input of the antenna of the transmit station, considered in the non-GSO satellite system (dBW)
+:	transmit antenna gain of the station considered in the non-GSO satellite system in the direction of the receive station (relative intensity, numerical ratio)
+:	receive antenna gain of the receive station in the direction of the i-th transmit station considered in the non-GSO satellite system (relative intensity, numerical ratio)
+:	maximum gain of the receive station antenna (numerical ratio)
+1 :	off bore-sight angle of the transmit station considered in the non-GSO satellite system in the direction of the receive station
+2 :	off bore-sight angle of the receive station in the direction of the i-th transmit station considered in the non-GSO satellite system
+Ri :	distance between the transmit station considered in the non-GSO satellite system and the receive station (m).
+In terms of I0/N0, epfd can be expressed as:
+(2b)
+(2c)
+(2d)
+where epfd is in dB(W/(m2 · Hz)),  is in W, and BWtx is the transmit bandwidth in Hz.
+Substituting I0/N0 (equation (1)):
+(2e)
+so:
+(2f)
+(2g)
+2	Simulation assumptions
+2.1	Orbit model
+The orbit model to simulate the space stations in their orbits is for circular orbits only accounting for precession of the line of nodes in the equatorial plane due to asphericity of the Earth.
+2.1.1	Discussion
+The orbit model represents satellite motion in a geocentric inertial coordinate frame shown in Fig. 2. The origin of this inertial frame is at the centre of the Earth. The x-axis points to the first point in the constellation Aries (i.e., vernal equinox), the z-axis is the mean rotation axis of the Earth, and the y-axis is determined as the cross product of the unit vectors in the z and x direction, i.e. .
+The orbital model is based on Newton's equation of motion for a satellite orbiting a perfectly spherical Earth in a circle. The characteristics of this motion that make it easy to model is that the satellite orbital radius and velocity are constant. These parameters are connected by Newton's second law. The equation of motion is:
+(3)
+where:
+msv :	mass of the space station
+v :	constant velocity of the space station
+G :	Newtonian gravitational constant (6.673  10–11 N · m2/kg2)
+r :	radius of orbit
+Me :	mass of the Earth (5.974  1024 kg).
+Equation (3) can be written in the form:
+(4)
+where Re is the radius of a perfectly spherical Earth (6 378 km). Since at the surface of the Earth:
+(5)
+where g is the acceleration due to gravity at the surface of the Earth is:
+(6)
+we find that (4) can be written as:
+(7)
+or:
+(8)
+The period of the orbit, T, is given by the expression:
+(9)
+These equations completely describe the dynamics of circular orbit motion about a perfectly spherical Earth.
+The description of this motion in the geocentric coordinate system shown in Fig. 2 is based on specifying the satellite position using the Keplerian orbital parameters. These variables are defined as:
+ :	the right ascension of the ascending node (RAAN) of the orbit. The angle as measured from the x-axis in the equatorial plane (x-y plane).
+I :	the inclination of the orbit. The angle as measured from the equatorial plane to the orbital plane of the space station.
+E :	the argument of latitude (true anomaly). The angle as measured from the line of nodes to the radius vector at the position of the space vehicle.
+It should be noted that the true anomaly is a function of the angular position of the space station at time t0 and the angular velocity of the space station. It can be expressed as:
+(10)
+where:
+E0 :	angular position of the space station at time t0 (rad)
+:	angular velocity of the space station (rad/s)
+	v/r.
+To account for orbital precession the RAAN of the orbit is also a function of the RAAN at time t0 and the orbital precession rate. It can be expressed as:
+(11)
+where:
+0 :	RAAN of the space station at time t0 (rad)
+r :	orbital precession rate of the space station (rad/s).
+(12)
+where:
+:	Earth attraction constant (3.986  105 km3/s2)
+J2 :	second harmonic Earth potential constant (1 082.6  10–6).
+The representation of the space station position in terms of the geocentric inertial coordinate system is:
+(13)
+The representation of the space station velocity in terms of the geocentric inertial coordinate system, ignoring the relatively long-term variation in , is:
+(14)
+2.1.2	Perturbations
+For GSO satellites:
+The orbit inclination of the satellite
+The slight inclination of the satellite orbit may occur for satellites that have been in orbit for a period of time. A deviation generally takes place, with a limit in the deviation not to be exceeded.
+The deviation of the antenna beam from its nominal pointing direction
+The following factors contribute to the total variation on the area on the surface of the Earth illuminated by the satellite beam:
+–	variations on satellite station-keeping;
+–	variations caused by the pointing tolerances, which become more significant for coverage areas with low angles of elevation;
+–	effect of yaw error, which increases as the beam ellipse lengthens.
+The effect of these possible variations should be assessed on a case-by-case basis, since their total effect on the area covered will vary with the geometry of the satellite beam, and it would not be reasonable to indicate a single value of shift on the area covered for all situations.
+For non-GSO satellites, the exact longitude precession rate would be affected by a slight drift due to longitudinal station-keeping errors. This effect should be modelled and integrated in the simulations.
+2.2	Consideration of polarization isolation
+The polarization isolation factor, Lp, is the amount of polarization isolation that can be assumed between the transmitter and receiver (see Annex 4).
+2.3	Operational assumptions
+2.3.1	Non-GSO earth stations location
+The identification of beams used at any given location and time from a non-GSO satellite is dependent on both the tracking strategy and the location of non-GSO earth stations. The tracking strategies are described in § 2.3.2. The following sections describe techniques to determine non-GSO earth station locations. The non-GSO systems should use the most accurate approach that applies to their system.
+The simulation requires geographical location of the non-GSO earth stations on the Earth's surface which could operate co-frequency, co-polarized. In some cases information on the number and exact location of non-GSO earth stations may be unavailable.
+If every non-GSO earth station whose uplink and/or downlink would interfere with the uplink and/or the downlink of a given victim earth station is modelled, the running time of the simulation may become excessive. In many cases it will be possible to limit the number of non-GSO earth stations included in the model, and thus substantially reduce the simulation runtime, without significant loss of accuracy in the epfd statistics computed. In most cases, the links to and from non-GSO earth stations nearest to the victim earth station will make the largest contributions to the epfd, and the contributions of links to and from other non-GSO earth stations will be progressively smaller as their distance from the victim earth station increases. One way of minimizing the necessary time of a definitive simulation is to perform an initial short run with a limited number of non-GSO earth stations disposed symmetrically around the victim earth station, and then add a concentric ring of non-GSO earth stations and perform a further short run, and repeat this process until the epfd statistics produced by successive short runs do not increase significantly. Use the resulting model for the definitive simulation.
+2.3.1.1	Known distribution of non-GSO earth stations
+There are cases where the exact locations of all the non-GSO earth stations are known. In those cases, the non-GSO systems should use those locations, which constitute the most accurate configuration of their system.
+2.3.1.2	Uniform distribution of non-GSO earth stations
+Each cell is assumed to have a uniform distribution of non-GSO earth stations.
+For the purpose of the simulation, the non-GSO earth stations’ position could be specified with regard to a predicted number of the earth stations located on a unit Earth area in a specific geographical region.
+The distribution of non-GSO earth stations should be done uniformly on the Earth’s surface, knowing the density of co-frequency, co-polarized non-GSO earth station per km2, and the average distance between the centre of the cells created by the non-GSO system.
+To produce the uniform distribution of non-GSO earth stations for the uplink, the following method should be used:
+Step 1:	Calculate the number, nes, of actual operating non-GSO earth stations that the representative earth station will represent using:
+nes  des  des  es
+where:
+des :	average distance between the co-frequency, co-polarized non-GSO earth stations (km)
+es :	density of co-frequency, co-polarized non-GSO earth station per km2.
+Then to perform the interference calculation, an equivalent e.i.r.p. level should be affected to each equivalent non-GSO earth station as follows:
+Step 2:	Calculate e.i.r.p. to use for each representative non-GSO earth station using:
+e.i.r.p.rep  e.i.r.p.es  10 log10 nes
+where:
+e.i.r.p.rep :	e.i.r.p. for a representative non-GSO earth station (dBW)
+e.i.r.p.es :	e.i.r.p. per non-GSO earth station (dBW)
+nes :	number of actual operating non-GSO earth stations.
+e.i.r.p.es  Pt  Gt
+where:
+Pt :	transmit power of the non-GSO earth station (dB)
+Gt :	gain of the non-GSO earth station in the direction of the non-GSO satellite (dBi).
+Step 3:	For every distance des in latitude and distance des in longitude within the GSO service area, locate a representative non-GSO earth station radiating with e.i.r.p.rep.
+2.3.1.3	Probabilistic distribution of non-GSO earth stations
+Assigning positions of non-GSO earth stations could be based on a probabilistic rule. Resource allocations can be continually chosen randomly or may be determined globally before the simulation is initiated (e.g. as a function of geography, or time). An initial random seed should be used to allow the simulation to be repeated under the same conditions.
+2.3.1.4	Distribution of non-GSO earth stations based on population
+Published population densities over the Earth's surface can be used to determine the geographic distribution of non-GSO earth stations. Tracking strategies should be weighted more heavily toward earth stations that have higher population densities.
+2.3.1.5	Distribution of non-GSO earth stations based on typical demand
+The distribution of non-GSO earth stations is likely to be dependent on the type of service provided (e.g. target market can be rural or city). If a more accurate model of the distribution of non-GSO earth stations is known then it should be used.
+2.3.2	Tracking strategy
+2.3.2.1	GSO arc avoidance
+Some non-GSO systems have been designed to reuse the frequency already heavily used by GSO systems. This frequency reuse is feasible thanks to several techniques. Some of them are described below.
+2.3.2.1.1	GSO arc avoidance based upon the latitude
+In order to decrease the interference level, some systems use a technique that allows to avoid coupling between the main beam of their satellites and the main beam of the GSO earth station. An exclusion zone is defined by X° with respect to the equatorial plane. When a non-GSO satellite enters the exclusion zone, the traffic of the beam where there is main beam coupling is handed over to another satellite that is not in the zone.
+In addition to that, those systems have been designed such that there is a minimum discrimination angle at the earth station of at least Y° between the GSO satellites and the non-GSO satellites.
+This technique is often used by MEO systems.
+2.3.2.1.2	GSO arc avoidance based upon angle between non-GSO satellite and GSO arc
+The GSO arc protection implemented by other systems consists of switching off the beams when any earth point within a cell sees an angular separation between the GSO arc and a non-GSO satellite of less than °.
+The value of  is system dependent, but it is generally taken equal to 10°.
+2.3.2.1.3	GSO arc avoidance based upon the system design
+Some systems have implemented their own technique, depending on the design of their system. There can be many different types of GSO satellite protection.
+2.3.2.2	Non-GSO space station selection
+There are several different satellite selection strategies which non-GSO system operators may employ. Studies have shown that the choice of the selection strategies affects the medium to long-term interference levels. Non-GSO system operators may use different selection strategies to reduce the interference into other systems. Some of the selection strategies are listed below in the following subsections.
+2.3.2.2.1	Space station selection based upon longest dwell time
+The space station selection process discussed in this section is based on establishing a link to the satellite in view of the non-GSO earth station for the longest period of time. This process will minimize the number of hand-offs of the data flow. If a satellite system is designed to have multiple satellites in view of the earth station for an extended period of time, then an additional constraint may be imposed to optimize on interference avoidance or diversity.
+It is assumed that the earth station, associated with a constellation, tracks the corresponding space station once it has a communication link established. When this space station is beyond the minimum elevation angle it is assumed that the next space station can be acquired before the next simulation time step. If more than one space station can be acquired at the next time step, the algorithm to select the next space station is based on the vector from the earth station to the potential space station,  and the unit vector in the direction of the space stations velocity,  The selection criterion is to minimize the dot product of  and
+(.)min
+		i.e. the minimum value of all satellites 	(15)
+above minimum elevation
+This selection procedure is shown in Fig. 4. The top view representation shows the space station velocity vector, denoted by  directed towards the earth station. The dot product is negative, so space station number 1 is selected over the other space station (see Annex 4).
+2.3.2.2.2	Space station selection based upon highest elevation angle
+This selection strategy will require a higher number of hand-offs than longest dwell time but may be used to improve link performance for the non-GSO system. Active satellites are selected if it has the highest elevation angle from a non-GSO earth station and an available transponder. There are two possible hand-over techniques for highest elevation angle:
+–	the satellite with the highest elevation angle is always selected as the active satellite;
+the highest elevation satellite is selected once the active satellite drops below a minimum elevation angle.
+When satellite diversity is applied, the same selection should be made on the number of satellite required by the diversity: the next satellite chosen would be the second highest elevation satellite, then the third would be the third highest elevation, etc.
+2.3.2.2.3	Space station selection based upon largest separation angle from the GSO arc
+Non-GSO systems may choose satellites based upon the farthest separation angle from the look angle to the GSO arc. This reduces the level of interference generated by the non-GSO satellites into a GSO earth station but has some drawbacks. It may result in a less than optimum link performance and also require a large amount of hand-offs.
+2.3.2.2.4	Space station selection based upon typical resource allocation
+Non-GSO systems should choose to provide a more typical resource allocation if it is different from the three mentioned above.
+2.3.3	Power control on range
+Power control on a non-GSO space station is to account for differences in the range R (between the earth station and the space station). This section describes an algorithm to perform power control on range. The concept of power control on range is for the transmitting station to reduce or increase its transmit power as the receiver moves towards or away from the transmitter, i.e. the received power is kept constant. The required input parameter for the simulation is the desired receiver power density at the input to the wanted antenna, Pr (dB(W/Hz)). This receive power can be expressed as:
+(16)
+where Rw is the length of the wanted signal path (i.e. distance between earth station and space station of constellation 1) and Pt (Rw) is the transmit power required to close the link. Pr can be related to the carrier to noise level at the wanted receiver by:
+(17)
+where:
+Grw(0) :	maximum wanted receive gain of the wanted antenna
+Gtw (0) :	maximum wanted transmit gain of the wanted antenna
+Tw :	wanted receiver noise temperature.
+When power control on range is considered, the equation to compute the interference level can be expressed as:
+(18)
+Traffic
+2.3.4.1	Time varying nature of the traffic
+The time varying nature of the interference created by a non-GSO system into a GSO network or non-GSO system should be taken into account for accurate modelling of the interference. The traffic variation is a function of the local time at the non-GSO earth station. The transmit power per carrier of a non-GSO system which use code division multiple access (CDMA) varies as a function of the traffic load on the specific carrier, then the transmit power per carrier may vary during the time of the day following the traffic demand. This feature is specific to CDMA.
+A reference traffic model is proposed. If the non-GSO system has a model that more accurately represents its service demand, it may choose to use it instead of the referenced one given in Fig. 5.
+The traffic coefficient is taken into consideration in the maximum transmit power.
+Pt  Pmax  Ctraffic
+where:
+Pt :	transmit power (W)
+Pmax :	maximum transmit power (W)
+Ctraffic :	traffic coefficient dependent on the local time.
+The traffic coefficients are only applicable to CDMA mode.
+It is noted that non-GSO traffic load might be correlated with the GSO traffic, depending on the type of services offered by the two systems. Interference during time periods when GSO traffic is very low will not likely have the same effect on the GSO network performance. If the GSO satellite is also using CDMA, epfd statistics calculated taking into account non-GSO traffic variations could lead in some cases to results that might not correspond integrally to interference statistics observed by GSO operators during busy hours.
+2.3.4.2	Geographical dependence of the traffic
+The referenced traffic model given in the previous section is only dependent on the time. The traffic statistics may also vary with geographic location, target markets and other factors. In order to be more precise, an additional traffic model depending on the geographic location, target markets and other factors may be needed. Nevertheless, this model will vary with the types of services offered by the systems, the system itself and the country considered.
+If a non-GSO system has a traffic model that more precisely represents its service demand depending on the geographical locations and target market, it may be used. If no precise data is available, the traffic demand could be considered identical everywhere on the Earth, which remains a conservative assumption. In that case, the traffic model used could be time-dependent only.
+2.4	Antenna parameters
+2.4.1	GSO earth station antenna parameters
+The antenna pattern for the earth station is an input parameter to the simulation. Suggested patterns include, but are not limited to, the following:
+–	measured antenna patterns;
+–	RR Appendix 8;
+–	Recommendation ITU-R S.465;
+–	Recommendation ITU-R S.580;
+–	Recommendation ITU-R S.1428.
+Recommendation ITU-R S.1428 has been developed in order to take into account a more accurate, though conservative, description of the shape of the pattern so that it can be used more realistically in interference calculations involving non-GSO FSS systems.
+2.4.2	Non-GSO space station antenna parameters
+In order to perform interference analysis, non-GSO satellite multiple beam antennas should be modelled using either of the following patterns, subject to availability, proposed in Recommendation ITU-R S.1528:
+–	measured antenna patterns;
+–	proposed reference antenna patterns;
+–	an analytical function which models the side lobes of the non-GSO satellite.
+2.4.3	GSO space station antenna patterns
+The GSO satellite reference antenna pattern that should be used to perform the interference analysis should follow Recommendation ITU-R S.672 with the following parameters:
+–	at 14/11 GHz band, an antenna pattern with a gain of 32.4 dBi, a side-lobe level of Ls  20 dB*, and a beamwidth of 4°;
+–	at 30/20 GHz band, an antenna pattern with a gain of 40.7 dBi, a side-lobe level of Ls  10 dB* (an exception to Recommendation ITU-R S.672), and a beamwidth of 1.55°.
+2.5	Input data
+The required input parameters for each of the two communication systems are:
+2.5.1	Orbit parameters
+–	Number of space stations
+–	Number of planes
+–	For each orbital plane:
+–	Orbit altitude
+–	Inclination of plane
+–	RAAN
+–	Argument of latitude for each space station in the orbital plane.
+2.5.2	Antenna parameters
+–	Space station
+If non-GSO system:
+–	Antenna pattern
+–	Maximum transmit gain (dBi)
+–	Maximum receive gain (dBi)
+–	Maximum number of co-frequency and co-polarization antenna beams and their spatial orientation.
+If GSO system:
+–	Transmit gain (dBi) in direction of non-GSO earth station
+–	Receive gain (dBi) in direction of non-GSO earth station
+–	Antenna pattern.
+–	Earth station
+–	Antenna pattern
+–	Maximum transmit gain (dBi)
+–	Maximum receive gain (dBi)
+–	Location (latitude, longitude).
+2.5.3	Operational and computational parameters
+–	Minimum elevation angle for communication
+–	Simulation time start
+–	Simulation time end (see § 2.7)
+–	Simulation time increment (see § 2.7)
+–	Precession (see § 2.7)
+–	If non-GSO system and power control on range is used: the desired receiver power density at the input to the wanted antenna (dB(W/Hz))
+Traffic model used (see § 2.3.4)
+Description of the non-GSO space stations selection used (based upon longest dwell time, highest elevation angle, largest separation angle from GSO arc, satellite diversity, etc.) (see § 2.3.2.2)
+Implementation of the GSO arc avoidance technique if the non-GSO system uses it (see § 2.3.2.1)
+–	Predicted density of non-GSO earth stations located in different geographical regions of the non-GSO network service zone, if non-GSO earth station locations are unknown (see § 2.3.1)
+–	Perturbations (see § 2.1.2).
+2.5.4	Frequency to be used for the assessment of interference
+The interference into the desired network should be assessed at the lowest frequency which is shared by the interfering and the desired networks, in circumstances where the antenna patterns are defined by an envelope.
+2.6	Output data
+The raw output data of the simulation is a time history of the interference to noise level, I0/N0, versus time. This data can be analysed to obtain the following information:
+–	A plot of the I0/N0 (dB) or epfd (dB(W/(m2 · 40 kHz))), as a function of the per cent time (on a logarithmic scale) that this level is exceeded.
+–	A time history of a peak interference event (I0/N0 versus time) or peak epfd level (epfd versus time).
+–	The number of events (and duration of those events) for which the I/N or epfd is above a pre-defined level. For example let the pre-defined level be X dB, then in this case an event starts when the interference level is above X dB and ends when it falls below X dB, the time that this event is above the X dB level is the duration of the event. This method will give an indication of how long the interference level will be above a particular value.
+2.7	Calculation of the total simulation time, simulation time increment and precession
+2.7.1	Introduction
+The calculation method described in this section may be used for simulation when the interference is from non-GSO satellite to GSO FSS earth station or from non-GSO earth station to GSO FSS satellite. Calculation methods for other interference cases and for elliptical orbits need further study (see Annex 4).
+2.7.2	Simulation time increment
+For accurate results the simulation time increment should be as short as possible, but on the other hand the total simulation time should be reasonable. For comparable accuracy in different simulations the time steps can be related to the antenna beamwidth of the interfered systems.
+Satellite speed in Earth-fixed coordinates depends on the sub-satellite point latitude but the variation can be neglected for this purpose and the highest speed at equator can be used in the calculation. The angular speed of the satellite, as seen from a point on Earth, is highest when the satellite is moving directly towards or away from that point. The angular speed can be calculated by the following equations:
+where:
+a :	satellite angular velocity in Earth-fixed coordinates (geocentric geosynchronous reference coordinate system) (rad/s)
+e :	Earth rotation angular velocity at the equator,  7.29  10–5 rad/s
+:	satellite angular velocity in space fixed coordinates (geocentric heliosynchronous reference coordinate system) (rad/s)
+I :	satellite orbit inclination (rad)
+ :	geocentric angle between the interfered earth station and the satellite sub-point when it is at the main beam axis of the earth station (rad)
+Re :	Earth radius (6 378 km) (m)
+h :	satellite altitude (m)
+ :	earth station antenna elevation (rad)
+3 dB :	earth station 3 dB beamwidth (rad)
+Nhits :	number of hits in interfered station 3 dB beamwidth (Nhits  5)
+t :	simulation time increment (s).
+2.7.3	Precession and total simulation time
+A satellite of a non-GSO constellation on a circular orbit traces out a path on the Earth's surface. After a time, which is specific to the system, the satellite or another satellite of the constellation returns to the same or practically to the same point. The time between these two cases is the repeat period of the constellation. The repeat periods of different constellations are from a few days to several months.
+With similar orbits in the non-GSO system the period of the orbital constellation recurrence could be derived using the following methodology:
+Step 1:	Define an angular spacing between subsatellite points at t  t0 and t  t0  T ignoring bias along ascending node longitude, where T is the satellite orbit period:
+where Te is the Earth rotation period.
+Step 2:	Define an angular spacing between subsatellite points at t  t0 and t  t0  Tj , where j is the number of orbits around the Earth.
+Step 3:	Define the least integer j, for which is met the following condition:
+where  is the required accuracy of the orbital constellation recurrence period (rad).
+Step 4:	Define the period of the orbital constellation recurrence:
+where jmin is the least integer j, for which Step 3 condition is met.
+Total simulation time and the precession should be such that the distribution of the satellite paths along a latitude line is uniform and there are enough traces passing through the interfered station beamwidth. For a compromise between accuracy and simulation programme run time the number of passes through the area should be the same as the number of hits during one pass (see simulation time increment).
+If the repeat period is so short that there will not be the required number of passes through the area, the programme is run for several values of the initial right ascension of the node. The angle between the initial ascensions of the node should correspond to the required spacing between the passes through the area and the number of program runs should be such that the initial right ascensions of one plane reaches the corresponding initial point of the next plane.
+If the repeat period is so long that the number of passes through the area is unnecessarily high an artificial precession which gives shorter repeat period can be used. In this case the satellite e.i.r.p. should not be time dependent.
+The effect of the fractional relation between a cycle of time dependent variation of satellite e.i.r.p. and satellite passes through the area needs further study.
+2.7.4	Dual time step sizes
+It may be desirable to use two time step sizes to increase the speed of the simulation run time. Section 2.7.2 addresses the computation of simulation time increment. The time increment can vary orders of magnitude between large and small receiving earth station antennas, becoming very small for narrow beamwidths due to the requirement for the number of hits in the main beam (Nhits  5). This requirement is necessary but it increases the run time significantly. To alleviate this problem, a dual time step can be used to reduce the variance and overall length of simulation run time for all sizes of earth station antennas, especially for those earth stations with narrow beamwidths.
+For this dual step algorithm, the time step size addressed in § 2.7.2 should be used for all simulations and is referred to here as the fine step size. This step size is dependent on the antenna beamwidth and should be used only during portions of the simulation where the non-GSO satellite is close to the regions of maximum epfd, near the main beam or edge of the exclusion zone. The percentage of time that satellites are in the regions far off-axis from the main beam, past the first side lobe, is much larger than the percentage of time satellites will be within the main beam. Because of this and the fact that past the first side lobe the epfd values do not change as rapidly with the satellite position, for regions away from the main beam a constant coarse step size can be used. This coarse step size is defined as a topocentric angle:
+coarse  1.5°
+This coarse step size can be used for all antenna sizes.
+There are two possible fine step regions because of the two possible worst-case locations of a non-GSO satellite:
+–	When a non-GSO satellite is near the main beam, the fine step region (FSR) is defined as a fixed topocentric angle from the axis of the GSO earth station beam:
+–	If D/  100, set the edge of the first side-lobe region to r of the GSO earth station pattern:
+1  r  15.85(D/)–0.6
+–	If D/  100, set the edge of the first side-lobe region to that defined in the GSO earth station pattern:
+1  95 /D
+The off-bore angle for the fine step region is defined as the greater of 3.5 or 1:
+–	When a non-GSO satellite is near the exclusion zone, the fine step region measured from the boundary of the exclusion zone is defined as:
+The size of the coarse step needs to be an integer multiple of fine steps for statistical purposes. Since the coarse step size is constant, the ratio of coarse steps to fine steps is dependent only upon the beamwidth of the GSO earth station (3 dB). This ratio is defined as:
+Ncoarse  floor ((Nhits  coarse)/ 3 dB)
+where “floor” is a function that truncates the decimal part of the ratio and outputs the integer part of the ratio. This produces a conservative ratio of fine steps to coarse steps to ensure that a coarse step is never larger than the target topocentric size of 1.5. Since this ratio is only dependent on the beamwidth of the GSO earth station antenna, 3 dB, the time savings increases as the beamwidth decreases. This is desired since simulations with narrow beamwidths require much more time to run.
+If a non-GSO satellite is with FSR_1 of the main beam or FSR_2 of the exclusion zone, the fine step size should be used for the simulation. For all other regions in space when a non-GSO satellite is not near the aforementioned regions, the coarse time step is then computed by multiplying Ncoarse by the fine step size.
+Annex  2
+
+Methodology for determining statistics of codirectional, co-frequency interference levels between non-GSO FSS systems having circular 
+orbits and GSO FSS networks in frequency bands below 30 GHz
+1	Introduction
+This Annex provides the algorithms to compute the aggregate total interference produced by a non-GSO network into a GSO system.
+These algorithms can be used to calculate the cumulative density function (cdf) of the epfd generated by the non-GSO system. The following cases of interference are studied:
+–	uplink interference from the transmit earth stations of a non-GSO network into a GSO system space station;
+–	downlink interference from the transmit space stations of a non-GSO system into a receive earth station of GSO network.
+This methodology also permits computation of the probability density function (pdf) and cdf of the C/I, as a function of the characteristics of both networks.
+In order to determine the worst interference case, a two-step approach is proposed. The first step leads to the location of the worst case. The second step is the implementation of the epfd and epfd calculation at the identified worst-case location.
+2	Interference scenario
+The non-GSO system is the interfering network. Figure 6 describes this interference scenario:
+3	Terminology
+3.1	Earth related constants
+For the Earth, the general constants are:
+Re :	Earth radius (6 378 km)
+O :	Earth centre
+:	Earth attraction constant (3.986  105 km3/s2)
+J2 :	second harmonic Earth potential constant (1 082.6  106)
+Te :	Earth rotation period (23 h 56' 04"  86 164 s)
+e :	Earth rotation angular velocity
+	2/Te  7.29  10–5 rad/s
+t :	elapsed time (s).
+3.2	Non-GSO satellite system space station related constants
+For the non-GSO satellite system space stations (see Fig. 7), the constants are as follows:
+N :	number of space stations of the non-GSO system
+i :	index for each of the non-GSO satellites (0  i  N)
+h :	satellite altitude above the Earth (km)
+r :	semi-major axis of the satellite (km)
+	h  Re
+I :	inclination angle of the orbital plane above the Equator (rad)
+i,0 :	RAAN of each of the non-GSO satellites at the initial time (rad)
+Ei,0 :	argument of latitude of each of the non-GSO satellites at the initial time (rad)
+T :	satellite orbit period (s)
+	2 (r3/)1/2
+:	mean motion of the satellite (rad/s)
+	2/T
+Ei,t :	argument of latitude of the satellite at the time of computation (rad)
+	Ei,0  it
+ri :	nodal regression of the ascending node (rad/s)
+
+i,t 	RAAN of the satellite at the time of computation (rad)
+	i,0  rit
+coordinate vector of a non-GSO satellite in the Earth-centred fixed reference:
+The non-GSO perturbation can be considered in calculating the non-GSO constellation related constants, as the position of the satellites may vary when taking perturbation into account.
+3.3	GSO satellite network space station related constants
+For the geostationary satellites, the parameters are as follows:
+h :	satellite altitude above the Earth (35 786 km)
+r :	semi-major axis of the satellite orbit
+	h  Re  42 164 km
+I :	inclination angle of the orbital plane above the equator (generally 0, but may vary between 5 and –5)
+0 :	RAAN of the GSO satellites at the initial time (rad). It can also be considered as its longitude
+T :	satellite orbit period
+	2(r3/)1/2  86 164 s
+:	mean motion of the satellite
+2/T  7.29  10–5 rad/s
+E0 :	argument of latitude at the initial time (rad)
+Et :	argument of latitude of the satellite at the time of computation (rad)
+	E0  t
+r :	nodal regression of the RAAN (rad/s)
+
+t :	RAAN of the satellite at the time of computation (rad)
+	  rt
+:	coordinate vector of the GSO satellite in the Earth-centred fixed reference centre:
+The GSO perturbation can be considered in calculating the GSO constellation related constants, as the position may vary when taking perturbation into account, as well as the pointing direction of the GSO satellite antenna.
+3.4	Earth station related constants
+a)	With known location of earth stations in the non-GSO system: An earth station is defined by:
+Lat :	latitude of earth station (rad)
+Lon :	longitude of earth station (rad)
+:	earth station coordinates in the Earth-centred fixed reference centre:
+
+b)	With unknown location of earth stations in the non-GSO system:
+i :	predicted density of non-GSO earth stations location in the i-th geographical region of the non-GSO service zone
+d :	average distance between the centre of the co-frequency, co-polarized non-GSO earth stations (km).
+4	Interference computation
+Section 4.1 gives a method to identify the worst-case location that would determine the highest epfd level. However, the epfd calculation could be performed on any other location on the Earth's surface and its associated GSO satellite.
+4.1	Step 1: Worst-case identification
+There is a need to identify the worst-case situation, meaning a maximum epfd location of the GSO network stations. When considering the interference situations between non-GSO systems and GSO networks, the worst-case situation is found whenever an in-line or quasi in-line event occurs.
+The worst-case identification for the downlink interference situation consists in finding the maximum epfd location of the GSO earth station. In the proposed methodology, the worst-case search is based on a geometrical analysis for the calculation of an in-line situation. The worst-case situation also depends on the side lobes level of the non-GSO satellite antenna at the time of the in-line situation.
+In order to assess the worst geometrical configuration, leading to the worst interference case, the GSO satellites are distributed along 360 arc in longitude every 1°. For each GSO space station, it is possible to draw a straight line which goes through this GSO space station and one non-GSO space station; it may cross the Earth at particular points P and P'.
+The coordinates of points P and P' are determined by resolving a system of equations which describe the intersection of a straight line (passing through the GSO space station and the non-GSO space station) and a sphere (representing the Earth). The resolution of these equations gives two solutions, only one being acceptable: the correct GSO earth station position is the one for which the distance between the GSO earth station and GSO space station is minimum.
+The family of points P is then candidate for worst-case locations of the GSO earth station. This first criterion is therefore dependent on the constellation geometry.
+The second term which is also predominant in the calculation of the maximum epfd is the level of the power radiated by the non-GSO satellite antenna in the direction of the GSO earth station. If the antenna is modelled by a pattern (with no modelling of the side lobes) the worst-case location depends only on the constellation geometry and requires a geometrical in-line situation. In the cases where the antenna is modelled by a function that takes into account the side lobes, or defined by a real antenna pattern, the side lobes effect would need to be considered.
+The non-GSO space station which is in line with the GSO space station and the GSO earth station generate pfd through the side lobes of its transmitting antenna, in the direction of the GSO earth station. The pfd generated would be higher when the non-GSO space station antenna gain in the direction of the GSO earth station is at a peak of the side lobes. This second criterion is therefore dependent on the non-GSO space station antenna pattern.
+In order to be exactly at the worst case, the transmit power has to be maximum. Therefore when the traffic model is implemented, it should be maximum during the in-line event to generate the highest epfd level.
+The worst-case configuration of the GSO network is dependent on the non-GSO constellation geometry as well as on the level of the side lobes level of the non-GSO space station antenna during the in-line geometrical situation.
+For the assessment of the worst-case identification for the uplink interference, the determination of the GSO network location for maximum epfd should be performed. The epfd produced by the emissions of all the earth stations of a non-GSO system operating in the FSS, is evaluated at any point of the geostationary arc. For duration purposes it is not possible to calculate epfd statistics for all possible space station locations and pointing directions. Thus it is necessary to define a method to determine the location where the maximum epfd occurs. The epfd is dependent on the density of non-GSO earth stations which are visible from the GSO space station with regards to its antenna aperture.
+In the meantime, the further from the sub-satellite point the GSO space station is pointing, the larger the beam size illuminated on the ground. In the case where the GSO space station antenna discrimination is taken into account, the pointing direction of the maximum epfd corresponds to a case where there is a high density of non-GSO earth stations within the coverage area and a maximum number of contributors in the far side lobes.
+Therefore, the maximum epfd will occur for a GSO space station pointing far from the sub-satellite point.
+The worst-case location is selected as worst test point in order to run Step 2 of the simulation programme.
+4.2	Step 2: Interference calculations at worst case
+Figure 9 describes the above-mentioned scenarios in a configuration of reference:
+4.2.1	Uplink interference computation
+The following notation is used for computing the interference link budgets on the GSO network uplink wanted carrier:
+en :	angle measured from the non-GSO network earth station, and between the GSO network space station and the non-GSO satellite system space station towards which the non-GSO system earth station is pointing (rad)
+sg :	angle measured from the GSO network space station, and between the GSO network space station receive antenna boresight and the interfering non-GSO system earth station (rad)
+den,sg :	distance between the interfering non-GSO system earth station and the GSO network space station (km)
+Grx,sg (sg) :	receive antenna gain of the GSO satellite in the direction of the interfering non-GSO system earth station (dBi)
+Gtx,en (en) :	transmit antenna gain of the interfering non-GSO system earth station in the direction of the GSO network space station (dBi)
+Ptx,en :	power density at the transmit antenna of the non-GSO system earth station (dB(W/Hz))
+f :	reference bandwidth (Hz)
+f :	frequency of the carrier at which the computation is performed (GHz)
+c :	speed of the light (0.3 m/ns)
+:	the wavelength of the carrier (m)
+c/f
+Ctraffic :	traffic coefficient which depends on the local time (dB).
+The interfering pfd (dB(W/(m2 · Hz))) in the reference bandwidth produced on the uplink by a single non-GSO system earth station into the wanted carrier of a GSO network received by the geostationary space station is:
+The total interfering power flux-density, designated as the epfdof all the non-GSO earth stations visible in the GSO space station coverage weighted by the discrimination of the receive antenna of the GSO satellite is calculated as follows:
+*
+where:
+Grx,sg (sg)/Gmax is the normalized linear gain of the GSO receiving antenna.
+4.2.2	Downlink interference computation
+The following notation is used for computing the interference link budgets on the GSO network downlink wanted carrier:
+sn :	angle measured from non-GSO system space station, and between the non-GSO system earth station towards which the non-GSO system space station is pointing and the considered GSO network earth station (rad)
+eg :	angle measured from the GSO network earth station, and between the GSO network space station towards which the GSO network earth station is pointing and the considered interfering non-GSO system space station (rad)
+Grx,eg (eg) :	receive antenna gain of the GSO network earth station in the direction of the interfering non-GSO system space station (dBi)
+Gtx,sn (sn) :	transmit antenna gain of the non-GSO system space station in the direction of the GSO network earth station (dBi)
+Ptx,sn :	power density at the transmit antenna of the non-GSO system space station (dB(W/Hz))
+f :	reference bandwidth (Hz)
+deg,sn :	distance between the GSO network earth station and the interfering non-GSO system space station (km)
+Ctraffic :	traffic coefficient which depends on the local time (dB).
+The interfering pfd (dB(W/(m2 · Hz))) in the reference bandwidth produced on the downlink by a single non-GSO system space station into the wanted carrier received by the GSO network earth station is:
+The epfd can be computed by summation of all the individual pfd. The resulting equation is:
+*
+4.2.2.1	Methodology to decrease simulation runtime
+In order to decrease the simulation runtime, the number of non-GSO satellites considered to calculate the epfd may be limited to the most contributing ones. To select the non-GSO satellites, an operational cone can be implemented in the simulation.
+For cases where the highest level of epfd generated by the interfering non-GSO system (see Fig. 10) occurs when a non-GSO satellite is in-line (or near in-line) with a satellite of the interfered system (see Fig. 11), and the earth station of this system, the cone is centred around the pointing direction of the earth station of the interfered system.
+Indeed, from a certain value of the angle which defines the cone, the epfd generated by a non-GSO satellite outside the cone at the earth station (see Fig. 11) would be lower than a given minimum level epfdmin.
+For cases where the highest level of epfd generated by the interfering non-GSO system occurs when a non-GSO satellite is at the edge of the exclusion zone, a ring is defined around the exclusion area.
+When satellites are visible inside the cone (or the ring), the contribution of each visible satellite is evaluated and summed to calculate the epfd generated at the earth station.
+When all the visible satellites are outside the cone (or the ring), the total epfd generated at the earth station may be neglected, or may be set at epfdmin. epfdmin is chosen by the system depending on its design (type of constellation, number of satellites, position of orbits, antenna size, etc.).
+The value of epfdmin is adjusted progressively until variations of the short-term epfd statistics produced by successive runs are neglected.
+The simulation runtime is thus considerably reduced, without significantly affecting the accuracy in the epfd statistics.
+4.2.2.2	Application to the calculation of additional operational limits (AOL)
+The AOL are defined for given epfd levels. The lowest limit is set at –182 dB(W/(m2 · 40 kHz)) for a 3 m antenna, and –185 dB(W/(m2 · 40 kHz)) for a 10 m antenna. The objective of the simulation is to analyse the epfd generated by a non-GSO system above this lowest epfd limit. In that case, the epfdmin chosen can be set at 1 dB below those lowest additional operational limits, giving a good accuracy in the results.
+5	Method to compute the aggregate interfering noise power from a single non-GSO system
+The non-GSO system presents inherently non-stationary geometrical and transmission parameters, therefore there is a need to identify the distribution of the interference power in the different possible configurations. Simulations are necessary in order to achieve this goal. This section describes the different steps to be applied at each time to compute the epfd or apfd and the interfering noise power in the worst case identified with Step 1.
+5.1	Method to compute the interference on the uplink
+For each of the considered time step, the following steps are applied:
+Step 1:	Computation of the position of the non-GSO system space stations as described in § 2.1.1 of Annex 1.
+Step 2:	Computation of the position of the GSO network space station.
+Step 3: 	The distribution of non-GSO system earth station locations should be determined using the methods described in § 2.3.1 of Annex 1.
+Step 4:	Computation of the transmit power density of each non-GSO system earth station.
+Step 5:	Computation of non-GSO space station selection as described in § 2.3.2.2 of Annex 1.
+Step 6:	Computation of the off-axis angle of each of the non-GSO system earth stations between its assigned non-GSO system space station and the GSO network space station.
+Step 7:	Computation of the transmit gain of each of the non-GSO system earth stations in the direction of the GSO network space station.
+Step 8:	Computation of the distance between each of the non-GSO system earth stations and the GSO network space station.
+Step 9:	Computation of the interfering pfd received by the GSO network space station from each of the non-GSO system earth stations.
+Step 10:	Computation of the received interfering pfd from each of the non-GSO system earth stations into the GSO network space stations.
+Step 11:	Computation of the epfdfor the chosen antenna diameter as described in § 4.2.2 of this Annex.
+Step 12:	Aggregation of the received interfering noise power if needed.
+5.2	Method to compute the interference in the downlink
+The method is similar to the method proposed in § 5.1, and depends on the GSO antenna diameter chosen to study. The study should be repeated for each type of antenna size analysed:
+For each of the considered time steps, the following steps are applied:
+Step 1:	Computation of the position of the non-GSO system space stations as described in § 2.1.1 of Annex 1.
+Step 2:	Computation of the position of the GSO network earth station.
+Step 3:	The distribution of non-GSO system earth station locations should be determined using the appropriate method described in § 2.3.1 of Annex 1.
+Step 4:	Computation of the transmit power density of each non-GSO system space station.
+Step 5:	Computation of space station selection as described in § 2.3.2.2 of Annex 1.
+Step 6:	Computation of the off-axis angle of each of the non-GSO system space stations between its assigned non-GSO system earth station and the GSO network earth station.
+Step 7:	Computation of the transmit gain of each of the non-GSO system space stations in the direction of the GSO network earth station.
+Step 8:	Computation of the distance between each of the non-GSO system space stations and the GSO network earth station.
+Step 9:	Computation of the receive antenna gain of the GSO network earth station in the direction of each of the non-GSO system space stations for the chosen antenna.
+Step 10:	Computation of the interfering pfd received by the GSO network earth station from each of the non-GSO system space stations.
+Step 11:	Computation of the epfd for the chosen antenna diameter as described in § 4.2.2 of this Annex.
+Step 12:	Aggregation of the received interfering noise power if needed.
+5.2.1	Monte Carlo method for choosing GSO ground station locations and their associated GSO satellite coverage
+The methodology can be part of the calculation of CDF of epfd.
+This methodology simulates x number of ground station locations randomly distributed with an associated GSO satellite at random longitudes.
+The ground station locations are computed by choosing a random latitude from –76 to 76and a random longitude from within the 120 coverage of the Earth from a satellite. The longitude is chosen with a uniform probability distribution within the 120. However, due to the spherical shape of the Earth the latitude distribution is not uniform. The following equations account for the area variations with latitude.
+Latitude  F (Rand(), y)	(19)
+where:
+Rand() returns a random number uniformly distributed between 0 and 1. Each time Rand() is called, a new independent random number is chosen
+F(a, y) returns latitude values between – y and y for values of a between 0 and 1. F(a, y) biases a uniform distribution to account for the smaller land areas at higher latitudes for a constant  latitude  longitude
+F(a, y)  (180/) arcsin(sin(y /180)  (2a – 1))	(20)
+Once the ground station is chosen it is tested to see if it is on a land mass. If not, this location is not included as one of the locations simulated. New locations are generated until one is chosen that is on a land mass. Similarly no locations where the elevation angle would be less than e° should be included, where e is the minimum operating elevation angle of the GSO network.
+The GSO longitude is chosen from uniformly distributed longitudes along the GSO arc that are at a 10º or greater elevation angle from the GSO ground station location.
+The temporal estimation of non-GSO FSS interference includes cumulative epfd probability distribution curves for various locations on the Earth’s surface and corresponding GSO satellite.
+The location that receives the maximum epfd level of interference is simulated as well as the set of epfd CDF curves for ground station locations with supporting GSO satellite. One thousand curves are sufficient to represent envelope 99% of the cases for each point on the CDF with an extremely high confidence level. Table 1 shows confidence intervals for various number of trials.
+TABLE  1
+Confidence probability for specified percentage 
+of cases and number of trials
+Annex  3
+
+Description and example of computational
+methodology in Annex 1
+1	Introduction
+The methodology described in Annex 1 is intended to be implemented via a computer program. This Annex outlines one such implementation along with a demonstration of an example of the results obtained using the geometric analysis defined in Annex 1 to interference analysis between a non-GSO system and a GSO satellite network.
+2	Description of computation methodology
+Shown in Fig. 12 is a top level description of an implementation, the blocks labelled A, B, C, D, E will be treated in more detail. To maximize efficiency this implementation computes interference from the four possible interference scenarios under consideration (Annex 1, § 1) at the same time. A data evaluation process evaluates the I0/N0 or epfd versus time data for each of the four scenarios, this evaluation process is not considered in this Annex.
+In this block diagram, the term I0/N0 can be replaced by the term epfd.
+2.1	Block A – Constellation selection and set-up
+Information about the constellations to be simulated are defined in this section of the program, see Fig. 12, block A. For this implementation the relevant data required by § 2.5 of Annex 1 is stored in a database and recalled for the simulation for each of the two constellations that are to be simulated. This portion of the program may also allow for variances from the standard set of parameters, such as different antenna patterns, modification of the location of the earth station associated with each constellation or the peak antenna gains associated with each antenna. For this discussion call the two constellations that are to be simulated Const_1 and Const_2.
+This section of the program allocates and initializes the memory required to simulate the constellation. This memory is made of data structures that holds information about the position of the constellation, the velocity of the constellation, and pointing vectors of each satellite of the constellation (antenna boresight information). See Annex 1, § 2.1 for the relevant initial information that needs to be configured for a simple orbit model.
+Required data for each earth station is also allocated memory and initialized for each station associated with the constellations. The data structure of the earth station keeps track of which satellite of the wanted constellation the earth station is currently communicating with, the locations of possible interfering satellites, and the minimum required elevation angle that the earth station can communicate (which is related to the maximum range to a satellite for communication to occur and also stored in the data structure). The initial satellite that the earth station is in communication with is also initialized in this portion of the program.
+2.2	Block B – Initialize program constants
+To promote efficient use of resources, constants of the simulation are factored out of the equation used to compute I0/N0. For example consider equation (1), the variables of this equation that do not change with respect to time (assuming that power control on range is not employed, § 2.3.3 of Annex 1) are:
+Pt :	available transmit power (W)
+BWtx :	transmit bandwidth (Hz)
+ :	wavelength of transmitter (m)
+k :	Boltzmann's constant (1.38  10–23 J/K)
+T :	noise temperature (K)
+Lp :	polarization isolation factor.
+Therefore, for each interference path the following four constants can be computed before the simulation starts to step on each time increment:
+TABLE  2
+Link constants of simulation
+In Table 2 the subscript 1 corresponds to constellation 1 downlink, 2 corresponds to constellation 2 downlink, 1 corresponds to constellation 1 uplink and 2 to constellation 2 uplink. The polarization isolation factor corresponds to the transmit/receive combination, i.e. 12 indicates the polarization isolation between the downlink transmitter of constellation 1 to the downlink transmitter of constellation 2.
+2.3	Block C – Position constellation to time t
+For each time step before any calculation of interference levels the position of the constellation is required to be computed. For this example the orbit model described in Annex 1, § 2.1 is employed. The velocity vector and position vector of each satellite are computed and stored in the data structure defined in block A of the simulation. The range between the earth station and the satellites of the constellation it is trying to communicate with is also computed in this step.
+2.4	Block D – Check visibility of satellites (interfering and wanted)
+This section determines which satellite is communicating to the earth station. First the satellite that the earth station was communicating with in the previous time step is checked to see if the earth station is able to continue communication (i.e. the range between the earth station and the satellite is  compared to the maximum possible range a satellite can be to continue communications, if larger then the communications need to be established with a new satellite). If communication with a new satellite needs to be established, then the algorithm shown in Annex 1, § 2.3.2 is used to select a new satellite for communication with the earth station.
+Once each earth station has computed which satellite it is communicating with, the parameters associated with the interference between the satellite systems can be computed. This requires computing the range of the four interference paths and the off-axis angles associated with the interference paths (see Fig. 1).
+2.5	Block E – Compute I0/N0 or epfd for all interference paths
+The computation of the interference levels are now possible because all relative information has been computed in previous steps. The interference level for four interference paths between the two constellations are performed in this section (see Tables 3 and 4). The interference levels are stored for later analysis.
+TABLE  3
+I0/N0 computation using link constants
+For the computation of the epfd at each time step, the following equations in Table 4 are used.
+TABLE  4
+epfd computation
+In Tables 3 and 4, for example in the Const_1 downlink  Const_2 downlink path the variables are:
+:	transmit gain of Const_1 downlink transmit antenna (relative intensity)
+:	receiver gain of Const_2 downlink receive antenna (relative intensity)
+R12 :	range between Const_1 transmitter (downlink) to Const_2 receiver (downlink) (m)
+Ctraffic :	traffic coefficient applied to an earth station depending on its local time.
+This section requires modification when power control on range is performed by one or both of the constellations under study.
+2.6	Accounting for the aggregate impact of multiple earth stations/satellites on the interference levels
+This aggregate of interference from multiple earth stations/satellites may be computed in either of two ways:
+Case 1:	By performing multiple simulations for each earth station.
+Case 2:	By performing one simulation that simulates all possible links.
+The basic difference is when the aggregation of all earth stations/satellites is performed, in Case 1 it is done after the simulation is complete and in Case 2 it is done during the simulation.
+2.6.1	Aggregate based on multiple simulations
+This method of computing the aggregate interference from multiple sources of interference has advantages in that the contribution from each source of interference can be assessed and evaluated to determine which source has the largest impact on interference. The disadvantage is that the simulation must be performed multiple times for each possible source of interference, which may be time consuming. The amount of data required to be stored is relatively large for simulations contain a large number of data points and operator error may arise in the aggregate results.
+To compute the aggregate based on multiple simulations the non-GSO constellation(s) must be set up so as to have the same initial starting and ending point in time and the interference level I0/N0 or the epfd, is saved for later analysis. After all sources of interference are computed the interference levels can be added together in time to arrive at an aggregate interference level.
+As an example of the aggregate based upon multiple simulations consider the example shown in this Annex, § 3 and assume that it is desired to assess the aggregate impact of two GSO earth stations on the non-GSO up and downlinks. Both GSO earth stations are described by the parameters found in Tables 5 and 6, one of the GSO earth stations (GSO ET1) is located as found in Table 3 at 33:26:54 N, 112:04:24 W and the second GSO earth station (GSO ET2) located at 40:26:54 N, 112:04:24 W and is assumed to be served by a different satellite beam than that of GSO ET1. Both GSO earth stations are assumed to be co-frequency to the non-GSO station.
+The next step is to run the simulation twice, once for each GSO earth station, and store the results for each time step. For example assume the following data sets are defined as:
+I0/N0 1 or epfd1(t) :	time series of uplink I0/N0 or epfd at the non-GSO receiver for the two co-located earth stations (non-GSO and GSO ET1)
+I0/N0 2 or epfd2(t) :	time series of uplink I0/N0 or epfd at the non-GSO receiver for the two separated earth stations (non-GSO and GSO ET2)
+I0/N0 A or epfdA(t) :	time series of aggregate I0/N0 or epfd at the non-GSO receiver for all GSO earth stations.
+After the two data sets are created the aggregate can be computed by summing the results. The uplink aggregate interference to the non-GSO satellite, I0/N0 A or epfdA(t), is found by:
+I0/N0 A(ti)  I0/N0 1(ti)  I0/N0 2(ti)
+epfd(ti)  epfd1(ti)  epfd2(ti)
+where ti is the time steps at which the interference is computed. Note a requirement for this approach is that the non-GSO constellation is initialized at the same time and has the same time step for both simulations, i.e. the starting location and all subsequent locations of the constellation in space is the same for both simulations, if this is not done the results will be incorrect.
+2.6.2	Aggregate based on one simulation
+This method of computing the aggregate interference from multiple sources of interference has advantages in that only one simulation is performed for all possible sources of interference and the resultant time savings in performing only one simulation. A disadvantage is that the data cannot have a detailed review to evaluate which source of interference may be the largest contributor to the aggregate results. This disadvantage can be removed by allowing the user to have an option to save each individual contribution as a function of time.
+Again as an example of the aggregate based upon multiple simulations consider the example shown described in § 2.6.1 for computing the interference from two GSO earth stations. In this case the analysis program sets up both earth stations and computes the aggregate interference for each time step.
+2.7	Expressions of interference in terms of epfd and epfd
+In Article 22 (Tables 22-1A to 22-1D, 22-2, 22-3, 22-4A to 22-4C and 22-4A1), epfd limits are indicated to protect GSO operations from co-channel non-GSO interference. This section describes how to relate the computed interference level of I0/N0 to uplink epfd values and downlink epfd values.
+The epfd (W/(m2 · MHz)) is computed by:
+(21)
+where:
+i :	index of the source of interference
+Pti : 	available transmit power (W)
+Gt (i) :	transmit gain (relative intensity)
+Gr (i) :	receive antenna gain of the victim receiver in the direction of the i-th source of interference (dBi)
+Gmax :	the maximum receive gain of the victim receiver (dBi).
+The interference to noise ratio, I0/N0, is computed by:
+(22)
+where:
+Pt :	available transmit power (W)
+BWtx :	transmit bandwidth (Hz)
+Gt (1) :	transmit gain (relative intensity)
+Gr (2) :	receiver gain (relative intensity)
+1 :	off bore-sight angle of the transmitter in the direction of the receiver
+2 :	off bore-sight angle of the receiver in the direction of the transmitter
+:	wavelength of transmitter (m)
+R :	range (m)
+k :	Boltzmann's constant (1.38  10–23 W/(Hz · K))
+T :	noise temperature (K)
+Lp :	polarization isolation factor.
+The epfd (W/(m2 · Hz)) from i-th source taking into account the receive antenna discrimination and normalizing to the maximum receiver antenna gain can be expressed as:
+(23)
+in which it is assumed that .
+Therefore taking into account equations (22) and (23), epfd (W/(m2 · Hz)) from the i-th source can be expressed in terms of I0i/N0 from the i-th source as:
+(24)
+Note that the factor  is a constant for the simulation and can be applied to the results of the simulation. It should be noted that if the I0/N0 used is the aggregate from multiple sources, the conversion factor can still be applied to aggregate I0/N0 to arrive at the aggregate epfd results shown in equation (21).
+3	Example of non-GSO and GSO interference methodology
+This section demonstrates an example of the results obtained using the geometric analysis defined by this methodology to interference analysis between a non-GSO system and a GSO network. The example presented in this Annex is for the LEO-A system and a GSO network. The input parameters for the constellations are in Table 5.
+TABLE  5
+Non-GSO and GSO simulation input parameters
+Table 6 shows the radio-frequency parameters for non-GSO and GSO links. The missing portions of the table is information that is not required for the simulation. In the GSO system no power control on range is employed, therefore the Pr row is not required, similarly for the non-GSO system employing power control on range Pt, BWtx and Pt /BWtx are not required.
+TABLE  6
+System radio-frequency parameters
+The results shown in Figs. 13 to 18 are for a simulation over 49 days sampled every 2 s. This results in over 2.1 million sample points.
+Shown in Figs. 13 and 14 is the I0/N0 versus the per cent time that level occurs. Figure 13 shows the interference ratio of the non-GSO system into the GSO network, Fig. 14 shows the interference ratio of the GSO network into the non-GSO system.
+Shown in Figs. 15 and 16 is the number of events and duration of those events that the interference ratio is greater than a pre-specified level. Figure 15 is the effect of the non-GSO system into the GSO network when an event is defined as occurring when I0/N0 is above –16 dB, Fig. 16 is the effect of the GSO network into the non-GSO system when an event is defined as occurring when I0/N0 is above –1 dB.
+Shown in Figs. 17 and 18 is the I0/N0 of time history of the I0/N0 for interference from the GSO uplink into the non-GSO uplink. These graphs are shown during a period of time that the interference level reaches it peak. Figure 17 is over a time-scale of 1 h, the tics on the time axis are shown every 15 min. Figure 18 examines the peak interference event shown in Fig. 17.
+3.1	Validation of interference results
+To confirm that the interference levels computed in § 3 are within bounds of what is expected a comparison with a known check point is desired. A convenient check point is to compare the maximum interference levels shown in Figs. 12 and 13 with the interference level computed when the non-GSO satellite is directly in line with the path between the GSO earth station and the GSO satellite. Shown in Table 7 is the interference computation for the case of the non-GSO system interfering with the GSO network. The peak values of Fig. 13 and the interference value computed in Table 7 are the same.
+TABLE  7
+In-line computation of interference level from non-GSO
+system into GSO network
+Shown in Table 8 is the interference computation for the GSO network interfering with the non-GSO system. The peak values of Fig. 14 and the interference value computed in Table 8 are the same.
+TABLE  8
+In-line computation of interference level from GSO
+network into non-GSO system
+Annex  4
+
+Continuing work programme
+The following is an outline for further work on this Recommendation.
+1	Adjust the run time to be that of the first repetition of the non-GSO subsatellite ground track when the other network is a GSO, and/or provide a discussion of the initial conditions and suitable run time for various constellations to ensure an unbiased statistical output.
+2	Include a discussion in Annex 1, § 2.7 of the appropriate time step selection for various LEO and MEO constellations.
+3	Further study is required to define the amount of isolation that can be assumed between the transmitter and receiver due to differing polarization. These studies should account for items such as atmospheric effects and systems that use phase comparative methods for tracking antennas.
+4	Use of space station selection techniques when multiple satellites are in view of an earth station. Include a discussion of other techniques under consideration by other operators that may address interference avoidance or diversity techniques.
+5	To take account in Annex 3, § 2.2 for systems employing power control based on the range between a non-GSO earth terminal and a non-GSO satellite.
+6	To consider the appropriateness of including example of the methodologies in the Recommendation.
+7	The desirability of including implementation details, such as optimizing constants as found in Annex 3, § 2.2, in the Recommendation. Consideration should also be given to the extent to which some parameters can be assumed to be constant, given factors such as adaptive peak gain antennas, power control and elliptical orbits.
+8	Further work is needed to adapt this Recommendation to non-circular orbits.

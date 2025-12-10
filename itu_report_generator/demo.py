@@ -16,6 +16,7 @@
 import os
 import asyncio
 from datetime import datetime
+from typing import Tuple, List, Dict
 from PIL import Image
 from autogen_core import Image as AutoGenImage
 from autogen_agentchat.agents import AssistantAgent
@@ -25,12 +26,37 @@ from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_agentchat.messages import MultiModalMessage
 import shutil, subprocess
 
-def build_prompt(image_path: str, image_info: dict, current_date: str) -> str:
+def build_prompt(image_path: str, image_info: dict, current_date: str, use_rag: bool = True) -> Tuple[str, List[Dict]]:
     """
     Build a STRICT, Word-friendly Markdown prompt for interference analysis reporting.
     The model MUST return Markdown only (no code fences, no extraneous text).
+    
+    Args:
+        image_path: 图片路径
+        image_info: 图片信息字典
+        current_date: 当前日期
+        use_rag: 是否使用RAG检索ITU标准信息
+    
+    Returns:
+        (prompt_text, rag_results): prompt文本和RAG检索结果列表
     """
-    return f"""You are a professional analyst specializing in interference analysis.
+    itu_refs_section = ""
+    rag_results = []
+    
+    if use_rag:
+        from src.itu_word_rag import get_itu_word_rag_instance
+        
+        rag = get_itu_word_rag_instance()
+        if rag:
+            analysis_type = image_info.get('analysis_type')
+            query = f"{analysis_type} limit threshold requirement standard"
+            rag_results = rag.search(query, top_k=3)
+            
+            if rag_results:
+                itu_refs_section = rag.format_references_for_prompt(rag_results, max_length=250)
+                itu_refs_section = "\n\n" + itu_refs_section + "\n"
+    
+    prompt_text = f"""You are a professional analyst specializing in interference analysis.
 Your task: produce a clean, Word-ready report in STRICT GitHub-Flavored Markdown (GFM).
 
 Output rules (VERY IMPORTANT):
@@ -109,7 +135,17 @@ Structure and formatting requirements (use EXACT headings and order):
 3. Action item with purpose and expected effect.
 
 ## 5. Compliance Considerations
-- If applicable, discuss potential threshold exceedance qualitatively (e.g., cinr/cir/EPFD/PFD ect) and uncertainty.
+
+### 5.1 ITU Standard Compliance
+- Based on the ITU standards referenced below, provide a clear assessment:
+  - **Compliance Status**: **Compliant** / **Non-Compliant** / **Partially Compliant** / **Not Applicable**
+  - **Key Findings**: Summarize how the observed values compare to ITU standard limits
+  - **Specific Thresholds**: If applicable, cite the specific ITU limit values (e.g., EPFD limit of **-XX dB(W/m²)**)
+  - **Risk Assessment**: Evaluate the risk level (Low/Moderate/High) based on compliance status
+{itu_refs_section}
+
+### 5.2 Additional Considerations
+- If applicable, discuss potential threshold exceedance qualitatively (e.g., cinr/cir/EPFD/PFD etc) and uncertainty.
 - Note any required follow-up measurements.
 
 ## 6. Appendix: Metadata
@@ -125,10 +161,17 @@ Final constraints:
 - Do not include any headings other than those specified above.
 - Keep the report ready for direct conversion to Word without cleanup.
 """
+    
+    return prompt_text, rag_results
 
 async def main():
-    image_path = os.environ.get("IMAGE_PATH", "./data/total/oneweb_total_earth_cinr.png")
+    image_path = "./data/total/oneweb_total_earth_cinr.png"
     filename = os.path.basename(image_path)
+    use_rag = True
+    api_key = "sk-poVFrR7aculYhRKykwkuLuHcDlSBjjfRzBYqu4xoNqpIGZFz"
+    base_url = "https://api.aikeji.vip/v1"
+    model_name = "gemini-2.5-flash"
+
     parts = filename.split('_')
     assert len(parts) > 0
     constellation = parts[0]
@@ -151,12 +194,21 @@ async def main():
         'filename': filename
     }
     current_date = datetime.now().strftime("%Y-%m-%d")
-    prompt_text = build_prompt(image_path, image_info, current_date)
-
-    api_key = os.environ.get("OPENAI_API_KEY", "sk-poVFrR7aculYhRKykwkuLuHcDlSBjjfRzBYqu4xoNqpIGZFz")
-    #base_url = os.environ.get("OPENAI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
-    base_url = "https://api.aikeji.vip/v1"
-    model_name = os.environ.get("OPENAI_MODEL", "gemini-2.5-flash-image")
+    
+    prompt_text, rag_results = build_prompt(image_path, image_info, current_date, use_rag=use_rag)
+    
+    if use_rag and rag_results:
+        print("\n" + "=" * 60)
+        print("ITU RAG 检索结果 (Top {}):".format(len(rag_results)))
+        print("=" * 60)
+        for i, result in enumerate(rag_results, 1):
+            source = result.get('source', 'Unknown')
+            score = result.get('score', 0.0)
+            text = result.get('text', '')
+            
+            print(f"\n[{i}] {source} (相似度: {score:.4f})")
+            print(f"    内容: {text.replace(chr(10), ' ')}...")
+        print("=" * 60 + "\n")  
 
     model_client = OpenAIChatCompletionClient(
         model=model_name,
@@ -169,6 +221,7 @@ async def main():
             "structured_output": True,
         }
     )
+
     basic_info_analyzer = AssistantAgent(
         "basic_info_analyzer",
         model_client=model_client,
@@ -209,10 +262,11 @@ async def main():
     image_dir = './data/total'
     os.makedirs(out_dir, exist_ok=True)
     result = await group_chat.run(task=task)
-    final_text = result.messages[-1].content if result.messages else ""
-    final_text = result.messages[-1].content if result.messages else ""
+
+    final_text = result.messages[-1].content
     final_text = final_text.replace("```markdown", "").replace("```", "").strip()
     final_text = final_text.replace("TERMINATE", "").strip()
+
     # Inject figure into Markdown before section "## 2. Data Analysis"
     try:
         
@@ -242,9 +296,6 @@ async def main():
     pandoc_exe = shutil.which("pandoc")
     print(f"Current dir: {os.getcwd()}")
     print(f"Files here: {os.listdir('.')}")
-    if not pandoc_exe:
-        raise RuntimeError("Pandoc 未找到，请先安装并加入 PATH（如：conda install -c conda-forge pandoc 或 choco install pandoc -y）。")
-
     cmd = [pandoc_exe, "--from", "gfm", "--to", "docx", str(md_path), "-o", str(docx_path)]
     subprocess.run(cmd, check=True)
     print(f"Word saved (pandoc): {docx_path}")

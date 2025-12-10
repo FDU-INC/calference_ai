@@ -15,3 +15,12 @@ numpy>=1.24.0
 accelerate>=0.20.0
 sentencepiece>=0.1.99
 
+# RAG (Retrieval-Augmented Generation) dependencies
+# 用于 ITU 数据检索功能
+langchain>=0.1.0
+langchain-community>=0.0.20
+faiss-cpu>=1.7.4  # 或 faiss-gpu 如果使用 GPU
+sentence-transformers>=2.2.0
+requests>=2.31.0  # 用于 ITU 数据获取
+PyPDF2>=3.0.0  # 用于 PDF 文档解析
+

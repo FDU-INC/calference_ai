@@ -1,0 +1,1867 @@
+Foreword
+The role of the Radiocommunication Sector is to ensure the rational, equitable, efficient and economical use of the radio-frequency spectrum by all radiocommunication services, including satellite services, and carry out studies without limit of frequency range on the basis of which Recommendations are adopted.
+The regulatory and policy functions of the Radiocommunication Sector are performed by World and Regional Radiocommunication Conferences and Radiocommunication Assemblies supported by Study Groups.
+Policy on Intellectual Property Right (IPR)
+ITU-R policy on IPR is described in the Common Patent Policy for ITU-T/ITU-R/ISO/IEC referenced in Annex 1 of Resolution ITU-R 1. Forms to be used for the submission of patent statements and licensing declarations by patent holders are available from http://www.itu.int/ITU-R/go/patents/en where the Guidelines for Implementation of the Common Patent Policy for ITU-T/ITU-R/ISO/IEC and the ITU-R patent information database can also be found.
+Electronic Publication
+, 2014
+ITU 2014
+All rights reserved. No part of this publication may be reproduced, by any means whatsoever, without written permission of ITU.
+RECOMMENDATION  ITU-R  S.1503-2
+Functional description to be used in developing software tools for determining conformity of non-geostationary-satellite orbit fixed-satellite system networks with limits contained in Article 22 of the Radio Regulations
+(2000-2005-2013)
+Scope
+This Recommendation provides a functional description of the software for use by the Radiocommunication Bureau of ITU to conduct examination of non-GSO  system notifications for their compliance with the “validation” limits specified in the Radio Regulations.
+Keywords
+Epfd; non-GSO; methodology.
+Abbreviations/Glossary
+Alpha angle (): the minimum angle at the GSO earth station between the line to the non-GSO satellite and the lines to the GSO arc.
+e.i.r.p. mask: equivalent isotropic radiated power mask used to define the emissions of the non-GSO earth station in the epfd(up) calculation or the emissions of the non-GSO satellite for the epfd(IS) calculation.
+epfd: equivalent power flux-density, as defined in RR No. 22.5C.1, of which there are three cases to consider:
+epfd(down): emissions from the non-GSO satellite system into a GSO satellite earth station;
+epfd(up): emissions from the non-GSO earth station into a GSO satellite;
+epfd(IS): inter-satellite emissions from the non-GSO satellite system into a GSO satellite system.
+pfd mask: power flux-density mask used to define the emissions of the non-GSO satellite in the epfd(down) calculation.
+X angle (X): the minimum angle at the non-GSO satellite between the line from the GSO earth station and the lines to the GSO arc.
+: Worst Case Geometry, the location of the GSO earth station and GSO satellite that analysis suggests would cause the highest single entry epfd values for given inputs.
+Related ITU-R Recommendations
+The ITU Radiocommunication Assembly,
+considering
+a)	that WRC-2000 adopted, in Article 22, single-entry limits applicable to non-geostationary  satellite orbit (non-GSO) fixed-satellite service () systems in certain parts of the frequency range 10.7-30 GHz to protect geostationary satellite orbit (GSO) networks operating in the same frequency bands from unacceptable interference;
+b)	that these frequency bands are currently used or planned to be used extensively by geostationary-satellite systems (GSO systems);
+c)	that during the examination under Nos. 9.35 and 11.31, the Bureau examines non-GSO  systems to ensure their compliance with the single-entry epfd limits given in Tables 22-1A, 22-1B, 22-1C, 22-1D, 22-1E, 22-2 and 22-3 of Article 22 of the Radio Regulations (RR);
+d)	that to perform the regulatory examination referred to in considering c), the Radiocommunication Bureau (BR) requires a software tool that permits the calculation of the power levels produced by such systems, on the basis of the specific characteristics of each non-GSO  system submitted to the Bureau for coordination or notification, as appropriate;
+e)	that GSO  and GSO broadcasting-satellite service (BSS) systems have individual characteristics and that interference assessments will be required for multiple combinations of antenna characteristics, interference levels and probabilities;
+f)	that designers of satellite networks (non-GSO , GSO  and GSO BSS) require knowledge of the basis on which the BR will make such checks;
+g)	that such tools may be already developed or under development and may be offered to the BR,
+recommends
+1	that the functional description specified in Annex 1 should be used to develop software tools calculating the power levels produced by non-GSO  systems and the compliance of these levels with the limits contained in Tables 22-1A, 22-1B, 22-1C, 22-1D, 22-1E, 22-2 and 22-3 of Article 22 of the RR.
+Annex 1
+
+Functional description of software for use by the BR in checking 
+compliance of non-GSO FSS systems with epfd limits
+TABLE OF CONTENTS
+Page
+PART A – Fundamental constraints and basic assumptions		3
+PART B – Input parameters		9
+PART C – Generation of pfd/e.i.r.p. masks		20
+PART D – Software for the examination of non-GSO filings		38
+PART E – Testing of the reliability of the software outputs		113
+PART F – Software implementing this Recommendation		115
+PART A
+Fundamental constraints and basic assumptions
+1	General
+1.1	Purpose
+The software algorithm described in this Annex is designed for its application by the BR to conduct examination of the non-GSO  system notifications for their compliance with the limits contained in Tables 22-1A, 22-1B, 22-1C, 22-1D, 22-1E, 22-2 and 22-3 of Article 22 of the RR.
+The algorithm could also under certain conditions permit examination of whether coordination is required between non-GSO  systems and large earth stations under Articles 9.7A and 9.7B using the criteria in RR Appendix 5.
+The algorithm in this Recommendation was developed based upon a reference GSO satellite in equatorial orbit with zero inclination angle. The analysis to determine whether a non-GSO satellite system meets the epfd limits in Article 22 of the RR is made by calculating the epfd levels at this reference satellite or at an earth station pointing towards it. A GSO satellite system operating at other inclination angles could be predicted to receive higher epfd levels without the non-GSO satellite system being considered in breach of the Article 22 limits. Analysis under RR Nos. 9.7A and 9.7B, however, is to determine if coordination is required by comparing against the trigger level in Appendix 5 of the RR, and therefore in this case other methodologies, including those that assume non-zero GSO satellite inclination, could be acceptable alternatives.
+1.2	Software block-diagram
+The block-diagram of the software algorithm described in this Annex is shown in Fig. 1. It comprises initial data and calculation for the notifying administration and the BR. The data section contains the whole set of parameters relevant to the notified non-GSO system, a set of reference GSO system parameters as well as epfd limits provided by the BR.
+The calculation section is designed for estimations required to examine notified non-GSO systems compliance with the epfd limits. The calculation section is based on a concept of a downlink power flux-density (pfd) mask (see Note 1), an uplink effective isotropic radiated power (e.i.r.p.) mask (see Note 2) and inter-satellite e.i.r.p. mask (see Note 3).
+NOTE 1 – A pfd mask is a maximum pfd produced by a non-GSO space station and is defined in Part C.
+NOTE 2 – An e.i.r.p. mask is a maximum e.i.r.p. radiated by a non-GSO earth station and is a function of an off-axis angle for the transmitting antenna main beam.
+NOTE 3 – An inter-satellite e.i.r.p. mask is a maximum e.i.r.p. radiated by a non-GSO space station and is a function of an off-axis angle for the boresight or (azimuth, elevation) angles of the non-GSO space station.
+The pfd / e.i.r.p. masks are calculated by the filing administration as identified in Block 1 and then supplied with the other non-GSO system parameters in Blocks a and b. The BR supplies additional parameters, in particular the epfd limits in Block c.
+FIGURE 1
+Stages in epfd Verification - Key Logic Blocks
+1.3	Allocation of responsibilities between Administrations and the BR for software employment
+Taking into account significant complexity regarding specific features of different non-GSO system configurations in the software it would seem appropriate to impose some burden of responsibility relevant to testing for epfd limits on administrations notifying appropriate non-GSO systems. Therefore the examination procedure for meeting epfd limits would consist of two stages.  The first stage would include derivation of a mask for pfd / e.i.r.p. produced by interfering non-GSO network stations. The mask would account for all the features of specific non-GSO systems arrangements (such as possible beam pointing and transmit powers). The first stage would be finalized  by the delivery of the pfd / e.i.r.p. mask to the BR.
+The second stage calculations would be effected at the  The second stage would feature the following operations:
+–	Identification of the runs required for a non-GSO network taking into account the frequencies for which it has filed and the frequency ranges for which there are epfd limits in Article 22 (Block 2).
+–	Definition of the maximum epfd geometry of a GSO space station and an earth station of that network (Block 3). It would ensure verification of sharing feasibility for a notified non-GSO network with any GSO network in the  and BSS.
+–	epfd statistics estimation (Block 4).
+–	Making a decision on interference compliance with appropriate epfd limits.
+The estimations are based on the non-GSO system parameters (Blocks a and b) delivered by a notifying administration and the initial data (Block c) available at the
+Any administration may use software that uses the algorithms defined in this Annex together with data on the non-GSO networks to estimate statistics for interference into its own GSO networks and check for compliance with epfd limits. It would assist in solving probable disputes between the BR and administrations concerned.
+The elements of the software block-diagram discussed are presented hereinafter in detail. The Parts are as follows:
+Part A	–	Basic limitations and main system requirements for the software as a whole are presented.
+Part B	–	Non-GSO networks parameters and initial data for Blocks a and b are discussed.
+Part C	–	Definitions and estimation algorithms for pfd / e.i.r.p. masks relative to non-GSO network earth and space stations are presented. Specifics of those masks applying in simulation is also discussed (Block 1).
+Part D	–	The part deals with general requirements on the software related to examination of non-GSO networks notifications, algorithms to estimate epfd statistics, and the format for output data presentation. Part D covers issues of Blocks 2, 3 and 4.
+Parts E, F	–	These parts define requirements on the software related to valuation of delivered software and to verification of the software output on validity.
+2	Fundamental assumptions
+2.1	Units of measurement
+To provide for adequate simulation results and to avoid errors a common measurement units system is used in Table 1 for the software description. The list of measurement units for the basic physical parameters is shown in Table 1.
+TABLE 1
+The system of measurement units for basic physical parameters used
+for the software performance description
+2.2	Constants
+The functional description of the software for examination of non-GSO networks notification at the BR uses the constants shown in Table 2.
+TABLE 2
+Constants to be used by software
+2.3	The Earth model
+The force of the Earth attraction is the main factor to define a satellite orbital motion. Additional factors include:
+–	orbit variations due to the Earth’s oblateness and its mass distribution irregularities;
+–	solar and lunar attraction;
+–	medium drag for satellite;
+–	solar radiation pressure, etc.
+The function description of software in this Annex accounts orbit perturbations only due to the Earth oblateness. It is motivated by the fact that effect of other perturbing factors is significantly less. The Earth’s oblateness causes secular and periodic perturbations of ascending node longitude and orbit perigee argument. Part D.6.3 describes expressions to account the Earth’s oblateness effect.
+The orbits of some repeating ground tracks can be very sensitive to the exact orbit model used. Administrations could also provide the BR with their own independently determined average precession rates that could be used by the software instead of the values calculated using the equation in Part D.6.3.
+2.4	Constellation types
+The algorithm in this Recommendation has been developed to be applicable to at least the non-GSO satellite systems shown in Table 3.
+TABLE 3
+Orbit type classification
+3	Modelling methodology
+The approach described in this Annex involves time simulation in which interference levels are evaluated on a time step by time step basis. Section D.4 defines the method to calculate the size of time steps and the total number of time steps to be used. This section also identifies an optional dual time step approach to reduce run times without altering the resulting decision.
+PART B
+Input parameters
+1	Introduction
+1.1	Background
+Certain parameters for a non-GSO network and other data must be specified in order to accomplish the requisite software functions:
+–	Function 1: Provide the pfd masks for the non-GSO satellites (downlink) and the e.i.r.p. mask for the earth stations transmitting to those satellites (uplink).
+–	Function 2: Apply the e.i.r.p. mask in the calculation of uplink epfd↑ levels and downlink equivalent pfd (epfd↓) levels (cumulative time distributions of epfd↑ or epfd↓).
+–	Function 3: Determine whether the pfd / e.i.r.p. mask levels are consistent with basic transmission parameters of the non-GSO network, only in the case of dispute.
+The roles of the administration of the non-GSO network and the BR are discussed in § A.1.3.
+Detailed parameters are needed by the BR in support of Function 2 and so this section focuses on the parameters needed to fulfil that requirement.
+The parameters provided should be consistent, so that if the administrations modifies its network so that the pfd / e.i.r.p. changes then a new mask would need to be supplied to the BR.
+1.2	Scope and overview
+This section identifies inputs to the software in four main paragraphs:
+–	Paragraph 2 defines the inputs from the BR;
+–	Paragraph 3 defines the inputs from the non-GSO operator excluding the pfd / e.i.r.p masks;
+–	Paragraph 4 defines the pfd / e.i.r.p. masks.
+An Attachment to Part B then maps the parameters to the  database tables.
+Note that in the following tables, square brackets in variable names indicate an index for that variable and not tentative text.
+2	BR supplied parameters to software
+The BR supplies two types of data, firstly the type of run to execute:
+The second data is to provide the threshold epfd levels to use as the pass / fail criteria. These are accessed by the software when generating the runs and consists of a series of records as follows:
+3	Non-GSO system inputs to software
+These are split into constellation parameters and then a set of orbit parameters for each space station.
+3.1	Non-GSO constellation parameters
+3.2	Non-GSO space station parameters
+4	pfd / e.i.r.p. masks
+4.1	Non-GSO downlink pfd mask
+4.2	Non-GSO uplink e.i.r.p. mask
+4.3	Non-GSO inter-satellite e.i.r.p mask
+Attachment to Part B
+This Attachment to Part B details the parameters that the epfd software uses from the  database
+Table 4 lists the current RR Appendix 4 information for non-GSO satellite systems included in the BR space networks system (SNS) database. The relationship between the database tables is shown in Fig. 2. Mask information and link tables are not shown in Fig. 2 but are described in Table 4.
+Format description
+Figure 2
+Extract from  entity relationship
+TABLE 4
+Appendix 4 data for epfd analysis
+Notice
+Non-geo
+orbit
+orbit (continued)
+Phase
+Grp
+srv_cls
+Mask_info
+e_as_stn
+sat_oper
+mask_lnk1
+mask_lnk2
+Tables used in the Article 9.7A/9.7B calculations
+e_stn
+e_ant
+PART C
+Generation of pfd/e.i.r.p. masks
+1	Definition
+The purpose of generating pfd masks is to define an envelope of the power radiated by the non-GSO space stations and the non-GSO earth stations so that the results of calculations encompass what would be radiated regardless of what resource allocation and switching strategy are used at different periods of a non-GSO system life.
+The concept of satellite-based reference angle could be used to calculate the pfd mask.
+2	Generation of satellite pfd masks
+2.1	General presentation
+The satellite pfd mask is defined by the maximum pfd generated by any space station in the interfering non-GSO system as seen from any point at the surface of the Earth. A four dimensional pfd mask is recommended for use by the BR verification software and is defined following one of the two options:
+Option 1: As a function of:
+–	the non-GSO satellite;
+–	the latitude of the non-GSO sub-satellite point;
+–	the separation angle  (or X) between this non-GSO space station and the GSO arc, as seen from any point on the surface of the Earth (at the satellite), as defined in § D.6.4.4;
+–	the difference L in longitude between the non-GSO sub-satellite point and the point on the GSO arc where the  (or X) angle is minimized, as defined in § D.6.4.4.
+Option 2: As a function of:
+–	the non-GSO satellite;
+–	the latitude of the non-GSO sub-satellite point;
+–	the azimuth angle, defined in § D.6.4.5;
+–	the elevation angle, defined in § D.6.4.5.
+Whatever parameters are used to generate the pfd mask, the resulting pfd mask should be converted to one of the format options above.
+Because the non-GSO space station can generate simultaneously a given maximum number of beams, it should be taken into account in order to better fit the system design and not be too constraining for non-GSO systems.
+The mitigation techniques used by the non-GSO system, such as the GSO arc avoidance, are implemented in the calculation of the pfd mask. The GSO arc avoidance defines a non-operating zone on the ground in the field of view of a non-GSO space station. The location of this non-operating zone on the ground will move as a function of the latitude of the non-GSO sub-satellite point. To get a more accurate model of a non-GSO system, the latitude of the non-GSO sub-satellite point is taken as a parameter to the pfd mask calculation.
+Use of  or X angle pfd masks implies that the same definition of GSO angle is used for exclusion angle in the calculation of epfd↓.
+2.2	Mitigation techniques description
+The mitigation technique implemented within the non-GSO system should be accurately explained in this section in order to be fully modelled in the calculation of the epfd↑.
+With regard to the use of a non-operating zone around the GSO arc, there are at least three different ways of modelling a non-GSO system based on a cell architecture:
+–	Cell-wide observance of a non-operating zone: a beam of a non-GSO space station is switched off if the separation angle between this non-GSO space station and the GSO arc, at any point of the non-GSO cell, is less than 0 (GSO arc avoidance angle).
+–	Cell-centre observance of a non-operating zone: a beam of a non-GSO space station is switched off when the centre of the cell sees this non-GSO space station at less than 0 from the GSO arc.
+–	A satellite-based reference: a beam of a non-GSO space station turns off when a satellite-based reference angle, X, is less than X0. The reference angle, X, is the angle between a line projected from the GSO arc through the non-GSO space station to the ground and a line from the non-GSO space station to the edge of the non-GSO beam.
+Other mitigation techniques may be used by a non-GSO system which are not listed here. Information on these techniques will be provided by the non-GSO administration for the description and verification of the pfd mask.
+Figure 3 shows a satellite-based reference with beam switch off inside an X angle based exclusion zone.
+Figure 3
+Overhead beam view of satellite-based exclusion angle
+2.3	pfd calculation
+2.3.1	pfd calculation
+The pfd radiated by a non-GSO space station at any point on the Earth’s surface is the sum of the pfd produced by all illuminating beams in the co-frequency band.
+Some non-GSO systems have tracking antennas which point to cells fixed on the Earth’s surface and do not move with the spacecraft. However, since the pfd mask is generated with respect to the non-GSO location, assumptions must be made in the development of the pfd mask. Making the simplifying assumption that the cells move with the spacecraft can lead to inaccurate geographic distributions of epfd levels.
+As non-GSO systems use mitigation techniques, there will be no main beam-to-main beam alignment. Therefore, de-polarization effects mean that both co-polarization and cross-polarization contributions must be included as sources of interference.
+The implementation of the pfd mask explicitly accounts for both co-polarization and cross-polarization from non-GSO satellites into GSO earth stations for like types of polarization (circular-to-circular or linear-to-linear). Isolation between systems of different types of polarization (circular-to-linear) is not directly covered. A study has shown that the average total interference power over all axial ratios and polarization ellipse orientations is a very small net increase in the received interference power in the BSS antenna of 0.048 dB. The bounds of any cross-polarization contributions, that are very unlikely to be reached, are from –30 dB to 3 dB.
+Then:
+where:
+pfd:	pfd radiated by a non-GSO space station (dB(W/m2)) in the reference bandwidth
+i:	index of the beams illuminated in the polarization considered
+Nco:	maximum number of beams which can be illuminated simultaneously in the polarization considered
+pfd_coi:	pfd produced at the point considered at the Earth’s surface by one beam in the polarization considered (dB(W/m2)) in the reference bandwidth
+j:	index of the beams illuminated in the opposite polarization to the polarization considered
+Ncross:	maximum number of beams which can be illuminated simultaneously in the opposite polarization to the polarization considered
+pfd_crossj:	pfd produced at the point considered at the Earth’s surface by one beam in the opposite polarization to the polarization considered (dB(W/m2)) in the reference bandwidth
+and
+where:
+Pi:	maximum power emitted by the beam i in the reference bandwidth (dB(W/BWref))
+BWref:	reference bandwidth (kHz)
+Gi:	gain generated by the beam i in the polarization considered at the point considered at the Earth’s surface (dBi)
+d: 	distance between the non-GSO space station and the point considered at the Earth’s surface (if the non-GSO satellite antenna gain is in isoflux, d is the altitude of the non-GSO space station) (m)
+and
+where:
+G_crossj:	cross-polarization gain generated by the beam j illuminated in the opposite polarization to the polarization considered, at the point considered at the Earth’s surface (dBi).
+It is expected that the parameters used to generate the pfd / e.i.r.p. mask correspond to the performance of the non-GSO satellite over its anticipated lifetime.
+2.3.2	Satellite antenna gain at the point considered at the Earth’s surface
+The objective of this section is to determine the gain in the direction of a point M at the Earth’s surface when the satellite antenna points towards a cell i. The antenna coordinate can be defined by four ways of the coordinate system:
+ :	spherical coordinate
+v :	u  sin  cos , v  sin  sin 
+B :	A   cos , B   sin 
+(Az, El) :	sin (El)  sin  sin , tan (Az)  tan  cos 
+As an example, the following calculations are performed in the antenna reference (A, B).
+The sampling of the non-GSO antenna pattern should be adapted so that interpolation does not lead to gain level significantly different from real values.
+Figure 4 presents the geometry in the antenna plane (A, B).
+Figure 4
+Antenna plane (A, B)
+The coordinates of the point M at the Earth’s surface are (a, b) in the antenna plane (A, B), corresponding to (M, M) in the polar reference.
+The coordinates of the point C centre of the cell i, are (Ac, Bc) in the antenna plane (A, B), and (c, c) in the spherical reference.
+For satellite antenna gain patterns with functional descriptions (i.e. equations), the gain into the point M may be computed directly from the coordinates C(Ac, Bc) and M(a, b). For other patterns, the satellite antenna gains are provided in a grid of (A, B) points, and the point M(a, b) may be located between four points of the grid (A, B).
+In general, it is therefore necessary to undertake interpolation between data points. Consider a grid of values P for a range of x values = {x1, x2, …} and y values = {y1, y2,…} as in Fig. 5.
+figure 5
+Interpolation between data points
+The value of parameter P at point (x, y) can be derived by identifying the bounding values and hence:
+Then P can be interpolated using:
+P = (1 – λx)(1 – λy)P11 + λx (1 – λy)P21 + (1 – λx)λyP12 + λxλyP22
+The sampling of the non-GSO satellite antenna pattern should be adapted so that interpolation does not lead to significant approximation.
+The same criteria should be used when sampling the pfd mask.
+2.4	Methodology
+The pfd mask is defined by the maximum pfd generated by any space station in the interfering non-GSO system and as a function of the parameters defined either in option 1 or option 2. For the generation of the pfd mask, the cells in the non-GSO satellite footprint are located according to the beam pointing utilized by the non-GSO system. For satellites with steerable antennas, the satellite can point to the same area of the Earth throughout its track through the sky.
+These cells are fixed relative to the Earth’s surface. For satellites that have antenna-pointing angles fixed relative to the satellite, the cell pattern is the same relative to the satellite but is moving relative to the Earth.
+2.4.1	Option 1
+Option 1 has been described for a pfd mask defined as a function of the separation angle , as an example. If the pfd mask is provided as a function of the X angle, the following calculation remains the same replacing  with X angle.
+The pfd mask is defined as a function of the separation angle  between this non-GSO space station and the GSO arc, as seen from any point on the surface of the Earth, and the difference L in longitude between the non-GSO sub-satellite point and the GSO satellite.
+The angle  is therefore the minimum topocentric angle measured from this particular earth station between the interfering non-GSO space station and any point in the GSO arc.
+The objective of the mask is to define the maximum possible level of the pfd radiated by the non-GSO space station as a function of the separation angle between the non-GSO space station and the GSO arc at any point on the ground, per interval of L.
+At each point of the non-GSO satellite footprint, the pfd value depends on:
+–	the configuration of the spot beams which are illuminated by the satellite;
+–	the maximum number of co-frequency beams which can be illuminated simultaneously;
+–	the maximum number of co-frequency, co-polarization beams which can be illuminated simultaneously;
+–	the maximum power available at the satellite repeater.
+The proposed methodology for the generation of the pfd mask is explained in the following steps:
+Step 1:  At any given time, in the field of view of a non-GSO space station, Ntotal is the maximum number of cells that can be seen with the minimum service elevation angle.
+Step 2:  In the field of view of the non-GSO space station, it is possible to draw iso- lines, i.e. the points on the surface of the Earth which share the same value of  (see Figs. 6 and 7).
+Figure 6
+Field of view of a non-GSO space station (Option 1)
+Step 3:  Along the iso- line, define intervals of L: difference in longitude between the non-GSO sub-satellite point and the point on the GSO arc where the  (or X) angle is minimized.
+Step 4:  Per each interval of L, the iso- line can be defined by a set of n points M,k for k  1, 2,...n. To determine the maximum pfd corresponding to a given value of ,it is necessary to calculate the maximum pfd at each of the points M,k for k  1, 2,...n. The maximum pfd at a given M,k is determined by first finding the pfd contributed by each celli toward M,k taking into account the dependency of the sidelobe patterns on the beam tilt angle. The maximum pfd contributions toward M,k are then summed, with the number of contributions constrained by the physical limitations of the space station:
+–	Out of the Ntotal cells that can be seen within the coverage area of the space station under a minimum elevation angle for communication, only Nco can be illuminated at the same frequency bandwidth, in one sense of polarization, and Ncross in the other sense of polarization. This characterizes the limitation of the antenna system on the non-GSO space station. To calculate the mask in one polarization, the cells which can be illuminated in the polarization concerned are identified, and the cross-polarization level is considered for other cells.
+–	Out of these Nco and Ncross cells, only a given number can be powered simultaneously. This characterizes the limitation of the repeater system of the non-GSO space station.
+–	If applicable, the limitations in terms of frequency reuse pattern and polarization reuse pattern also need to be clarified.
+–	If applicable the power allocated to one cell may vary taking into account the elevation angle relative to this cell, for example.
+Figure 7
+View in 3D of the iso- line
+Step 5:  The generation of the pfd mask also needs to take into account accurately the mitigation technique implemented within the non-GSO system.
+With regard to the use of a non-operating zone around the GSO arc, there are three different ways of modelling a non-GSO system based on a cell architecture:
+–	cell-wide observance of a non-operating zone: a beam is switched off when one point on the Earth sees a non-GSO satellite within 0 of the GSO arc. In this particular case, any beam illuminating a cell which is crossed by an iso- line corresponding to a value   0 is switched off;
+–	cell-centre observance of a non-operating zone: a beam is switched off when the centre of the cell sees a non-GSO satellite within 0 of the GSO arc. In this case, any beam illuminating a cell with its centre inside the non-operating zone bounded by the two iso-0 lines is switched off;
+–	if a satellite-based reference is chosen: a beam of a non-GSO space station turns off when the angle, X, is less than X0. The reference angle X is the angle between a line projected from the GSO arc through the non-GSO space station to the ground and a line from the non-GSO space station to the edge of the non-GSO beam.
+Step 6:  The maximum pfd value corresponding to a given value  within an interval of L is:
+pfd(, L)    maxk = 1, 2,...n(pfd(M,k))
+Step 7:  The location of an iso- line, hence the value of the maximum pfd along this line depends on the latitude of the non-GSO sub-satellite point. Therefore, a set of pfd masks will need to be provided, each corresponding to a given latitude of the sub-satellite point.
+Step 8:  A set of pfd masks may be needed (one per non-GSO satellite).
+2.4.2	Option 2
+The pfd mask is defined in a grid in azimuth and elevation, per latitude of the non-GSO sub-satellite.
+The objective of the mask is to define the maximum possible level of the pfd radiated by the non-GSO space station in this azimuth elevation grid.
+At each point of the non-GSO satellite footprint, the pfd value depends on:
+–	the configuration of the spot beams which are illuminated by the satellite;
+–	the maximum number of co-frequency beams which can be illuminated simultaneously;
+–	the maximum number of co-frequency, co-polarization beams which can be illuminated simultaneously;
+–	the maximum power available at the satellite repeater.
+Figure 8
+Field of view of a non-GSO space station (Option 2)
+The proposed methodology for the generation of the pfd mask is explained in the following steps:
+Step 1:  At any given time, in the field of view of a non-GSO space station, Ntotal is the maximum number of cells that can be seen with the minimum service elevation angle.
+Step 2:  For each point M(Az, El), determine the maximum pfd. The maximum pfd at a given M,k is determined by first finding the pfd contributed by each celli toward MAz, El) taking into account the dependency of the sidelobe patterns on the beam tilt angle. The maximum pfd contributions toward M,k are then summed, with the number of contributions constrained by the physical limitations of the space station:
+–	Out of the Ntotal cells that can be seen within the coverage area of the space station under a minimum elevation angle for communication, only Nco cells can be illuminated at the same frequency bandwidth, in one sense of polarization, and Ncross cells in the other sense of polarization. This characterizes the limitation of the antenna system on the non-GSO space station. To calculate the mask in one polarization, the cells which can be illuminated in the polarization concerned are identified, and the cross-polarization level is considered for other cells.
+–	Out of these Nco and Ncross cells, only a given number can be powered simultaneously. This characterizes the limitation of the repeater system of the non-GSO space station.
+–	If applicable, the limitations in terms of frequency reuse pattern and polarization reuse pattern also need to be clarified.
+–	If applicable the power allocated to one cell may vary taking into account the elevation angle relative to this cell, for example.
+Step 3:  The generation of the pfd mask also needs to take into account accurately the mitigation technique implemented within the non-GSO system.
+With regard to the use of a non-operating zone around the GSO arc, there are three different ways of modelling a non-GSO system based on a cell architecture:
+–	cell-wide observance of a non-operating zone: a beam is switched off when one point on the Earth sees a non-GSO satellite within 0 of the GSO arc. In this particular case, any beam illuminating a cell which is crossed by an iso- line corresponding to a value   0 is switched off;
+–	cell-centre observance of a non-operating zone: a beam is switched off when the centre of the cell sees a non-GSO satellite within 0 of the GSO arc. In this case, any beam illuminating a cell with its centre inside the non-operating zone bounded by the two iso-0 lines is switched off;
+–	if a satellite-based reference is chosen: a beam of a non-GSO space station turns off when the angle, X, is less than X0. The reference angle X is the angle between a line projected from the GSO arc through the non-GSO space station to the ground and a line from the non-GSO space station to the edge of the non-GSO beam.
+Step 4:  A set of pfd masks may need to be provided as a function of the latitude of the sub-satellite point.
+Step 5:  A set of pfd masks may be needed (one per non-GSO satellite).
+3	Generation of e.i.r.p. masks
+3.1	Generation of earth station e.i.r.p. masks
+3.1.1	General presentation
+The earth station e.i.r.p. mask is defined by the maximum e.i.r.p. as a function of the off-axis angle generated by an earth station. There can be different e.i.r.p. masks applicable at different latitudes.
+The non-GSO earth station is located in a non-GSO cell which is served by a maximum number of non-GSO space stations. The density of non-GSO earth stations which can operate co-frequency simultaneously is also used as an input to the calculation.
+3.1.2	Mitigation techniques description
+The mitigation technique implemented within the non-GSO system should be accurately explained in this section in order to be fully modelled in the calculation of the epfd↑ (see § C.2.2).
+3.1.3	Earth station antenna pattern
+The earth station antenna pattern used needs to be identified to calculate the earth station e.i.r.p. mask.
+3.1.4	Methodology
+Step 1:  The earth station e.i.r.p. mask is defined by the maximum e.i.r.p. radiated in the reference bandwidth by the earth station as a function of the off-axis angle, and is given by:
+ES_e.i.r.p(θ)  =  G(θ) + P
+where:
+ES_e.i.r.p.:	equivalent isotropic radiated power in the reference bandwidth (dB(W/BWref))
+:	separation angle between the non-GSO space station and the GSO space station at the non-GSO earth station (degrees)
+G():	earth station directional antenna gain (dBi)
+P:	maximum power delivered to the antenna, in the reference bandwidth (dB(W/BWraf))
+BWraf:	reference bandwidth (kHz).
+Step 2:  Assuming that the non-GSO cells are uniformly distributed on the Earth’s surface, the simultaneous co-frequency transmit non-GSO earth stations are evenly distributed over the cell. Therefore the interferer can be located at the centre of the cell to perform the simulation.
+This exercise would be repeated for all latitudes for which the ES_e.i.r.p. could be different.
+3.2	Generation of space station e.i.r.p. masks
+The space station e.i.r.p. mask is defined by the maximum e.i.r.p. generated by a non-GSO space station as a function of the off-axis angle between the boresight of the non-GSO space station considered and the direction of the GSO space station.
+The space station e.i.r.p. mask is defined by the maximum e.i.r.p. radiated in the reference bandwidth by the space station as a function of the off-axis angle, and is given by:
+NGSO_SS_e.i.r.p.()    G()  P
+where:
+NGSO_SS_e.i.r.p.:	equivalent isotropic radiated power in the reference bandwidth (dB(W/BWref))
+	separation angle between the boresight of the non-GSO space station and the pointing direction of the GSO space station (degrees)
+G():	space station antenna gain pattern (dBi) corresponding to the aggregation of all beams
+P:	maximum power, in the reference bandwidth (dB(W/BWrif))
+BWrif:	reference bandwidth (kHz).
+4	pfd and e.i.r.p. mask format
+4.1	General structure of masks
+One of the inputs to Recommendation ITU-R S.1503 are the pfd and e.i.r.p. masks, namely:
+–	For epfd(down) runs, the pfd mask(s), containing tables of pfd(, long) or of pfd(azimuth, elevation) together with the latitude for which each table is valid.
+–	For epfd(up) runs, the non-GSO earth station e.i.r.p. mask(s), each one contains tables of e.i.r.p. () together with the latitude for which each table is valid.
+–	For epfd(IS) runs, the non-GSO satellite e.i.r.p. masks, each one contains tables of e.i.r.p. () together with the latitude for which each table is valid.
+During the simulation, the software will calculate the relevant parameters, such as latitude and off-axis angle or  angle, and then use the mask to calculate a pfd or e.i.r.p. using the following approach:
+1)	The array of {Latitude, Table} is searched and the table which has the nearest latitude to the value calculated in the simulation is selected.
+2)	Using the selected table, the pfd or e.i.r.p. is then calculated by interpolation using:
+a)	pfd: calculated using bi-linear interpolation in either pfd(, long) or pfd(azimuth, elevation);
+b)	e.i.r.p.: calculated using linear interpolation in e.i.r.p. ().
+Each table is independent i.e. at different latitudes it can use a different grid resolution and range. The mask does not need to cover the whole range: outside the supplied values the last valid value is assumed to be used.
+However, it should be noted that for latitude and {azimuth, elevation, , long} regions where no actual pfd is produced, in order to avoid using nearest latitude table containing operational pfd values it is advisable to provide extremely low pfd values for these ranges to simulate no transmission scenario.
+The pfd mask table is not assumed to be symmetric in {azimuth, elevation, , long} and should be given for the full range from positive to negative extremes. The e.i.r.p. masks are assumed to be symmetric around the boresight line via use of the off-axis angle as the parameter. In the case that the {azimuth, elevation, , long, off-axis angle} calculated in the simulation is outside the ranges given in the pfd or e.i.r.p. masks, then the last valid value should be used.
+For the ES e.i.r.p. masks, there is the option to specify the position by (latitude, longitude) rather than density via a reference to a specific ES in the . Note that it is not permitted to mix types: either all non-GSO ES are to be defined via specific ES or all via the density field.
+Each mask has header information giving:
+–	Notice ID
+–	Satellite name
+–	Mask ID
+–	Lowest frequency mask is valid in MHz
+–	Highest frequency mask is valid in MHz
+–	Mask type
+–	Parameters of mask.
+The masks relationships are shown in Figs. 9 to 11.
+Figure 9
+Structure of pfd mask data for epfd(down)
+Figure 10
+Structure of pfd mask data for epfd(up)
+Figure 11
+Structure of pfd mask data for epfd(IS)
+The pfd masks are to be provided to the ITU BR in XML format as:
+–	It is both machine readable and human readable
+–	Allows both format and type checking
+–	Is an international standard for exchange of data.
+The XML format is plain text with opening and closing blocks, as in
+<satellite_system>
+</satellite_system>
+Within each section there are then fields relevant to that block.
+At the top level the satellite system is identified via its notice ID and name using:
+<satellite_system ntc_id="NNNNNNN" sat_name="NAME">
+[Header]
+[Tables]
+</satellite_system>
+Within this structure there is the header followed by each of the tables.
+The format for each mask is described in more detail in the sections below.
+4.2	pfd mask for epfd(down)
+The header format of the pfd mask is as follows:
+<pfd_mask mask_id="N" low_freq_mhz="F1" high_freq_mhz="F2" type="Type" a_name="latitude" b_name="B" c_name="C">
+where (see Table 5):
+TABLE 5
+pfd mask header format
+For each of a, b, c there are then arrays of values, such as:
+<by_a a="N">
+</by_a>
+The values within that open/close structure then all relate to a = N: a similar structure is used for b values.
+The innermost group gives the actual pfd value, such as:
+<pfd c="0">–140</pfd>
+An example pfd mask would therefore be:
+<satellite_system ntc_id="12345678" sat_name="MySatName">
+<pfd_mask mask_id="3" low_freq_mhz="10000" high_freq_mhz="40000" type="alpha_deltaLongitude" a_name="latitude" b_name="alpha" c_name="deltaLongitude">
+<by_a a="0">
+<by_b b="–180">
+<pfd c="–20">–150</pfd>
+<pfd c="0">–140</pfd>
+<pfd c="20">–150</pfd>
+</by_b>
+<by_b b="–8">
+<pfd c="–20">–165</pfd>
+<pfd c="0">–155</pfd>
+<pfd c="20">–165</pfd>
+</by_b>
+<by_b b="–4">
+<pfd c="–20">–170</pfd>
+<pfd c="0">–160</pfd>
+<pfd c="20">–170</pfd>
+</by_b>
+<by_b b="0">
+<pfd c="–20">–180</pfd>
+<pfd c="0">–170</pfd>
+<pfd c="20">–180</pfd>
+</by_b>
+<by_b b="4">
+<pfd c="–20">–170</pfd>
+<pfd c="0">–160</pfd>
+<pfd c="20">–170</pfd>
+</by_b>
+<by_b b="8">
+<pfd c="–20">–165</pfd>
+<pfd c="0">–155</pfd>
+<pfd c="20">–165</pfd>
+</by_b>
+<by_b b="180">
+<pfd c="–20">–150</pfd>
+<pfd c="0">–140</pfd>
+<pfd c="20">–150</pfd>
+</by_b>
+</by_a>
+</pfd_mask>
+</satellite_system>
+4.3	e.i.r.p. mask for epfd(up)
+The header format of the pfd mask is as follows:
+<eirp_mask_es mask_id="N" low_freq_mhz="F1" high_freq_mhz="F2" min_elev="E" d_name="separation angle" ES_ID = “–1“>
+where (see Table 6):
+TABLE 6
+Non-GSO ES e.i.r.p. mask header format
+There are then arrays of e.i.r.p. values for given off-axis angles, such as:
+<eirp d="0">30.0206</eirp>
+An example pfd mask would therefore be:
+<satellite_system ntc_id="12345678" sat_name="MySatName">
+<eirp_mask_es mask_id="1" low_freq_mhz="10000" high_freq_mhz="40000" min_elev="0" d_name="separation angle", ES_ID=–1>
+<eirp d="0">30.0206</eirp>
+<eirp d="1">20.0206</eirp>
+<eirp d="2">12.49485</eirp>
+<eirp d="3">8.092568</eirp>
+<eirp d="4">4.9691</eirp>
+<eirp d="5">2.54634976</eirp>
+<eirp d="10">–4.9794</eirp>
+<eirp d="15">–9.381681</eirp>
+<eirp d="20">–12.50515</eirp>
+<eirp d="30">–16.90743</eirp>
+<eirp d="50">–18.9471149</eirp>
+<eirp d="180">–18.9471149</eirp>
+</eirp_mask_es>
+</satellite_system>
+4.4	e.i.r.p. mask for epfd(IS)
+The header format of the pfd mask is as follows:
+<eirp_mask_ss mask_id="N" low_freq_mhz="F1" high_freq_mhz="F2" d_name="separation angle">
+where (see Table 7):
+TABLE 7
+Non-GSO satellite e.i.r.p. mask header format
+There are then arrays of e.i.r.p. values for given off-axis angles, such as:
+<eirp d="0">30.0206</eirp>
+An example pfd mask would therefore be:
+<satellite_system ntc_id="12345678" sat_name="MySatName">
+<eirp_mask_ss mask_id="2" low_freq_mhz="10000" high_freq_mhz="40000" d_name="separation angle">
+<eirp d="0">30.0206</eirp>
+<eirp d="1">20.0206</eirp>
+<eirp d="2">12.49485</eirp>
+<eirp d="3">8.092568</eirp>
+<eirp d="4">4.9691</eirp>
+<eirp d="5">2.54634976</eirp>
+<eirp d="10">–4.9794</eirp>
+<eirp d="15">–9.381681</eirp>
+<eirp d="20">–12.50515</eirp>
+<eirp d="30">–16.90743</eirp>
+<eirp d="50">–18.9471149</eirp>
+<eirp d="180">–18.9471149</eirp>
+</eirp_mask_ss>
+</satellite_system>
+PART D
+Software for the examination of non-GSO filings
+1	Introduction
+1.1	Scope
+The scope of this section is to specify part of a software requirements document (SRD) for a computer program that can be used by the BR to calculate whether a specific non-GSO system proposed by an administration meets epfd limits.
+There are three key tasks that the software must complete as identified in Fig. 1:
+1)	determination of the runs to execute;
+2)	for each run, determination of worst case geometry;
+3)	for each run, calculation of epfd statistics and checking compliance with the limits.
+1.2	Background
+This section assumes that the following approaches are used:
+epfd calculation: Each non-GSO satellite has a pfd mask and the pfd for each satellite is used to calculate the aggregate epfd↓ at an earth station of a GSO system. This is repeated for a series of time steps until a distribution of epfd↓ is produced. This distribution can then be compared with the limits to give a go/no go decision.
+epfd calculation: The Earth is populated with a distribution of non-GSO earth stations. Each earth station points towards a non-GSO satellite using pointing rules for that constellation, and transmits with a defined e.i.r.p.. From the e.i.r.p. and off-axis gain pattern for each earth station, the epfd↑ at the GSO can be calculated. This is repeated for a series of time steps until a distribution of epfd↑ is produced. This distribution can then be compared with the limits to give a go/no go decision.
+epfdis calculation: From the e.i.r.p. and off-axis angle for each space station, the epfdis at the GSO space station can be calculated. This is repeated for a series of time steps a distribution of epfdis is produced. This distribution can then be compared with the limits to give a go/no go decision.
+The SRD provides detailed algorithms that would allow it to be implemented in software by any interested parties without reference to any specific development methodology.
+1.3	Overview
+This section is structured into the following paragraphs:
+§ 2:	Determination of runs to execute
+§ 3:	Determination of worst case geometry for each run
+§ 4:	Calculation of time step size and number of time steps
+§ 5:	Calculation of epfd statistics and limit compliance checking
+§ 5.1:	Defines the epfd↓ algorithm
+§ 5.2:	Defines the epfd↑ algorithm
+§ 5.3:	Defines the epfdis algorithm
+§ 6:	Defines the core geometry and algorithms used by both epfd calculations including gain patterns
+§ 7: 	Specifies the output formats and process to obtain a go/no-go decision.
+Note that where square brackets are included as part of a parameter name, this indicates an index into an array, not tentative text.
+1.4	General assumptions and limitations
+A general limitation on the generation of epfd statistics is:
+Bin size:	SB = 0.1 dB
+To be consistent with the evaluation algorithm in § D.7.1.3 epfd values calculation for each time step should be rounded to the lower values with a maximum precision of 0.1 dB.
+The calculation of angle to GSO arc, and X, as described in § D.6.4.4 are based upon a number of test points, with specified separation between them:
+Separation between GSO test points: 1e-5 radians.
+1.5	Database and interface
+Wherever feasible, input data should be taken from the  or other databases, combined with BR resources such as DLLs to define epfd limits and calculate antenna gains.
+2	Determination of runs to execute
+2.1	Article 22 runs
+For an Article 22 run a key task is to determine which runs to execute given a non-GSO filing and the epfd limits specified in the RR.
+For all ES e.i.r.p. masks in non-GSO notice
+{
+Get frequency range of ES e.i.r.p. mask (fmin, fmax)
+From LimitsAPI request all epfd(up) limits in range (fmin, fmax)
+For all epfd(up) limits returned
+{
+Set FrequencyRun = max(fmin(mask), fmin(limits)) + RefBW/2
+CreateRun:
+Direction = Up
+Frequency = FrequencyRun
+Sat_Beamwidth = From Limits
+Sat_GainPattern = From Limits
+epfd_Threshold = From Limits
+Ref_BW = From Limits
+}
+}
+For all PFD masks in non-GSO notice
+{
+Get frequency range of pfd mask (fmin, fmax)
+From LimitsAPI request all  epfd(down) limits in range (fmin, fmax)
+For all epfd(down) limits returned
+{
+Set FrequencyRun = max(fmin(mask), fmin(limits)) + RefBW/2
+CreateRun:
+Direction = Down
+Service =
+Frequency = FrequencyRun
+ES_DishSize = From Limits
+ES_GainPattern = From Limits
+epfd_Threshold = From Limits
+Ref_BW = From Limits
+}
+From LimitsAPI request all BSS epfd(down) limits in range (fmin, fmax)
+For all epfd(down) limits returned
+{
+Set FrequencyRun = max(fmin(mask), fmin(limits)) + RefBW/2
+CreateRun:
+Direction = Down
+Service = BSS
+Frequency = FrequencyRun
+ES_DishSize = From Limits
+ES_GainPattern = From Limits
+epfd_Threshold = From Limits
+Ref_BW = From Limits
+}
+}
+For all Satellite EIRP masks in non-GSO notice
+{
+Get frequency range of satellite EIRP mask (fmin, fmax)
+From LimitsAPI request all epfd(is) limits in range (fmin, fmax)
+For all epfd(is) limits returned
+{
+Set FrequencyRun = max(fmin(mask), fmin(limits)) + RefBW/2
+CreateRun:
+Direction = Intersatellite
+Frequency = FrequencyRun
+Sat_Beamwidth = From Limits
+Sat_GainPattern = From Limits
+epfd_Threshold = From Limits
+Ref_BW = From Limits
+}
+}
+2.2	Article 9.7A
+For Article 9.7A runs the criteria and threshold is defined in Appendix 5 of the Radio Regulations and runs are generated as follows:
+If the selected earth station meets the criteria in Appendix 5
+{
+Get the frequency range of the selected ES(fmin, fmax)
+Get all non-GSO networks in the  that overlap that frequency range
+For each non-GSO network returned
+{
+For all pfd masks in non-GSO notice
+{
+Get frequency range of PFD mask Mask(fmin, fmax)
+If there is overlap ES(fmin, fmax) with Mask(fmin, fmax)
+{
+Get RefBW from Appendix 5
+Set FrequencyRun = max(ES_fmin, Mask_fmin) + RefBW/2
+CreateRun:
+Direction = Down
+Frequency = FrequencyRun
+ES_DishSize = From ES filing
+ES_GainPattern = From ES filing
+epfd_Threshold = From Appendix 5
+Ref_BW = From Appendix 5
+}
+}
+}
+}
+2.3	Article 9.7B
+For Article 9.7B runs the criteria and threshold is defined in Appendix 5 of the Radio Regulations and runs are generated as follows:
+For all pfd masks in non-GSO notice
+{
+Get frequency range of pfd mask Mask(fmin, fmax)
+Get all ES in the  that overlap that frequency range
+For each ES returned
+{
+If the earth station meets the criteria in Appendix 5
+{
+Get the frequency range of the ES(fmin, fmax)
+Get RefBW from Appendix 5
+Set FrequencyRun = max(ES_fmin, Mask_fmin) + RefBW/2
+CreateRun:
+Direction = Down
+Frequency = FrequencyRun
+ES_DishSize = From ES filing
+ES_GainPattern = From ES filing
+epfd_Threshold = From Appendix 5
+Ref_BW = From Appendix 5
+}
+}
+}
+}
+3	Worst case geometry
+3.1	 epfd↓
+3.1.1	Inputs
+The inputs to the algorithm are as follows:
+pfd_mask:	the pfd mask to check
+:	the GSO arc avoidance angle of the non-GSO system
+h :	the minimum operating height of the non-GSO system
+:	the minimum elevation angle of the non-GSO system
+i :	the inclination angle of the non-GSO system
+ES :	the parameters of the ES including gain pattern.
+3.1.2	Algorithm
+This section describes the algorithm to determine the Worst Case Geometry () for the epfd(down) direction.
+Note that there could be different pfd masks at different frequencies: this process is assumed to be repeated for each valid frequency range.
+The  is based upon search in (, φ) as seen by the non-GSO satellite, with particular care taken for the region (–0, +0) including  = 0. This search is repeated at a number of test non-GSO satellite latitudes. In addition, specific checks are made for the highest latitudes for which  = {−0,0, +0} to ensure compatibility with the methodology in Recommendation ITU-R S.1714.
+For each test point considered, the algorithm calculates the epfd using the pfd mask and receive antenna gain, and compares that to the threshold for the relevant latitude.
+It is likely that multiple test points will result in the same difference between epfd level and threshold. To assess which should be used as the , the angular velocity of the non-GSO satellite as seen by the ES is calculated, and the geometry selected is that:
+–	Gives the highest difference between epfd level and threshold to the resolution of the resulting statistics (0.1 dB).
+–	If multiple geometries meet point 1, select the one that would result in geometry that gives the lowest angular velocity of the satellite as seen by the ES.
+The search algorithm is shown in Fig. 12.
+Figure 12
+Search (, φ) grid for
+The algorithm is described in the following pseudo code:
+WCGA_Down:
+Set WorstEPFDBin = –9999
+Set WorstAngularVelocity = +9999
+For all satellites in the order listed in ITU DB
+{
+Determine PFD mask to use for this satellite
+If this PFD mask has not been checked so far then
+Call GetWCGA_Down
+End if
+Next satellite
+GetWCGA_Down (PFD_Mask, 0, 0, ES):
+StepSize = min(ES.Beamwidth, PFD_Mask_StepSize)/Nhits
+If (i = 0)
+{
+CheckWCG_Down (latitude = 0)
+}
+Else
+{
+LatNumSteps = RoundUp(i / StepSize)
+For n = 0 to LatNumSteps inclusive
+{
+latitude = i * n / LatNumSteps
+CheckWCG_Down(latitude)
+If (n > 0)
+{
+CheckWCG_Down(-latitude)
+}
+}
+CheckExtremeWCG( = 0 &  = +/2}
+CheckExtremeWCG( = 0 &  = -/2}
+If (0 > 0)
+{
+CheckExtremeWCG( = 0 &  = +/2}
+CheckExtremeWCG( = 0 &  = –/2}
+CheckExtremeWCG( = +0 &  = +/2}
+CheckExtremeWCG( = +0 &  = -/2}
+}
+}
+CheckWCG_Down(latitude):
+Locate non-GSO satellite at latitude
+Calculate φ0 for elevation angle 0 and radius r
+CheckCase(latitude,  = 0, φ = 0)
+PhiSteps = RoundUp(φ0 / StepSize)
+For φ = PhiStepSize to φ0 inclusive in PhiSteps steps
+{
+ThetaMin = /2
+ThetaMax = +3/2
+If the PFD mask is symmetric in DeltaLong or Azimuth
+ThetaMax = /2
+NumThetaSteps = RoundUp(2φ/PhiStepSize)
+ThetaStepSize = (ThetaMax-ThetaMin)/NumThetaSteps
+For ThetaStep = 0 to NumThetaSteps inclusive
+{
+= ThetaMin + ThetaStep*ThetaStepSize
+CheckCase(latitude, , φ)
+}
+If can calculate  that corresponds to  = 0
+CheckCase(latitude, , φ)
+If (0 > 0)
+{
+If can calculate  that corresponds to  = 0
+CheckCase(latitude, , φ)
+If can calculate  that corresponds to  = +0
+CheckCase(latitude, , φ)
+}
+If mask is not symmetric then repeat for other hemisphere
+}
+CheckCase(latitude, , φ):
+Convert (, φ) to (az, el)
+Create line from non-GSO satellite N in direction (az, el)
+Identify point P in which line intersects Earth
+At point P calculate (, X, long) angles wrt point N
+At point P calculate AngularVelocity using methodology below
+Calculate PFD from mask, latitude & (az, el, , X, long)
+Calculate Grel()
+Calculate EPFDThreshold from latitude of point P
+Calculate EPFDMargin = PFD + Grel() - EPFDThreshold
+Calculate EPFDbin = EPFDMargin/BinSize
+If WorstEPFDBin < EPFDBin
+{
+WorstEPFDBin = EPFDBin
+Worst AngularVelocity = AngularVelocity
+Store this (N, P)
+}
+Else if (WorstEPFDBin = EPFDBin &&
+WorstAngularVelocity > AngularVelocity)
+{
+WorstAngularVelocity = AngularVelocity
+Store this (N, P)
+}
+CheckExtremeWCG(,):
+Iterate in true anomaly until find latitude for (, )
+Calculate φ0 at latitude
+CheckCase(latitude, , φ0)
+The algorithm uses the geometry given in the sections below.
+3.1.3	Geometry
+3.1.3.1	Conversion between (az, el) and (, φ)
+The following equations can be used:
+cos(φ) = cos(az) cos(el)
+sin(el) = sin(θ) sin(φ)
+3.1.3.2	Setting satellite at latitude
+Key steps in this algorithm are the calculation of the position and velocity vectors of the non-GSO satellite and ES. The latitude can be used to derive the true anomaly, , using:
+To derive the position and velocity vectors, the following equations could be used:
+In the satellite plane:
+where:
+P, Q:	unit vectors in the orbit plane with origin the centre of the Earth and P aligned with the orbit’s major axis
+a, e, : 	orbital elements.
+Also:
+p = a(1 – e2)
+The non-GSO’s position and velocity vectors can then be converted from the PQW orbit plane based frame to Earth centred vectors using the standard rotation matrix via the (, , i) orbital elements. It can be assumed that second order effects including the J2 factor need not be considered.
+The position vector equation can also be used to calculate a latitude from a true anomaly, , and hence by iteration locate the satellite at the required latitude.
+3.1.3.3	Calculation of maximum φ in satellite viewpoint
+For a given latitude and hence satellite radius, the maximum angle at the satellite from sub-satellite point φ0 can be derived from the elevation angle  using:
+3.1.3.4	Calculation of alpha for maximum φ in satellite viewpoint
+For a given latitude and hence satellite radius, the maximum angle at the satellite from sub-satellite point φ0 can be derived from the elevation angle  using the equation above. There will then be two extrema points as shown in Fig. 13:
+Figure 13
+Extrema cases to derive
+Then the alpha value at the extrema can be calculated as follows:
+–	Convert given (, φ) into (azimuth, elevation)
+–	Calculate line from non-GSO satellite in direction (azimuth, elevation)
+–	Calculate nearest intersection point P with Earth radius Re
+–	At point P calculate  angle of non-GSO satellite.
+3.1.3.5	Calculation of angular velocity
+The inputs are as follows:
+ES position vector:	res
+ES position vector:	es
+Non-GSO satellite position vector:	rsat
+Non-GSO satellite position vector:	sat
+From these, it is possible to calculate the apparent velocity and vector from the ES to the satellite:
+r = rsat – res
+= sat – es
+The angle between these two vectors can then be calculated:
+The instantaneous angular velocity is then:
+The various terms are shown in Fig. 14:
+Figure 14
+Vectors to calculate non-GSO satellite apparent angular velocity
+Note that a low angular velocity will result in higher likelihoods of interference and hence for a given epfd value the  that gives the least apparent angular velocity would be the one to use.
+The ES’s velocity vector can be derived from its position vector (x, y, z) as follows:
+Where we is the Earth’s angular velocity in radians per second.
+3.1.3.6	Find latitude from (, h, )
+This section describes how to go from , h,  to non-GSO latitude assuming the satellite is at the highest latitude for which the relevant  line intersects the point where the elevation angle is  and  = /2 as shown in Fig. 15.
+Figure 15
+Calculation of highest latitude for a given value of
+The method depends upon whether  is positive or negative as in the following two sub-sections:
+3.1.3.7	Find latitude from (, h, ) with   0
+The geometry for this case is shown in Fig. 16:
+Figure 16
+Highest latitude for   0
+Hence the angles can be derived as follows:
+Note that this approach is only valid for  +  < /2. In cases where  +   /2, then an error flag should be raised: if necessary use p = q = 0.
+3.1.3.8	Find latitude from (, h, ) with  < 0
+The geometry for this case is shown in Fig. 17:
+Figure 17
+Highest latitude for  < 0
+Hence the angles can be derived as follows:
+Note that this approach is only valid for  +  < /2. In cases where  +   /2, then an error flag should be raised: if necessary use p = q.
+3.1.3.9	Find (, φ) from (latitude, , h, )
+In this case, the non-GSO satellite is assumed to be at a given latitude (which could be the orbit inclination) and from , h,  it is possible to work out the  angle.
+The satellite’s field of view is shown in Fig. 18:
+Figure 18
+Searching for  that gives the required (, )
+The first stage is to calculate φ0 as follows:
+From this, the result can be derived using a binary chop algorithm as follows:
+FindThetaPhiFromAlpha(lat, , h, ):
+Configure Non-GSO satellite at latitude = lat
+Phi0 = GetPhiZero(h, ) using equation above
+Theta0 = /2
+Theta1 = +/2
+Alpha0 = GetAlpha(Theta0, Phi0)
+Alpha1 = GetAlpha(Theta1, Phi0)
+If Alpha0 <  then
+{
+Return fail with (Theta0, Phi0) as nearest angles
+}
+Else if Alpha1 >
+{
+Return fail with (Theta1, Phi0) as nearest angles
+}
+While (Theta1 – Theta0 < 1e-6)
+{
+Theta2 = (Theta1 + Theta0)/2
+Alpha2 = GetAlpha(Theta2, Phi0)
+If (Alpha2 > )
+{
+Theta1 = Theta2
+Alpha1 = Alpha2
+}
+Else
+{
+Theta0 = Theta2
+Alpha0 = Alpha2
+}
+}
+Return (Theta1, Phi0) and ok
+GetAlpha(, φ):
+Convert (, φ) to (az, el)
+Create line in direction (az, el) from non-GSO satellite
+Identify point P where line intersects Earth
+At point P calculate
+Return
+3.2	 epfd↑
+3.2.1	Inputs
+The inputs to the algorithm are as follows:
+ES_eirp :	the non-GSO ES e.i.r.p. mask to check
+θadB :	the GSO satellite’s beam half power beamwidth
+:	the minimum elevation angle of the GSO system
+a,i,e, ,, :	the inclination orbit parameters of the non-GSO system.
+3.2.2	Algorithm
+The WCGA for the epfd(up) case is as follows
+WCGA_UP:
+Calculate φ0
+From φ0 calculate LatBS
+If single EIRP mask for all ES and ES from density
+If orbit (e = 0, i > 0)
+(lat, long) = {LatBS, 0}
+If orbit (e = 0, i = 0)
+(lat, long) = {0, LatBS}
+If orbit (e > 0) and apogee in northern hemisphere
+(lat, long) = {LatBS, 0}
+If orbit (e > 0) and apogee in southern hemisphere
+(lat, long) = {LatBS, 0}
+Else
+If ES from density
+If (i = 0)
+Call WCGA_UP_Equatorial_all
+Else
+Call WCGA_UP_General
+Endif
+Else
+If non-GSO satellite repeats
+Call WCGA_UP_SpecifcES_Repeating
+Else
+Call WCGA_UP_SpecifcES_NonRepeating
+Endif
+Endif
+Endif
+The various cases, their functions and geometries are described in the following sections.
+3.2.3	Geometry
+3.2.3.1	General
+In general, the worst single entry epfd is when the ES is in the main beam of the GSO satellite and is pointing as closely as possible directly at it. The nearest the ES can point towards the GSO defined by the exclusion zone size, hence the worst single entry epfd is:
+EPFD = EIRP(0) – 10log10(4πD2)
+Where D is the distance from the ES to the GSO satellite.
+This gives the worst single entry interference: the aggregate epfd will also depend upon the area covered by the GSO beam, which will depend upon the incident angle.
+The GSO system’s geometry relating to the WCGA(up) is shown in Fig. 19:
+Figure 19
+GSO system geometry for WCGA(up)
+Note that for non-GSO systems in circular orbit with global coverage:
+–	The area of the surface of the Earth covered by the beam (and hence of the non-GSO satellite constellation’s orbital shell) is furthest away from the sub-satellite point, hence with constant density of ESs there will be more of them at higher latitudes.
+–	The probability of a non-GSO satellite being in a defined latitude range increases with latitude.
+–	The GSO system will have a minimum elevation angle for operating reasons.
+From these constraints, the latitude of the GSO beam’s boresight can be calculated from an assumed minimum elevation angle and beamwidth taken from the epfd limits in Article 22 of the RR.
+FIGURE 20
+GSO pointing angles for WCGA(IS) geometry
+Here the latitude of the ES can be derived as follows:
+Then, noting that  > /2:
+Hence:
+LatBS = π – φBS – ψ
+These equations can be used to derive the values in Table 8:
+TABLE 8
+(up) geometry for constrained scenarios
+This approach is appropriate for:
+–	Global coverage non-GSO systems in circular orbit with single e.i.r.p. mask.
+–	Gobal coverage non-GSO systems in elliptical orbit with apogee in the northern hemisphere with single e.i.r.p. mask.
+Simple changes are required to derive the  locations for equatorial systems and non-GSO systems with elliptical orbits with apogee in the southern hemisphere when a single e.i.r.p. mask is used, as shown in Fig. 21:
+Figure 21
+(up) locations for selected constellation types
+Analysis of the (up) suggests that there are three special cases to consider:
+1)	Equatorial orbit systems when the e.i.r.p. varies by latitude
+2)	Cases where the ESs are at specified locations rather than evenly distributed
+3)	General case when the ES e.i.r.p. varies by latitude
+These are discussed in the following sections.
+Note that the epfd(up) limits in Article 22 are 100% of time to be met, 0% of time permitted to be exceeded and hence the time factor is not important.
+3.2.3.2	Range in latitude
+When calculating the (up) and also the epfd(up), it is necessary to identify where the ES could be located. While most systems in types A and B have global coverage, non-GSO networks of type C will be limited in the latitude range.
+The latitude range can be derived from the satellite’s height, its inclination angle and the minimum operating elevation angle for the ES, as in Fig. 22:
+Figure 22
+Calculation of maximum latitude for
+For elliptical systems, there will be two values, one for the apogee and another for the perigee, and so the inputs would be:
+Semi-major axis of orbit (km):	a
+Eccentricity of orbit:	e
+Minimum elevation angle (radians):
+Inclination angle (radians):	i
+From these parameters, the following calculations can be undertaken:
+ra = a(1 + e)
+θa = π – (ψ + φa)
+Then:
+Latmax = i + θa
+Similarly, using:
+rp = a(1 – e)
+Using the same equations but replacing suffix (a) with (p), the following can be derived:
+Latmin = –i – θp
+This assumes that for elliptical systems, the apogee is in the northern hemisphere, i.e. that one of the following is true:
+e = 0
+= 270°
+where:
+:	argument of perigee.
+In the case that:
+e > 0
+= 90°
+Then the following adjustments should be made:
+Latmax’ = –Latmin
+Latmin’ = –Latmax
+In the case that the orbit inclination is zero and eccentricity zero (i.e. for an equatorial circular orbit) then these equations reduce to:
+Latmax = θ
+Latmin = –θ
+3.2.3.3	Equatorial orbits with multiple e.i.r.p. masks
+3.2.3.3.1	Introduction
+The scenario for non-GSO systems with equatorial orbits and e.i.r.p. masks that vary by latitude is shown in Fig. 23:
+Figure 23
+Geometry for (up) for non-GSO constellation in equatorial orbit
+The geometry means that any non-GSO ES on the equator will always be in-line with some point on the GSO arc and hence would have to use extremely low power or be forced to be inactive by the  exclusion zone angle. As the non-GSO ES latitude increases, the angle to the GSO arc also increases, permitting higher e.i.r.p.s.
+The epfd at the GSO satellite will be:
+EPFD = EIRP(θ) – 10log10(4πD2)
+where  is the off-axis angle at the non-GSO ES towards the GSO satellite.
+The approach to take depends upon whether all the e.i.r.p. masks are monotonically decreasing with the off-axis angle. If they are, then it is possible just to consider the case at each edge of the mask: otherwise it becomes necessary to search in latitude.
+3.2.3.3.2	e.i.r.p. masks monotonically decreasing
+If each of the e.i.r.p. masks are monotonically decreasing with the off-axis angle, then it is solely necessary to check the start and end of the range of latitudes for which the mask is valid.
+From the equations in the section on the general case:
+θBS = π – φBS – ψBS
+where the angles are as shown in Fig. 24.
+Figure 24
+Angles to GSO beam boresight
+Then from the latitude of the non-GSO ES, it is possible to work out the delta longitude between it and the GSO satellite using:
+cos θBS = cos latES cos ∆longES
+So that:
+Hence the position vectors of each can be derived as:
+It is possible to calculate the azimuth of the non-GSO ES as seen by the GSO satellite using:
+From this, noting that the non-GSO satellite is by definition on the equator with zero latitude, the delta longitude between the GSO satellite and the point on the non-GSO orbit that minimizes the off-axis angle at the non-GSO ES can be derived using:
+With angle notation the same as for the GSO boresight calculation above.
+Hence:
+From the non-GSO ES there are then two vectors:
+r1 = rGSO – rES
+r2 = rNGSO – rES
+It is then possible to calculate the off-axis angle at the non-GSO ES as the angle between these two vectors and the distance to the GSO the size of vector r1.
+The angle to use in the epfd calculation is the maximum of this and the exclusion zone size:
+x = max(0, Angle(r1, r2))
+Hence the epfd is:
+EPFD = EIRP(x) – 10log10(4πr12)
+The  is the location of the ES with the highest single entry epfd.
+Hence:
+WCGA_UP_Equatorial_Masks:
+For all EIRP masks
+Call WCGA_Up_Equatorial(max(LatMax, Mask start latitude))
+Call WCGA_Up_Equatorial(min(+LatMax, Mask end latitude))
+Next mask
+3.2.3.3.3	e.i.r.p. masks not monotonically decreasing
+If the non-GSO e.i.r.p. mask is not monotonically decreasing, then it becomes necessary to check additional latitudes. The latitude range is determined by the range of visibility in latitude of the non-GSO satellite constellation, calculated using the equations above.
+The algorithm requires a step size, which should be the minimum of 1º and the smallest step size in the e.i.r.p. masks.
+It is assumed that the e.i.r.p. mask is symmetric in latitude.
+There is then an outer loop:
+WCGA_UP_Equatorial_all:
+LatStepSize = min(1, StepSizeinEIRPMask)
+Calculate LatMax from non-GSO orbit parameters
+For latitude = 0 to LatMax
+Get EIRP mask for this latitude
+WCGA_Up_Equatorial(latitude)
+Next latitude
+The WCGA_Up_Equatorial(latitude) is the same as for the case above with monotonically increasing e.i.r.p. masks, namely:
+WCGA_Up_Equatorial(latitude):
+Calculate the GSO satellite’s φBS
+For this latitude, calculate the longitude
+Calculate the ES and GSO satellite vectors
+Calculate the longitude of the non-GSO satellite
+Calculate the non-GSO satellite vector
+Calculate offaxis angle at ES
+Calculate EPFD
+If this is the highest EPFD so far then store it
+3.2.3.4	Specific ES locations
+Some non-GSO networks are proposing to only use a specific set of ES locations and will not have a general wide spread deployed assumed in the existing WCGA(up). The algorithm to use will depend upon whether the constellation repeats or not: if the constellation repeats then the geometric permutations will be significantly reduced.
+3.2.3.4.1	Specific ES repeating orbit
+If there are specific ES locations and the non-GSO satellite network using a repeating track orbit then there will be a highly limited number of geometries that are feasible. It is therefore possible to fly the satellite for the repeat period and then, for each ES, for each non-GSO satellite, calculate the . If  ≤ 0, or the elevation angle is below the minimum, then the ES would not transmit, otherwise the epfd towards that location can be derived.
+In some cases, the ES would appear to be very close to the rim of the Earth as seen by the GSO satellite. However as noted elsewhere, it is assumed that there are restrictions in the pointing of the GSO satellite beam. It is therefore necessary to adjust the boresight so that it is as close as possible to the non-GSO ES using the geometry in Fig. 25.
+Figure 25
+(up) adjustment of GSO beam boresight
+The inputs are the non-GSO ES location (latitude, longitude) and the longitude on the GSO arc corresponding to the α towards the non-GSO satellite.
+Then:
+Calculate the two position vectors given in the equations above
+Calculate the (azimuth, elevation) of the ES as seen by the GSO
+Calculate the (, φ) of the ES as seen by the GSO
+Derive the adjusted point (, φ0) of the boresight
+Calculate ∆φ = φ – φ0
+Calculate the (azimuth, elevation) of the boresight
+Create a line from the GSO satellite in this direction
+Calculate the intersection point = BS location
+Hence the algorithm is:
+WCGA_UP_SpecifcES_Repeating:
+Set WorstEPFD = –999
+For each ES
+Get the EIRP mask for this ES
+Get the beamwidth for this EIRP mask
+Use the beamwidth to calculate the time step = t_step
+Get t_repeat = the repeat period of the constellation
+For t = 0 to t_repeat with step size t_step
+Update the position vector of this ES
+For all non-GSO satellites
+Update the position vector of this satellite
+If this satellite is visible to the ES
+Calculate α for this satellite, ES
+Calculate elevation angle ε for this satellite
+If α  α0 and ε > ε0 then
+Calculate d = distance ES to α point on GSO arc
+Calculate GSO boresight position and φ
+Calculate EPFD = EIRP(α) + Grel(φ)
+–10log10(4πd2)
+If EPFD > WorstEPFD then
+WorstEPFD = EPFD
+Store this GSO(long, boresight) geometry
+Endif
+Endif
+Endif
+Next satellite
+Next time step
+Next ES
+3.2.3.4.2	Specific ES non-repeating orbit
+If there are specific ES and the non-GSO constellation drifts, it will eventually be in every possible configuration, and eventually there will be the case where the non-GSO satellite and ES have the same longitude and the non-GSO satellite is just at the edge of the exclusion zone, as in Fig. 26:
+Figure 26
+Distance from non-GSO ES to GSO satellite
+The distance can be calculated using:
+The ES could be located above the maximum boresight location for the GSO satellite. This can be checked by calculating φ using:
+If  φES > φ0 then ∆φ = φES – φ0 else ∆φ = 0.
+At this point:
+EPFD = EIRP() + Grel(∆φ) – 10log10(4πd2)
+It is therefore possible to iterate over all non-GSO ES and for each latitude and e.i.r.p. mask derive a single entry epfd. The ES which has the highest single entry epfd can then be selected.
+The GSO satellite is then at the same longitude as the ES and with boresight at the minimum of the ES latitude and value calculated from the elevation angle and beamwidth.
+3.2.3.5	General case
+This case is for when the e.i.r.p. mask varies by latitude and the non-GSO satellite system provides global coverage to ES given via a density rather than specific locations.
+In this case the non-GSO satellite will cover all locations in the sky as seen by the non-GSO ES and so the epfd will be:
+EPFD = EIRP(0) + 10log10(4πd2)
+Note that to get epfd values in the same units as given in the RR, the distance should be in metres rather than km.
+This epfd will decrease as the path loss increases towards the edge of coverage. However the aggregation effect of increasing area as the beam points away from the sub-satellite point is more significant. Hence the worst case will be at the limit identified previously:
+Figure 27
+WCGA(up) GSO beam location
+Therefore the WCGA in the case where the e.i.r.p. mask varies by latitude is to look at the e.i.r.p. masks to determine which has the highest e.i.r.p.(0). When there is a range of latitudes with the same value, the highest should be taken.
+Then from the θBS and latitude, the difference in longitude can be calculated using:
+cos θBS = cos latBS cos ∆longBS
+The GSO longitude should be selected such that the first satellite of the non-GSO constellation goes through the centre of this beam during its first orbit. The first step is the two test position vectors:
+It is then possible to create a line:
+where:
+p = rGSO
+The non-GSO satellite should be somewhere along that line during its first orbit in the simulation.
+For circular orbits the radius is constant and so the point at which the non-GSO satellite crosses this line can be calculated by finding the first positive solution of the following quadratic equation in :
+From the position vector of the non-GSO satellite its (latitude, longitude) can be calculated.
+Note that the calculations above were based upon a reference GSO satellite with longitude zero and hence this is not the actual longitude but rather difference in longitude required between the GSO satellite and the non-GSO satellite when it reaches the required latitude.
+The moment that that satellite reaches this latitude can be derived from:
+From , the actual longitude of the non-GSO satellite can be calculated when it reaches the required longitude, and the actual longitude of the GSO satellite derived as:
+longGSO = longNGSO – ∆longitude
+For elliptical systems, this could require iteration in . One approach is as follows:
+SetSatelliteElliptical:
+Set LatIn1 = 0.00001
+Set LatIn2 = LatBS
+LatOut1 = CalcLatOut(LatIn1)
+LatOut2 = CalcLatOut(LatIn2)
+While (abs(LatIn1 – LatIn2) > 1e-6)
+LatIn3 = (LatIn1 + LatIn2)/2
+LatOut3 = CalcLatOut(LatIn3)
+if (dLatIn3 > dLatOut3)
+{
+dLatIn2 = dLatIn3
+dLatOut2 = dLatOut3
+}
+else
+{
+dLatIn1 = dLatIn3
+dLatOut1 = dLatOut3
+}
+Wend
+CalcLatOut(LatIn):
+From LatIn calculate non-GSO (w + v) and hence v
+Hence calculate r_ngso = p/(1 + e*cos(nu))
+Solve line for point P where r = r_non
+Calculate latitude of point P
+Return latitude calculated
+Hence:
+WCGA_UP_General:
+Set WorstEIRP = -999
+Set MaxLat = 0
+Calculate φ0
+For each EIRP mask
+Calculate ThisEIRP = max(EIRP( > α0), EIRP(α0))
+If ThisEIRP > WorstEIRP
+Set MaxLat = the largest absolute latitude for this mask
+WorstEIRP = ThisEIRP
+Endif
+Next mask
+From MaxLat and φ0 calculate the longitude
+Calculate when first non-GSO satellite would be inline
+Hence set
+3.3	 epfdIS
+3.3.1	Inputs
+The inputs to the algorithm are as follows:
+SS_eirp :	the satellite e.i.r.p. mask to check
+θadB :	the GSO satellite’s beam half power beamwidth
+:	the minimum elevation angle of the GSO system
+a,i,e, ,, :	the inclination orbit parameters of the non-GSO system.
+3.3.2	Algorithm
+WCGA_IS:
+From the EPFD limits get the gain pattern to use
+From the EPFD limits get the GSO beamwidth θadB
+From  θadB calculate φ1, φ2
+Using the gain pattern calculate Grel(φi) for i = 1,2
+From φ1 calculate LatBS
+If for all satellites i = 0 then
+{
+Worst Case Geometry:
+BS.Latitude = 0
+BS.Longitude = LatBS
+GSO.Longitude = 0
+}
+Else
+{
+Set WorstEPFDBin = -9999
+Set WorstAngularVelocity = +9999
+For all satellites in the order listed in ITU DB
+{
+Determine EIRP mask to use for this satellite
+If this EIRP mask has not been checked so far then
+Call GetWCGA_IS(EIRP_mask, i)
+End if
+Next satellite
+Rotate GSO, BS in longitude to ensure inline event
+}
+GetWCGA_IS(EIRP_Mask, i):
+LatStep = i / RoundUp(i)
+For lat=i to +i in LatStep steps
+{
+Set satellite at latitude to calculate r, v
+If satellite is above minimum operating height
+{
+From r, φi calculate ψi
+From φi, ψi calculate Di, θi
+Try to calculate ∆longi
+In the cases that the geometries are feasible
+{
+From the GSO gain pattern calculate Grel(φi)
+From the EIRP mask calculate EIRP(ψi)
+Calculate EPFDi
+Calculate rgso, gso
+Calculate θ of non-GSO satellite as seen by GSO
+If EPFDi is higher than WorstEPFD
+{
+Store this geometry
+WorstAngularVelocity = θ
+WorstEPFD = EPFDi
+}
+Else if EPFDi is the same bin as WorstEPFD
+{
+If θ is lower than WorstAngularVelocity
+{
+Store this geometry
+WorstAngularVelocity = θ
+}
+}
+}
+}
+}
+3.3.3	Geometry
+There are two potentially significant geometries, which is when the non-GSO satellite just becomes visible as seen by the GSO satellite and when it traverses the GSO satellite beam, as shown below:
+Figure 28
+Two (IS) non-GSO satellite locations
+In some cases, the same  location will handle both geometries – e.g. for an equatorial satellite system a beam at the extreme in azimuth will be aligned for both geometries.
+From the radius of the non-GSO satellite at each of the positions, it is possible to calculate the off-axis angle at the satellite and hence e.i.r.p.() together with the distance:
+Figure 29
+Two (IS) calculation of satellite off-axis angle
+where:
+φ1 = φBS (from above)
+Hence:
+Where i = {1, 2} noting that  and that
+Then:
+θi = π – φi – ψi
+Hence given a non-GSO satellite with radius distance Rngso,i at the two specified geometries, the two single entry epfd levels can be calculated as:
+)
+Note that Grel,1 = 0 and Grel,2 = Grel (φ2 – φ1).
+By setting the non-GSO satellite at a specified latitude, it is therefore possible to derive the single entry epfd from the radius vector and the two geometries identified above.
+In some cases, there will be no in-line geometry – for example for elliptical systems at apogee the line from the non-GSO satellite to the GSO arc will at no point intersect the Earth. This can be checked by calculating the difference in longitude between the non-GSO satellite and the point on the GSO arc from the geometry above and the non-GSO satellite’s latitude using:
+If there is no solution to this equation, then there is no position that meets the required geometry. Other positions could be excluded if the non-GSO satellite was below the minimum operating height.
+Given multiple locations with the same single entry epfd, then the one to use would be the one with the lowest angular velocity, using the same method as for WCGA(down), noting that the velocity vector of the GSO satellite can be derived in the same way as for earth stations, i.e.
+The position of the GSO satellite would be chosen such that one of the non-GSO satellites with the e.i.r.p. mask identified traverses the critical geometry during its first orbit, using the same methodology as for the WCGA(up).
+Additional geometry for the  for epfd(IS) is described in §§ C.3.1.3 and C.3.2.3 above.
+4	Calculation of time step size and number of time steps
+4.1	Simulation time increment and accuracy
+The simulation time increment is one of the most important parameters for the determination of a distribution function of interference from non-GSO networks on the basis of the simulation model. Its specified value should guarantee absence of cases when high-level short-term interference exceeding an acceptable level is missed and is not considered. Otherwise results of simulation analysis will be inaccurate and sometimes erroneous. The decrease of a simulation time increment allows to increase accuracy of obtained results but at the same time results in increase of total number of simulation time increments and amount of required calculations.
+The description of calculation algorithms for simulation time increment in uplink, downlink and intersatellite cases are shown below.
+4.2	Description of the procedure for the determination of minimum downlink simulation time increment
+The value of simulation time increment should guarantee acquisition and description of the most short-term interference scenarios with the required accuracy. The high-level short-term interference is caused by emission of a non-GSO space station which is in-line situation (a non-GSO satellite passes through the main beam of a GSO earth station antenna). Therefore, the method for determining a simulation time increment tref  is based on ensuring the required number Nhit of pfd↓ estimations during the time interval t when a non-GSO satellite passes through the main beam of a GSO earth station antenna:
+(1)
+The time required for a non-GSO satellite passing through the main beam of a GSO earth station antenna depends on mutual location of the earth and space stations of the GSO network as well as on orbital parameters of the non-GSO network. The value of t should be computed at the location where the time for a non-GSO satellite to pass through the GSO main beam is smallest. Since this occurs when a GSO earth station is located directly under a GSO space station, pass time t is determined by equations (2) and (3) (see Fig. 30):
+(2)
+where:
+(3)
+s:	non-GSO satellite angular velocity of rotation around the Earth at the minimum operational altitude (degrees/s); for multiple orbits, the greatest such s should be selected
+e:	Earth rotation angular velocity at the equator (degrees/s)
+i:	orbit inclination (degrees)
+3dB:	GSO earth station antenna 3 dB beamwidth (degrees)
+Re:	Earth radius (km)
+h:	orbit altitude (km) (see Note 1)
+NOTE 1 – In the case that the constellation has multiple values of h for different sub-constellations or planes, the lowest value should be used. In the case of elliptical orbits the minimum operating height should be used.
+Figure 30
+Calculation of epfd(down) time step size
+The Nhit value defines simulation accuracy. The higher the Nhit value the higher the accuracy of the final results.
+Nhit should be set to 16 as derived in § D.4.5. In a case when a non-GSO network satellite constellation consists of satellites with different orbital parameters it is necessary to determine a simulation time increment for each type of the orbits concerned and to define a minimum one.
+TABLE 9
+Input data
+4.3	Description of the procedure for the determination of minimum uplink simulation time increment
+High-level short-term uplink interference would be caused by emissions from a non-GSO earth station during an in-line event (when a GSO SS is in the main beam of a non-GSO earth station antenna). The required number Nhit of epfd↑ measurements should be effected within the period of the GSO satellite staying in the main beam of the non-GSO earth station antenna to ensure acquisition and definition of the in-line event. If the non-GSO earth station were directly below the GSO satellite (see Fig. 31) then the value of the minimum simulation time increment could be calculated using equations (1) and (2). In that case a width of the non-GSO earth station antenna main beam should be taken instead of that of the GSO earth station antenna main beam.
+Figure 31
+Calculation of epfd(up) time step size
+TABLE 10
+Input data
+4.4	Description of the procedure for the determination of minimum inter-satellite simulation time increment
+The time step size for epfdis calculations is derived by considering that there should be at least Nhit time steps during which the non-GSO satellite is within the main beam of the GSO satellite. Given that the shortest time step is when the beam at the GSO is pointed as far as possible away from the sub-satellite point, and given the following:
+Re:	radius of the Earth
+h:	height of non-GSO orbit
+Rgeo:	radius of geostationary orbit
+3dB:	half power beamwidth of GSO beam.
+For eccentric orbit systems, calculate the height when the non-GSO satellite crosses the equator, i.e. when  = –.
+Then the time step can be calculated using the following algorithm (see Fig. 32).
+Figure 32
+Geometric parameters involved in the equations
+Calculate:
+Then calculate the value:
+which can be used in equation (2) to calculate the step size to use.
+4.5	Derivation of Nhit
+The time step size is selected to ensure there is sufficient resolution of the epfd within the victim’s main beam. The necessary resolution is driven by the bin size of 0.1 dB and from this the number of steps within the main beam can be derived.
+Nhit should be selected so that the highest epfd will be detected in the simulation and identified to be within the right bin. This implies a resolution in the calculations of (0.1 dB)/2 = 0.05 dB.
+The greatest error would occur when two time steps are located equally spaced on either side of the main beam, as in Fig. 33:
+Figure 33
+Calculation of Nhits
+The spacing between samples will be:
+The gain pattern within the main beam can be assumed to be parabolic and hence following:
+The slope on this curve is:
+Hence we can derive Nhit required for a difference in gain of 0.05 dB as follows:
+So:
+Therefore for the time step nearest the main beam when:
+Then:
+This approach can also be used for cross-track sampling, and hence Ntrack = Nhit = 16.
+4.6	Total simulation run time
+This section describes the calculation of number of time steps for the epfd↓ and epfd↑ algorithms specified in § D.5. The basic approach first considers constellations with repeating and non-repeating ground track separately, where systems that use repeating ground tracks use station keeping to ensure that the satellites follow a single Earth trace. For example there will be minor launch errors and perturbations that would make the orbit drift unless station keeping was used operationally to ensure the track repeats. Administrations therefore must indicate to the BR whether station keeping is used to maintain a single track.
+Some constellations have different values for inclination, height, or eccentricity between the planes. In this case, it is assumed that, to maintain coverage, the constellation would be designed so that the separation between planes does not change significantly. For the case of repeating ground tracks, this means that there will be a single repeat period for the constellation. This is the time for all satellites within the constellation to return to the same position relative to the Earth and each, within the constraints of station keeping. For the case of non-repeating ground tracks, there will be a single period for all the orbit planes to process around the equator.
+This approach is to be used for constellations with both circular and elliptical orbits with orbit inclination non-zero. For equatorial orbit constellations in which all satellites have the same altitude, then it is sufficient to run for a single repeat period. This can be calculated as follows:
+Where ws and we are the rotation angular velocities of the satellite and Earth as given in § D.2.
+Table 11 shows the input parameters used in all other constellation types.
+TABLE 11
+Input data
+In both cases the time step can be calculated using the method described above. The number of time steps should be at least:
+Nmin  	NS  /(100 – (maximum % in the Tables of Article 22 of the RR less than 100%))
+So for example for the 99.999% case the number of steps would be:
+Nmin    1 000 000
+4.6.1	Repeating orbits
+For those orbits specified as being repeating, the orbit predictor has to be accurate to ensure repeatability. Thus, there is an option for administrations to specify the exact longitude precession rate with respect to a point mass orbit predictor that ensures the orbit would repeat. The definition and use of this parameter is described in § D.6.3.
+With this parameter, a simulated orbit would be repeated but in reality there would be a slight drift due to longitudinal station keeping errors. It is expected that station keeping changes within the orbit plane would make no difference and so are not included.
+The result should be as shown in Fig. 34:
+Figure 34
+Track of repeating orbit non-GSO satellite through GSO ES beam
+In Fig. 34, it can be seen that the result would be a series of samples within the main beam of the GSO earth station that is sufficiently fine to resolve the main beam, includes station keeping drift and produces sufficient samples to generate the required statistics.
+TABLE 12
+Input data
+Given the following parameters:
+Nmin:	minimum number of time steps required for statistical significance
+Prepeat:	time period that the constellation repeats (s)
+Tstep:	time step (s)
+Ntracks:	number of tracks through the main beam, = 16, as specified in § D.4.5.
+For this case the time step should not exactly divide the constellation repeat period. If:
+Nrepsteps    Prepeat/Tstep
+is an integer, then calculate a revised time step equal to:
+Calculate the time period required to get the minimum number of time steps for statistical significance:
+Tsig    Nmin · Tstep
+This corresponds to the following number of constellation repeats:
+Nrep  round (Tsig/Prepeat) to nearest integer above.
+The number of repeats of the constellation is the largest of Nrep or Ntracks i.e.
+Nrun    max (Nrep, Ntracks)
+Then the total run time is:
+Trun  =  Nrun · Prepeat
+So the number of time steps is then:
+Nsteps  round (Trun/Tstep) to nearest integer below.
+4.6.2	Non-repeating orbits
+In this case the longitudinal spacing between successive ascending node passes must be examined so that there are sufficient tracks within the main beam. The time step size and number of time steps can be used to determine how far a particular orbit will have processed within the run. The same numbers can be used to determine how many time steps are required for the orbit to drift around the equator. The orbit period can then be used to work out the difference between tracks.
+The constant that specifies the required number of points within the main beam can be used to specify the number of tracks though the main beam required (i.e. Ntrack  Nhits). If the gap between tracks is too large or too fine (resulting in either insufficient samples or excessive run times respectively) then artificial precession can be used.
+It is expected that station keeping drift should cancel out in the long term and so would not be required for these calculations.
+The result should be as shown in Fig. 35.
+Figure 35
+Track of non-repeating orbit non-GSO satellite through GSO ES beam
+In Fig. 35, it can be seen that the result would be a series of tracks within the main beam of the GSO earth station that is sufficiently fine to resolve the main beam and produces sufficient samples to generate the required statistics.
+TABLE 13
+Input data
+Two parameters are required:
+Spass	longitudinal spacing between successive ascending passes through the equatorial plane
+Sreq	required resolution of passes through the equatorial plane based upon GSO earth station beam size.
+These are calculated using the following steps:
+Step 1:	Using the equations in § D.6.3.2, calculate the
+Step 2:	Convert the  into degrees per minute
+Step 3:	Calculate the nodal period of the orbit in minutes using:
+Step 4:	Calculate the longitudinal spacing between successive ascending passes through the equatorial plane, S, given the Earth’s rotation rate (e  0.250684 degrees/min):
+Spass    (e – r) Pn               degrees
+The equations above apply to circular orbits. For elliptical orbit systems where the calculations above would be significantly different, the value of Spass should be supplied by the administration.
+Step 5:	From the GSO earth station beamwidth and height, Sreq can be calculated using equation (3):
+Step 6:	Calculate the number of orbits to fully populate around the equator, taking into account that each plane has ascending and descending nodes:
+Step 7:	Round Norbits to next highest integer.
+Step 8:	Calculate total angle orbit has rotated round during this time:
+Step 9:	Calculate the number of multiples of 360 that this corresponds to, rounding up to nearest integer below:
+Step 10:		Calculate the separation between planes that this corresponds to:
+Step 11:		To ensure that the orbit drifts with the required precession rate, the following additional artificial precession should be included:
+Sartificial  =  Sactual – Spass               degrees/orbit
+or:
+degrees/s
+Step 12:		Part D gives more information on how this parameter is used. The total run time is then the time to process around the equator, namely:
+Trun    Tperiod · Norbits
+Step 13:		The total number of time steps is then:
+Nsteps    Round (Trun / Tstep) to nearest integer below.
+4.7	Dual time step option
+4.7.1	Dual time step option epfd(down)
+In order to improve simulation performance an option to the algorithm is to implement two time steps. A coarse time step would be used except when any non-GSO satellite is near one of the two conditions:
+–	exclusion angle  or X = 0
+–	exclusion angle  or X = edge of exclusion zone.
+Figure 36 shows where to use the finer time step:
+Figure 36
+Use of fine time step when at edge or centre of exclusion zone
+A coarse step size is used for non-critical regions far from the GSO earth station main beam axis and exclusion zone boundaries. This step size is defined as a topocentric angle:
+coarse  =  1.5
+This coarse step size is used for all antenna beamwidths and all non-GSO systems.
+There are two possible fine step regions because of the two possible maximum epfd locations of a non-GSO:
+a)	When a non-GSO satellite is near the main beam, the fine step region is defined as a fixed topocentric angle from the axis of the GSO earth station beam (X or   =  0).
+–	If D/ > 100, set the edge of the first sidelobe region to r of the GSO earth station pattern:
+1  =  r  =  15.85(D/)–0.6
+–	If D/  100, set the edge of the first sidelobe region to that defined in the GSO earth station pattern:
+1  =  95 /D
+The off-bore angle for the fine step region is defined as the greater of 3.5 or 1:
+1  =  max (3.5, φ1)
+b)	When a non-GSO satellite is near the exclusion zone, the fine step region measured from the boundary of the exclusion zone (X = X0 or  = 0) is defined as:
+_2  =  φcoarse
+The size of the coarse step needs to be an integer multiple of fine steps for statistical purposes. Since the coarse step size is constant, the ratio of coarse steps to fine steps is dependent only upon the beamwidth of the GSO earth station (3dB). This ratio is defined as:
+Ncoarse  =  Floor ((Nhits * φcoarse) / φ3dB)
+where floor is a function that truncates the decimal part of the ratio and outputs the integer part of the ratio. This produces a conservative ratio of fine steps to coarse steps to ensure that a coarse step is never larger than the target topocentric size of 1.5°.
+4.7.2	Dual time step option epfd(up)
+In order to improve simulation performance an option to the algorithm is to implement two time steps. A coarse time step would be used except when any non-GSO satellite is near the edge of the exclusion zone. Note that there is no need to check for the central line representing  = 0 as non-GSO earth station does not transmit to the non-GSO satellite when within the exclusion zone.
+Figure 37 shows where to use the finer time step:
+Figure 37
+Use of fine time step when at edge of exclusion zone
+A coarse step size is used for non-critical regions far from the GSO earth station main beam axis and exclusion zone boundaries. This step size is defined as a topocentric angle:
+φcoarse = 1.5
+This coarse step size is used for all antenna beamwidths and non-GSO systems.
+The size of the coarse step needs to be an integer multiple of fine steps for statistical purposes. Since the coarse step size is constant, the ratio of coarse steps to fine steps is dependent only upon the beamwidth of the non-GSO earth station (3dB). This ratio is defined as:
+Ncoarse = Floor ((Nhits * φcoarse) / φ3dB)
+where floor is a function that truncates the decimal part of the ratio and outputs the integer part of the ratio. This produces a conservative ratio of fine steps to coarse steps to ensure that a coarse step is never larger than the target topocentric size of 1.5°.
+5	epfd calculation description
+5.1	epfd software description
+This section describes the algorithm to calculate the epfd↓ from a non-GSO constellation into a GSO downlink. It is assumed that each non-GSO satellite has a pfd mask. From the pfd for each satellite the aggregate epfd↓ at an earth station of a GSO system is calculated. This is repeated for a series of time steps until a distribution of epfd↓ is produced. This distribution can then be compared with the limits to give a go/no go decision.
+Figure 38 shows the geometry with constellation of non-GSO satellites and test GSO satellite transmitting to a GSO earth station.
+Figure 38
+Example of epfd(down) scenario
+5.1.1	Configuration parameters
+These run definition parameters are:
+5.1.2	Non-GSO system parameters
+The following parameters, as specified in § B.3.1 would be used.
+For each satellite the following parameters specified in § B.3.2 – Parameters provided by administration of the non-GSO system, would be used, where the definitions of the parameters are specified in § D.6.3.1 at the time of the start of the simulation.
+Note that in the Table below, the indices [N] are present to indicate that there would be a different value for each satellite, and the N-th value corresponds to the N-th satellite. For the pfd mask it indicates that the pfd data is structured in such a way that the pfd[N] entry is a reference that points to a particular sub-set. For example each satellite in the constellation could reference the same pfd(lat, az, el), pfd(lat, X, long), or pfd(lat, , long) table.
+5.1.3	Run time step parameters
+The following run parameters should be calculated using the algorithm in § D.4:
+5.1.4	Algorithms and calculation procedures
+The operating non-GSO satellites are those outside the exclusion zone, above their minimum operating elevation angle and transmitting towards (i.e. height above or equal to MIN_OPERATING_HEIGHT) the GSO earth station. The maximum number of operating non-GSO satellites is the maximum number of non-GSO satellites allowed to transmit co-frequency towards the same area on the ground.
+To calculate epfd↓ values from one non-GSO system into one GSO system earth station the following algorithm should be used. The algorithm can be used on multiple GSO systems in parallel if required.
+Step 1:	Read in parameters for non-GSO system as specified in § D.5.1.2.
+Step 2:	Read in GSO parameters as specified in § D.5.1.1.
+Step 3:	If required, calculate the maximum epfd GSO location using the algorithm in § D.3.1.
+Step 4:	Initialize statistics by zeroing all bins of epfd↓ values.
+Step 5:	If required calculate number of time steps and time step size using algorithm in § D.4 and hence calculate end time.
+If a dual time step algorithm is included then use Sub-step 5.1, otherwise Ncoarse = 1 all the time.
+Sub-step 5.1:	Calculate coarse step size Tcoarse = Tfine * Ncoarse.
+Step 6:	If a dual time step algorithm is included then repeat Sub-step 6.1 to Step 22 until end time is reached, otherwise repeat Steps 7 to 22 until end time is reached.
+Sub-step 6.1:	If it is the first time step then set Tstep = Tfine.
+Sub-step 6.2:	Otherwise if there are less than Ncoarse steps remaining then set Tstep = Tfine.
+Sub-step 6.3:	Otherwise, if any of the  or X angles for the last time step were within _1 of zero or _2 of the exclusion zone angle (0 or X0) then set Tstep = Tfine; otherwise, set Tstep = Tcoarse.
+Step 7:	Update position vectors of all earth stations based on coordinate system in § D.6.1.
+Step 8:	Update position vectors of all GSO satellites based on coordinate system in § D.6.2.
+Step 9:	Update position and velocity vectors of all non-GSO satellites based on coordinate system, orbit prediction model and station keeping algorithm in § D.6.3.
+Step 10:		Set epfd↓ = 0.
+Step 11:		Select all non-GSO satellites visible to the GSO earth station using the algorithm in § D.6.4.1.
+Step 12:		Repeat Steps 13 to 18 for each visible non-GSO satellite.
+Step 13:		Calculate the parameters required by the pfd mask, either (lat,  or X, long) or (lat, azimuth, elevation) as required, using the definition of angles in § D.6.4.4 or § D.6.4.5.
+Step 14:		Using the pfd mask for the selected non-GSO satellite, calculate pfd(lat,  or X, long) or pfd(lat, azimuth, elevation) at the GSO earth station using the non-GSO satellite pfd mask as specified in § D.5.1.5.
+Step 15:		Calculate the off-axis angle  at GSO earth station between line to the GSO satellite and the non-GSO satellite.
+Step 16:		Calculate GRX() = Receive gain (dB) at GSO earth station using relevant gain pattern specified in algorithms in § D.6.5.
+Step 17:		Calculate epfd↓i for this non-GSO satellite using:
+Step 18:		epfd↓i = pfd() + GRX() – Gmax where Gmax is the peak gain of the GSO earth station antenna.
+Step 19:		Sort the epfd↓ contributions of the non-GSO satellites.
+Step 20:		Repeat Step 21 for the Nco[lat] largest epfd↓ contributions on this list plus those satellites within the exclusion zone, where Nco[lat] is the maximum number of operating non-GSO satellites at the latitude of GSO_ES considered corresponding to the maximum number of satellites allowed to transmit at the same frequency towards the same area on the ground, fulfilling the GSO exclusion zone and minimum elevation angle requirements as defined by for the non-GSO system.
+Step 21:		Increment epfd↓ by the epfd↓i value.
+Step 22:		Increment epfd↓ statistics by epfd↓ for this time step by (Tstep/Tfine) entries.
+Step 23:		Generate the epfd↓ CDF from the epfd↓ PDF using the algorithm in § D.7.1.2.
+Step 24:		Compare epfd↓ statistics with limits using the algorithm in § D.7.1.
+Step 25:		Output results in format specified in § D.7.3.
+5.1.5	pfd mask calculation
+The pfd mask is defined as a table of pfd values for various angles and latitudes.
+Note that the latitude range should be:
+Minimum:	–i
+Maximum:	+i
+where i is the inclination of the non-GSO satellite’s orbit.
+In general, the (azimuth, elevation) or (,or X) angles calculated at each time step will be between two values in the arrays. In this case linear interpolation between pfd values should be used. If the angles are outside the pfd mask, the software calculates pfd from the highest angle in the mask (i.e. at the mask edge).
+The mask that is closer in latitude to that of the reference satellite should be used. Part C gives more information about the format and sampling of the pfd mask.
+5.1.6	Outputs
+The result of the algorithm is two arrays in format:
+where PC_[I] is the percentage of time epfd_DOWN_[I] is exceeded.
+5.2	epfd↑ software description
+This section describes the algorithm to calculate epfd↑ from non-GSO earth stations into a GSO uplink. The locations of the ES can be defined in one of two ways:
+1)	It is assumed that the Earth is populated with a uniform distribution of non-GSO earth stations. In this case the ES_ID in the e.i.r.p. mask should be set to –1.
+2)	The locations of specific ES are used via a field in the ES e.i.r.p. mask. In this case the density field is not used.
+Each earth station points towards a non-GSO satellite using pointing rules for that constellation, and transmits with a defined e.i.r.p. From the e.i.r.p. and off-axis gain pattern for each earth station, the epfd↑ at the GSO can be calculated. This is repeated for a series of time steps (or reference satellite positions, in the analytical method) until a distribution of epfd↑ is produced. This distribution can then be compared with the limits to give a go/no go decision.
+Figure 39 shows the geometry with population of non-GSO earth stations transmitting to a constellation of non-GSO satellites, together with a test GSO satellite receiving from a GSO earth station.
+Figure 39
+Example of epfd(up) scenario
+5.2.1	Configuration parameters
+This sub-section specifies the parameters required for all epfd↑ calculations defined in the RR. This would be a data-set of N sets of limits that can be shared between runs. The Table could be queried so that the required values can be used depending upon non-GSO system frequency.
+For each set of limits the following would be defined as generated by in § D.2.1
+5.2.2	Determination of maximum epfd configuration
+The maximum epfd location of the GSO satellite and beam centre is defined in § D.3.2.
+5.2.3	Calculation of run steps
+The time step and number of time steps are calculated using the algorithm in § D.4 which also describes the optional dual time step option.
+5.2.4	Inputs
+5.2.4.1	Input parameters
+This section defines the input parameters for a particular non-GSO system scenario. In this case, input is a generic term that could include files or user input. Information is required for:
+–	non-GSO system;
+–	GSO system;
+–	run configuration.
+5.2.4.2	Non-GSO system parameters
+The following parameters, as specified in § B.3.1 would be used:
+For each satellite the following parameters specified in § B.3.2, would be used, where the definitions of the parameters are specified in § D.6.3.1 at the time of the start of the simulation.
+Note that in the Table below, the indices [N] are present to indicate that there would be a different value for each satellite, and the N-th value corresponds to the N-th satellite.
+Each satellite must have an independent set of six orbital parameters for orbit definition and subsequent propagation.
+To define the characteristics of non-GSO earth stations, the following parameters, as specified in § B.4.2 would be used:
+5.2.4.3	GSO system parameters
+The GSO system can be either calculated or use worst-case parameters using the algorithm in § D.3.2 or entered values. The required parameters as specified are:
+These parameters are defined in §§ D.6.1 and D.6.2.
+5.2.4.4	Run parameters
+The following run parameters should be calculated using the algorithm in § D.4:
+5.2.5	Production of non-GSO earth station distribution
+In the case that the non-GSO ES locations are defined by a distribution, the following method should be used:
+Step 1:	Calculate the number of actual operating non-GSO earth stations that the representative earth station will represent using:
+NUM_ES = ES_DISTANCE * ES_DISTANCE * ES_DENSITY
+Step 2:	Calculate e.i.r.p. to use for each representative non-GSO earth station using:
+_e.i.r.p. = ES_e.i.r.p. + 10log10(NUM_ES)
+Step 3:	Define the GSO service area as the region enclosed by the contour representing a relative gain of 15 dB.
+Step 4:	For every distance ES_DISTANCE in latitude and distance ES_DISTANCE in longitude within the service area defined in Step 3, locate a representative non-GSO earth station with radiating with _e.i.r.p.
+The deployment method should be symmetric around the (latitude, longitude) of the GSO satellite’s boresight, as shown in Fig. 40.
+Figure 40
+Deployment method for non-GSO earth stations
+No non-GSO ESs should be deployed below the minimum latitude or above the maximum latitude, where these two extreme values are derived using the methodology above.
+The separation in latitude in radians between non-GSO ES can be calculated from the distance using:
+The separation in longitude in radians between non-GSO ES can be calculated using:
+5.2.6	Algorithms and calculation procedures
+To calculate epfd↑ values from one non-GSO system into one GSO system satellite the following algorithm should be used. The algorithm can be used on multiple GSO systems in parallel if required:
+Step 1:	Read in parameters for non-GSO system as specified in § D.5.2.4.2.
+Step 2:	Read in GSO parameters as specified in § D.5.2.4.3.
+Step 3:	If required calculate maximum epfd GSO location using the algorithm in § D.3.2.
+Step 4:	If required calculate locations of non-GSO earth stations using the algorithm in § D.5.2.5.
+Step 5:	Initialize statistics by zeroing all bins of epfd↑ values.
+Step 6:	If required calculate number of time steps and time step size using the algorithm in § D.4 and hence calculate end time.
+If a dual time step algorithm is included then use Sub-step 6.1, otherwise Ncoarse  1 all the time.
+Sub-step 6.1:	Calculate coarse step size Tcoarse = Tfine * Ncoarse.
+Step 7:	Repeat Steps 8 to 24 for all time steps.
+If a dual time step algorithm is included then repeat Sub-step 7.1 to Step 22 until end time is reached.
+Sub-step 7.1:	If it is the first time step then set Tstep = Tfine.
+Sub-step 7.2:	Otherwise if there are less than Ncoarse steps remaining then set Tstep = Tfine.
+Sub-step 7.3:	Otherwise if any of the  angles for the last time step were within coarse of the exclusion zone angle then set the Tstep = Tfine; otherwise, use Tstep = Tcoarse.
+Step 8:	Update position vectors of all earth stations using algorithm in § D.6.1.
+Step 9:	Update position and velocity vectors of all non-GSO satellites using algorithm in § D.6.3.2.
+Step 10:		Update position vectors of GSO satellite using algorithm in § D.6.2.
+Step 11:		Set epfd↑ = 0.
+Step 12:		Repeat Steps 13 to 23 for all non-GSO earth stations.
+Step 13:		Determine if this non-GSO earth station is visible to the GSO satellite using the algorithm in § D.6.4.1.
+Step 14:		If the non-GSO earth station is visible to the GSO satellite then do Steps 15 to 23.
+Step 15:		Repeat Steps 16 to 23 for the maximum number of non-GSO satellites that can be tracked.
+Step 16:		Select the i-th satellite away from the GSO satellite that is above minimum elevation angle and not inside the GSO exclusion zone.
+Step 17:		If the algorithm has selected a satellite then do Steps 18 to 23.
+Step 18:		Calculate ES_EIRP[lat] (dB(W/BWraf)) of non-GSO earth station at its given latitude in direction of GSO satellite using non-GSO earth station e.i.r.p. mask in § C.3.
+_EIRP = ES_EIRP[lat] + 10log10 (NUM_ES)
+Step 19:		Calculate GRX = receive relative gain (dB) at GSO satellite using relevant gain pattern specified in the algorithms in § D.6.5.
+Step 20:		Calculate D = distance (km) between the non-GSO earth station and the GSO satellite using the algorithm in § D.6.4.1.
+Step 21:		Calculate the spreading factor LFS = 10log(4D2) + 60.
+Step 22:		Calculate epfd↑i for this non-GSO satellite:
+epfd↑i = _EIRP – LFS + GRX – Gmax
+Step 23:		Increment epfd↑ by epfd↑i.
+Step 24:		Increment epfd↑ statistics by this epfd↑.
+If a dual time step algorithm is included then the step below should be used:
+Sub-step 24.1:	Increment epfd↑ statistics by the epfd↑ for this time step by Tstep/Tfine entries.
+Step 25:		Generate the epfd↑ CDF from the epfd↑ pdf using the algorithm in § D.7.1.2.
+Step 26:		Compare epfd↑ statistics with limits using the algorithm in § D.7.1.
+Step 27:		Output results in format specified in § D.7.2.
+5.2.7	Outputs
+The result of the algorithm is two arrays of size NEPFD↑ in format:
+where PC_[I] is the percentage of time epfd_UP_[I] is exceeded.
+5.3	epfdis software description
+This section describes the algorithm to calculate epfdis from non-GSO space stations into a GSO uplink. From the e.i.r.p. and off-axis angle for each space station, the epfdis at the GSO space station can be calculated. This is repeated for a series of time steps (or reference satellite positions, in the analytical method) until a distribution of epfdis is produced. This distribution can then be compared with the limits to give a go/no go decision.
+5.3.1	Configuration parameters
+This sub-section specifies the parameters required for all epfdis calculations. This would be a data-set of N sets of limits that can be shared between runs. The Table could be queried so that the required values can be used depending upon non-GSO system frequency.
+For each set of limits the following would be defined as derived in § D.2.1.
+5.3.2	Determination of maximum epfd configuration
+The maximum epfd location of GSO satellite and beam centre is defined in § D.3.3
+5.3.3	Calculation of run steps
+A single time step and number of time steps are calculated using the algorithm in § D.4.
+5.3.4	Input parameters
+This sub-section defines the input parameters for a particular non-GSO system scenario. In this case, input is a generic term that could include files or user input. Information is required for:
+–	non-GSO system;
+–	GSO system;
+–	run configuration.
+5.3.4.1	Non-GSO system parameters
+The following parameters, as specified in § B.2.1 would be used:
+For each satellite the following parameters specified in § B.2.1 would be used, where the definitions of the parameters are specified in § D.6.3.1 at the time of the start of the simulation.
+Note that in the Table below, the indices [N] are present to indicate that there would be a different value for each satellite, and the N-th value corresponds to the N-th satellite.
+Each satellite must have an independent set of six orbital parameters for orbit definition and subsequent propagation.
+To define the characteristics of non-GSO space stations, the following parameters, as specified in § B.4.3 would be used:
+5.3.4.2	GSO system parameters
+The GSO system can either use worst-case parameters using the algorithm in § D.5.2 or entered values. The required parameters are:
+These parameters are defined in §§ D.6.1 and D.6.2.
+5.3.4.3	Run parameters
+The following run parameters should be calculated using the algorithm in § D.4:
+5.3.5	Algorithms and calculation procedures
+In the calculation of the dual time step for the epfdis computation, Ncoarse = 1.
+To calculate epfdis values from one non-GSO system into one GSO system satellite the following algorithm should be used. The algorithm can be used on multiple GSO systems in parallel if required:
+Step 1:	Read in parameters for non-GSO system as specified in § D.5.3.4.2.
+Step 2:	Read in GSO parameters as specified in § D.5.3.4.3.
+Step 3:	If required calculate worst-case GSO location using algorithm in § D.3.3.
+Step 4:	Initialize statistics by zeroing all bins of epfdis values.
+Step 5:	If required calculate number of time steps and time step size using algorithm in § D.4 and hence calculate end time.
+If a dual time step algorithm is included then use Sub-step 5.1, otherwise Ncoarse = 1 all the time.
+Sub-step 5.1:	Calculate coarse step size Tcoarse = Tfine * Ncoarse.
+Step 6:	Repeat Steps 7 to 19 for all time steps.
+If a dual time step algorithm is included then repeat Sub-step 6.1 to Step 17 until end time is reached.
+Sub-step 6.1:	If it is the first time step then set Tstep = Tfine.
+Sub-step 6.2:	Otherwise if there are less than Ncoarse steps remaining then set Tstep = Tfine.
+Sub-step 6.3:	Otherwise, if any of the α angles for the last time step were within coarse of the exclusion zone angle then set the Tstep = Tfine; otherwise, use Tstep = Tcoarse.
+Step 7:	Update position and velocity vectors of all non-GSO satellites using algorithm in § D.6.3.
+Step 8:	Update position vectors of GSO satellite using algorithm in § D.6.2.
+Step 9:	Set epfdis = 0.
+Step 10:	Repeat Steps 10 to 18 for all non-GSO space stations.
+Step 11:	Determine if this non-GSO space station is visible to the GSO satellite using the algorithm in § D.6.4.1.
+Step 12:	If the non-GSO space station is visible to the GSO satellite then do Steps 13 to 18.
+Step 13:	Calculate e.i.r.p. (dB(W/BWrif)) of non-GSO space station in direction of GSO satellite using the e.i.r.p. mask in § C.3 for the non-GSO space station’s latitude.
+Step 14:	Calculate GRX = receive relative gain (dB) at GSO satellite using relevant gain pattern specified in algorithms in § D.6.5.
+Step 15:	Calculate D = distance (km) between the non-GSO space station and the GSO satellite using the algorithm in § D.6.4.1.
+Step 16:	Calculate the spreading factor LFS = 10 log(4 D2) + 60.
+Step 17:	Calculate epfdisi for this non-GSO satellite:
+epfdisi = e.i.r.p. – LFS + GRX – Gmax
+Step 18:	Increment epfdis by epfdisi.
+Sub-step 19:	Increment epfdis statistics by this epfdis.
+If a dual time step algorithm is included then the step below should be used:
+Sub-step 19.1:	Increment epfdis statistics by the epfdis for this time step by Tstep/Tfine entries.
+Step 20:	Generate the epfdis CDF from the epfdis pdf using the algorithm in § D.7.1.2.
+Step 21:	Compare epfdis statistics with limits using algorithm in § D.7.1.
+Step 22:	Output results in format specified in § D.7.2.
+5.3.6	Outputs
+The result of the algorithm is two arrays in format:
+where PC_[I] is percentage of time epfd_IS_[I] is exceeded.
+6	Geometry and algorithms
+This section describes the geometry that defines the core algorithms used in the software. One aspect is the conversion into a generic cartesian vector-based coordinate system. The precise orientation of the X vector is not specified in this Recommendation to allow alternative implementations by developers. The axis chosen should not impact the results as satellite and Earth coordinates are defined relative to the Earth.
+To aid developers examples coordinate systems are used to show how to convert to and from generic vectors.
+6.1	Earth coordinates system
+Figure 41 shows the reference coordinate system for earth stations.
+Figure 41
+Definition of latitude
+The Earth is defined as a sphere with radius as specified in § A.2.2 = Re. The Earth rotates around an axis, the Z axis, at a rate defined in § A.2.2 = e. Perpendicular to the Z axis, crossing the Earth at the Equator, is the XY plane.
+Earth stations are located on this sphere based upon two angles:
+Latitude: angle between line from centre of Earth to earth station and XY plane;
+Longitude: angle as shown in Fig. 42.
+Figure 42
+Definition of longitude
+Earth stations are assumed to have constant position in time.
+The orientation within the XY plane of the X and Y axes is not specified in this Recommendation as all locations are referenced to the Earth rather than one particular inertial frame. This allows different implementations to use different reference points if required without impacting on the results.
+One possible implementation is what is described as the geocentric inertial system. For this example case, conversion from geographic coordinates is achieved using:
+if y  0	(5)
+if y  0	(6)
+(7)
+If this example coordinate system is used, then the conversion from geographic coordinates into geocentric inertial system coordinates is:
+x = Re cos(lat) cos(long)	(8)
+y = Re cos(lat) sin(long)	(9)
+z = Re sin(lat)	(10)
+where:
+(x, y, z):	coordinates in the geocentric inertial system
+long:	geographic longitude
+lat: 	geographic latitude.
+In this example geocentric inertial reference system, the equation for motion of a mass point on the Earth’s surface would be as:
+(11)
+where:
+lat:	geographic latitude of the mass point on the Earth’s surface
+lon:	geographic longitude of the mass point on the Earth’s surface
+t:	time
+e:	angular rate of rotation of the Earth.
+6.2	GSO satellite coordinate system
+The geostationary arc is a circle in the XY plane at a distance of Rgeo from the Earth’s centre where Rgeo is specified in § A.2.2. Individual geostationary satellites have location on this circle defined by a longitude as shown in Fig. 43.
+Figure 43
+Definition of GSO satellite longitude
+Geostationary satellites are assumed to have constant longitude in time. The conversion to and from vectors can use the same algorithms as in the section above by setting the latitude to zero.
+6.3	Non-GSO satellite coordinate system
+6.3.1	Non-GSO satellite orbit parameters
+This section defines the parameters that specify an orbit for non-GSO satellites. Non-GSO satellites move in a plane as shown in Fig. 44.
+Figure 44
+Orbit plane angles
+The plane of the orbit is referenced to the Earth by two angles:
+:	longitude of ascending node: This defines where the ascending orbit plane intersects the equatorial plane. As the orbit is fixed in inertial space while the Earth rotates, a time reference for which this angle is valid must be given. In this case it is the start of the simulation.
+i:	inclination angle: This is defined as the angle between the plane of the orbit and the equatorial plane.
+The orbit and position of the non-GSO satellite within the orbit is then defined by further parameters as shown in Fig. 45.
+Figure 45
+Definition of non-GSO satellite in-plane angles
+The shape of the orbit is defined by:
+a = (Ra + Rp)/2	(12)
+e = (Ra – Rp) / (Ra + Rp)	(13)
+where:
+a:	semi-major axis
+e:	eccentricity
+Ra:	distance from the centre of the Earth to the satellite at apogee
+Rp:	distance from the centre of the Earth to the satellite at perigee.
+The position of the perigee within the orbit plane is defined by:
+:	argument of perigee, angle between the line of the nodes and perigee.
+The position of a non-GSO satellite within the plane at a particular time is defined by:
+v0:	angle between perigee and specified point on orbit.
+For circular orbits,  can be set to zero and v0 assumed to be the same as the argument of latitude defined as:
+0  =    +  0	(14)
+Other useful terms are:
+p  =  a(1 – e2)	(15)
+M  =  E  –  e sin E	(16)
+(17)
+(18)
+(19)
+where:
+p:	focal parameter
+E:	eccentric anomaly
+M:	mean anomaly
+T:	period of orbit
+R:	distance from centre of Earth to satellite when satellite is at position .
+These can be used by the algorithm to predict the future position of the non-GSO satellite as described in § D.5.
+6.3.2	Non-GSO satellite orbit predictor
+Given the orbital elements in the section above, standard orbit mechanics can be used to predict the position of the satellite at future times. In addition there are three additional precession factors for the ascending node and argument of perigee as described below.
+Line of nodes
+(20)
+where:
+J2 = 	0.001082636
+Orbit precession in ascending node longitude.
+The rate of ascending node longitude secular drift is defined as:
+(21)
+It follows from the above that polar orbits have zero precession rate and equatorial ones have a maximum precession rate. With direct satellite motion (i  90°) the ascending node shifts to the west (to  decreasing) and with reverse satellite motion (i  90°) it shifts to the east (to  increasing).
+Perigee argument precession.
+Perigee argument secular shift rate is defined as:
+(22)
+Perigee argument precession rate at i = 0 and i = 180 is maximum. For i1 = 63 26' 06'' or i2 = 116° 33' 54'' the precession rate is zero. If i  i1 or i  i2, then the perigee precession is along a satellite motion direction, and if i1  i  i2, then it is in the opposite direction.
+Use of precession terms
+Perigee argument is defined as:
+ω = ω0 + ωrt	(23)
+where:
+0:	perigee argument at an initial moment
+r:	perigee argument precession rate.
+A current value of an ascending node longitude is defined as:
+Ω = Ω0 + Ωrt	(24)
+where:
+0:	ascending node longitude at an initial moment
+r:	ascending node longitude precession rate.
+The conversion to generic cartesian-based vector would depend upon the direction of the X vector. For an example coordinate system and for circular orbits, the satellite motion expression in the geocentric inertial reference system could be defined as:
+(25)
+A satellite motion in an elliptical orbit is non-uniform; therefore, the Kepler expression and a concept of a mean anomaly would be used in the model to define the real anomaly as a function of time. Since an explicit dependence of the true anomaly on time is unavailable; the numerical methods of solving the below expressions were used for its definition. The expression is:
+(26)
+6.3.3	Non-GSO satellite orbit station keeping
+An important aspect to station keeping is to simulate multiple passes of the non-GSO satellite through an earth station’s main beam with slightly different crossing directions. As changing the position within the plane does not affect this, then the main parameter to vary is the longitude of the ascending node.
+The approach proposed is to give range Wdelta in longitude of ascending node. At the start of the simulation all stations in the constellation have this parameter offset by Wdelta. During the simulation this field would increase to 0 (at the run’s mid-point) and then increase to Wdelta.
+This is implemented by rotating the station’s position and velocity vectors around the Z axis by the required angle as specified in § D.6.3.4.
+6.3.4	Forced orbit precession
+The standard orbit prediction algorithm is based upon point Earth mass plus correcting factors for J2 perturbations. There are two cases where this requires to be over-ridden:
+a)	where administrations supply a detailed value of the orbit precession rate with respect to a point Earth mass to ensure a repeat ground track;
+b)	for non-repeat orbits where an artificial precession rate is used to ensure the required spacing between equatorial passes.
+This is achieved by rotating the non-GSO satellite position and velocity vectors around the Z axis by the required angle, using rotation matrix:
+(27)
+to rotate by angle .
+NOTE 1 – The software should check the orbit precession rate supplied under item a) for self-consistency with the other input parameters.
+6.3.5	Combining the orbit models
+The various options for the orbit model can be combined in three ways as shown Fig. 46:
+Figure 46
+Flowchart of orbit model options
+Note that the equatorial orbit i = 0 constellation is a special case in that there is no station keeping but the ground track of each satellite repeats just after one orbit.
+It should therefore be treated as Case (1) but with forced precession set to zero as described in § D.4.
+6.3.6	Mapping orbit parameters from  data
+The following orbit parameters are given in the  / IFIC database:
+Table orbit:
+–	Apogee height (km) = ha
+–	Perigee height (km) = hp
+–	Inclination angle (degrees) = INC
+–	Right ascension (degrees) = RA
+–	Longitude of ascending node (degrees) =
+–	Argument of perigee (degrees) = AP.
+Table phase:
+–	Phase angle (degrees) = PA.
+For most of these fields it is possible to map nearly directly to the orbit parameters required, such as:
+i = INC
+=
+= AP
+Note that this algorithm uses the ascending node definition based upon longitude rather than right ascension to ensure the orbit is correctly referenced to earth station longitude.
+The last field to define is the true anomaly, , which can be derived from the phase angle. The phase angle is defined in RR Appendix 4 as:
+The phase angle is shown in Fig. 47:
+Figure 47
+Definition of phase angle
+The true anomaly can therefore be derived from the phase angle as follows:
+6.4	Geometry
+6.4.1	Distance between two stations
+Given two station’s position vectors in the form (x, y, z), the distance D between them can be calculated using:
+6.4.2	Distance to Earth horizon
+The distance to the horizon Dh for a station with Earth centred position vector of magnitude R can be calculated as follows:
+6.4.3	Satellite visibility check
+Two stations, whether earth stations or satellites, are visible if the direct distance between them is less than the sum of the distance to the horizon for each station, using the spherical Earth model described in § D.6.1.
+6.4.4	Angle to GSO arc and Longitude
+Figure 48 shows the definition of the  angle and X angle.
+Figure 48
+Definition of  and X angles
+The Figure shows a test earth station and non-GSO satellite.
+For each test point Pi on the GSO arc, there is a line from the earth station that intersects that point. There is then an angle i between that line and a line from the earth station to the non-GSO satellite.
+The  angle is the minimum of all the test points for which the line does not intersect the Earth, i.e.
+  =  min  (i)
+Similarly for each test point Pi on the GSO arc, there is a line from the non-GSO satellite that intersects that point. There is then an angle Xi between that line and a line from the earth station to the non-GSO satellite.
+The X angle is the minimum of all the test points for which the line does not intersect the Earth, i.e.
+X  =  min  (Xi)
+The sign of  and X is determined by whether the line from the earth station to the non-GSO satellite intersects the XY plane at a distance less than or greater than the GSO radius as follows:
+Given:
+Earth station position vector:
+Non-GSO satellite position vector: 	RNS
+Construct line:
+where:
+This line crosses the XY plane when:
+R(z) = 0
+i.e. when
+Hence:
+The sign of , X is then determined by:
+If Rz=0 > Rgeo then  is positive
+If Rz=0 = Rgeo then  is zero
+If Rz=0 < Rgeo then  is negative.
+From the test point identified to give the  or X angle, the longitude can be calculated between the non-GSO sub-satellite point and the point on the GSO arc where the  (or X) angle is minimized, as shown in Fig. 49:
+Figure 49
+Definition of longitude
+Hence:
+Long = LongAlpha – LongNGSO
+The  or X iteration should use test points that meet the requirements in § D.1.4.
+6.4.5	Satellite azimuth and elevation
+Figure 50 shows the definition of the azimuth and elevation angles used for the non-GSO satellite:
+Figure 50
+Definition of azimuth and elevation
+It should be noted that direction of the cartesian X, Y, Z vectors in this diagram are:
+X:	+ve in the East direction from the non-GSO satellite
+Y:	towards the centre of the Earth from the non-GSO satellite
+Z:	+ve towards the North direction from the non-GSO satellite.
+6.5	Gain patterns
+This section defines the gain patterns used in the algorithms for earth stations and satellites. Note that all formula include the peak gain, so where relative gain is required the peak gain should be subtracted.
+6.5.1	GSO earth station gain patterns
+6.5.1.1	 earth station gain pattern
+The  earth station gain pattern to use is specified in Recommendation ITU-R S.1428.
+6.5.1.2	BSS earth station gain pattern
+The BSS earth station gain pattern to use is specified in Recommendation ITU-R BO.1443.
+6.5.2	GSO satellite gain pattern
+The values of peak gain and half power beamwidth and the antenna reference radiation pattern to use are specified in RR Article 22 based upon Recommendation ITU-R S.672.
+In the 11-14 GHz bands, a peak gain of 32.4 dBi, a beamwidth of 4° and a first side-lobe level of 20 dB should be assumed; in the 20-30 GHz bands, a peak gain of 40.7 dBi, a beamwidth of 1.55° and a first side-lobe level of 10 dB should be assumed.
+7	Structure and format of results
+7.1	Go/No-go decision
+7.1.1	Overall description of the decision process
+When time simulation is used, the simulation produces a probability distribution function (PDF) of the pfd. The PDF records, for each pfd level, the number of simulation time-steps at which that pfd level occurred divided by the sum of all bins. The PDF shall be converted into a cumulative distribution function (CDF) which records for each pfd level the number of simulation time-steps at which that pfd level was exceeded normalized by the total number of simulation time steps.
+When the analytical method is used, a PDF of the pfd is directly determined. This PDF records the probability of occurrence of each pfd level. These probability values correspond to the percentage of time that the pfd level would occur in an infinite time observation interval. This PDF can also be converted into a CDF.
+7.1.2	Production of the CDF
+The process detailed in § D.5 generated a PDF of the pfd values. This PDF shall be converted into a CDF which records for each pfd level an estimate of the percentage of time during which that pfd level is exceeded.
+For each pfd value, the CDF shall be calculated by:
+CDFi = 100 (1 – SUM (PDFmin: PDFi))
+where:
+PDFx:	PDF table entry for a pfd value of X dB, normalized so that the total sum for all PDFx is 1.
+7.1.3	Comparison procedure
+The next stage is the comparison of the pfd limit values in the RR with those in the probability table.
+Step 1:	Perform Steps 2 through 4 for each specification limit i.
+Step 2:	Read the pfd value/probability pair (Ji and Pi) from the database.
+Step 3:	If the pfd value Ji has a higher precision than SB (currently 0.1 dB) round Ji to a lower value with a maximum precision of 0.1 dB.
+Step 4:	From the CDF find Pt, the probability that pfd value Ji was exceeded as obtained by the software.
+Step 5:	If Pi  Pt then record Pass: the CDF complies with this specification point. Else record Fail: the CDF does not comply with this specification point.
+The final stage is the comparison of the maximum pfd value recorded during the software run with the limit specified for 100% time (if any).
+From the CDF, find the maximum pfd value recorded during the software run, Jmax. Compare it with the pfd limit specified for 100% time, J100. If Jmax  J100 then record Pass: the CDF complies with this specification point. If Jmax  J100 then record Fail: the CDF does not comply with this specification point.
+7.1.4	Decision process
+If a Pass result was recorded for all of the specification limits, then the non-GSO network complies with the specification. If any Fail results were recorded, then the non-GSO network does not comply with the specification.
+7.2	Background information to decision
+The background information required is:
+–	pfd data generated in the software run (including antenna diameter) and reference antenna pattern;
+–	table of specification limits for various antenna diameters and reference antenna pattern.
+7.3	Format for output
+The output format shall be:
+–	statement of the result of the test;
+–	summary table;
+–	CDF table (for information only).
+7.3.1	Statement of the result of the compliance test
+The overall conclusion of the evaluation (Pass or Fail) as defined in § D.7.1.4 shall be output.
+7.3.2	Summary table
+The summary table shall show the following data (see Table 14):
+TABLE 14
+Summary table
+7.3.3	Probability table
+The output shall include for information the calculated CDF which was used in the decision-making process.
+PART E
+Testing of the reliability of the software outputs
+1	Evaluation of the computation accuracy of the candidate software
+These tests could be performed by the software developer, and the results supplied to the BR along with the candidate software.
+Software functions to be evaluated:
+Orbit projection – Using a set of simplified parameters which result in a defined repeat period, run the software for the required simulation interval and check the actual (satellite vectors) against the predicted values.
+Offset angles – Using appropriate sets of earth station and satellite locations, check the actual beam offset angle values against the predicted values. The sets of test data should cover the most complex trigonometrical cases: for example sites around longitude zero and longitude 180°.
+Time step and simulation duration – Using appropriate sets of non-GSO network parameters, check the time step and simulation duration values generated by the software against the predicted values. This checking could be done, for example, through a comparison with results obtained with the analytical method.
+CDF generation – Using sets of test input files with known CDF results, verify the CDF generation software.
+Go/no-go decision process – Using sets of CDF test input files, verify the accuracy of the go/no-go decision process.
+Should multiple implementations be available then sensitivity analysis could be used to evaluate them and their output can be compared to ensure consistency.
+2	Evaluation of the epfd(↓/↑) statistics obtained by the BR
+These are tests which will be performed automatically by the software as part of each run, to confirm that the run did find the worst-case interference events.
+epfd value for 100% time – the epfd↓ value for 100% time obtained during the run should be compared with a value calculated from analysis of the non-GSO constellation. The obtained value should be within ±0.X dB of the expected value.
+In cases in which the time simulation method is used, a software based on the analytical method described in § D.6 can, if applicable, be used, as an option, to verify the reliability of the obtained statistical results.
+3	Verification of the pfd masks
+The pfd masks are inputs to the BR validation tool to be provided by the notifying administration to the BR together with the software used for its calculation, the complete software description and parameters. The information required to generate the pfd mask could be made available to interested administrations to be used in case of dispute.
+4	Re-testing of the BR software after any modifications or upgrades
+A set of tests should be defined for use on any occasions when the BR software or its operating environment has been modified or upgraded. Such tests could include:
+a)	some or all of the tests defined in § E.1 for the initial evaluation of the computational accuracy of the candidate software;
+b)	repetition of a representative set of evaluations of actual non-GSO filings, and comparison of the results obtained by the original and modified software systems.
+PART F
+Software implementing this Recommendation
+1	Operating system
+The software shall run on Microsoft platforms under the Windows XP or higher operating system.
+2	Interfaces to existing software and databases
+The BR captures all incoming notices related to space services into one central database for alphanumeric data (SNS) and into another database for graphical data (GIMS) such as antenna diagrams and service areas. These databases are used for the publication of the data on , in the Weekly Circular and its Special Sections. They are also used to provide input data to software packages performing RR Appendix 8 and pfd examinations. Graphical Interface for Batch Calculations (GIBC) is used to carry out examination using these different modules. This guarantees that the data published are also the data used in these examinations. The BR considers this important for both the notifying administration and for administrations the services of which may be affected by the new station. For its regulatory and technical examination of satellite networks, the BR has only used so far on a regular basis software developed for GSO networks. However, when software for epfd calculations that works on non-GSO networks becomes available the same principle should apply. This is not only for the convenience of the BR, but to ensure consistency and transparency towards administrations.
+3	User manual
+The purpose of the user manual is to tell the user how to run different tests to obtain certain results. Given the complexity of these tests, they need to be given in detail.
+______________

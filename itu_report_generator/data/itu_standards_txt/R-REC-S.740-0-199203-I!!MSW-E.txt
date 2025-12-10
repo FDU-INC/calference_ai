@@ -1,0 +1,322 @@
+RECOMMENDATION  ITU-R  S.740*
+Technical coordination methods for 
+fixed-satellite networks
+(1992)
+The ITU Radiocommunication Assembly,
+considering
+a)	that during the planning stage of a satellite network it is necessary to calculate levels of potential interference between planned and existing networks;
+b)	that the methods to determine the need for coordination of satellite networks are given in Appendix S8 to the Radio Regulations and Recommendations ITU-R S.738 and ITU-R S.739;
+c)	that once the need for coordination has been identified, it would be necessary to make a technical assessment of the potential for interference between satellite networks;
+d)	that ITU-R has reviewed various approaches to the management of the geostationary-satellite orbit;
+e)	that the approach used in the detailed technical coordination process is left to the administrations concerned;
+f)	that if the potential interference exceeds the allowable criterion, the administrations concerned must agree on the conditions for the operation of their respective networks;
+g)	that Recommendations ITU-R S.466, ITU-R S.671, ITU-R S.483, ITU-R S.523 and ITU-R S.735 provide permissible levels of interference between networks of the fixed-satellite service;
+h)	that in certain cases there may be a need for multilateral coordination,
+recommends
+1	that in undertaking detailed technical coordination of fixed-satellite networks, the techniques listed below and described in Annex 1 may be used, by agreement between the administrations concerned in the absence of any other mutually agreed approach:
+–	carrier power technique;
+–	power density averaging bandwidth technique;
+–	isolation technique,
+2	that Note 1 should be considered part of this Recommendation:
+NOTE 1 – Annexes 2, 3 and 4 contain the methods for the detailed calculations of the above techniques.
+ANNEX  1
+Technical coordination methods 
+for fixed-satellite networks
+1	General approach
+For the purpose of this Annex, the network seeking access to the orbit is designated A. It is assumed that T calculations, based on information as required under Appendix S4 of the Radio Regulations and as published by the Radiocommunication Bureau for registered networks (a registered network is one whose assignments have been recorded in the Radiocommunication Bureau Master Register), for networks not yet registered but already coordinated, and for networks which are in the process of being coordinated, have established the need to coordinate with networks B, C, D, etc. which may fall in any of the above categories. All such networks have precedence over the applicant’s network A.
+2	Coordination process
+The coordination process can, for purposes of discussion, be divided into three phases.
+The first involves the inspection of the actual or planned transmissions of the involved networks and an assessment of their interaction against “standard” interference criteria.
+The second phase of the process is an investigation of potential changes to the transmission plan elements (transmission characteristics, frequency plans) or orbital locations which could lead to a solution of any interference problems identified in phase 1. Generally, the applicant administration will tend to have more latitude in considering such changes to its network than the administration operating an existing system; however, phase 2 would not expect either network to consider the acceptance of serious constraints on its current or planned mode of operation, type, distribution and quality of service. This phase should, through very detailed consideration of all technical and operational parameters, be capable of resolving specific and apparently relatively severe interference situations.
+The third phase, if necessary, would be consideration and negotiation of system modifications and adjustments on either or both involved networks. Such changes may affect the quality and type of service and the future growth options of either or both networks.
+In dealing with the resolution of interference conditions it must be borne in mind that any specific solutions found for the two networks under consideration may generate or aggravate problems with other networks; this may be particularly significant when considering space station relocations.
+3	Technical considerations
+Fundamentally, there are two initial facets to the coordination process:
+–	agreement on acceptable interference criteria; and
+–	agreement on the calculations of the interference.
+ITU-R Recommendations may be used for interference criteria but other criteria may be used by mutual acceptance. The calculations generally involve a translation of receiver output criteria to receiver input (RF) criteria and the RF interference path parameters. Since many of the parameters amenable to modification are associated with the RF domain, it may be convenient to classify approaches to coordination in this domain, i.e. based on RF criteria.
+3.1	Interference domains
+A first step in the coordination process is identification of the interference domains. Each band or band segment common to both networks for each satellite beam in the two space segments must be identified. Within each such band or band segment, those portions over which the space station and earth station receiving sensitivities (G/T) and space station and earth station e.i.r.p. densities remain constant in either network are identified.
+This process yields all the interference domains. Certain portions of the spectrum may appear several times because they may represent intra-satellite frequency re-use. Where uplink frequencies and downlink frequencies or satellite beams or both may be paired in a variety of ways (switching of beam connectivity in a space station), all possible operational configurations need to be considered. Further, the number of domains will usually be bounded, at least in current space stations, by the transponder arrangement in the space stations and may, in simple space stations, encompass several or all transponders. Where two space stations have single satellite antenna beams (i.e. common-coverage transmit and receive beams) and all their transponders have uniform characteristics over the common frequency band there would be only one interference domain.
+3.2	Coordination approaches
+The selection of the methods used to effect coordination is determined by agreement between the participating administrations. The characteristics of the affected networks and the potential severity of the interference will influence the choice of the approach to be used for coordination.
+Interference coordination can, in practice, be achieved with a variety of techniques. Among these are:
+–	the comparison of the total carrier power characteristics of transmissions with criteria of acceptable received interfering power;
+–	the comparison of the power density characteristics of transmissions with criteria of acceptable received interfering power density;
+–	the comparison of available inter-network isolation (normalized inter-network coupling loss) with criteria of required isolation between transmissions (normalized wanted-to-unwanted carrier ratio).
+For the first case, RF criteria can be expressed as I/N or C/I and for the second case as I0/N0 or C0/I0 where I is the interference power, N is the internal link noise power and C is the desired carrier power and subscript “0” indicates power/Hz averaged over a reference bandwidth. In the third case, interference criteria are expressed in terms of the required C/I between two transmissions, normalized by the carrier-to-noise density ratios C/N0 which characterize the performance requirements of the two transmissions.
+3.2.1	Carrier power technique
+This technique is most applicable to the following cases:
+–	in frequency bands in which satellite networks are well developed and in which the satellite population is relatively high;
+–	for modulations which are well defined and may be of any type, e.g. SCPC, analogue, digital, FM/TV, etc.;
+–	in frequency bands in which this approach has been extensively used.
+The mandatory information required under Appendix S4 of the Radio Regulations is not sufficient to serve as a basis for coordination under an I/N or C/I approach. It is necessary for the applicant administration to submit more detailed information on his network. Other administrations having networks with which the need to coordinate has been established must also furnish more detailed information. To effect coordination using the I/N or C/I approaches requires a full exchange of Appendix S4 data including superscript information for each carrier type, earth-station type and satellite antenna beam within all bands or band segments common to both networks; and where available, individual frequency plans. Since this information is adequate for the C/I approach, it would appear desirable to proceed on this approach, since it provides a more accurate estimate of interference.
+The interference domains must first be identified. For each of these it is necessary to identify the transmission (carrier) types which are used or are planned to be used in both networks. In the absence of known frequency plans the worst interference combination of the carriers of the two networks should be assumed. In most cases, this would correspond to frequency coincidence of the carriers. Where frequency plans are known, or where only one arrangement of transmissions in the two networks within a given interference domain is possible, the interference analyses are simplified.
+For each domain, interference from each transmission type of one network into each transmission type of the other is calculated for coincident frequency assignments (or, where available, for the actual or planned frequency assignments) in each direction (i.e., from network A into network B and vice versa). Each interfering transmission is assumed to originate at the lowest-gain antenna of a transmitting earth station (i.e., the one having the highest off-axis e.i.r.p.) which does or is expected to use it. When the interfering transmission occupies a bandwidth much less than that of the interfered-with transmission, it should be assumed that transmissions of the interfering type occupy, at appropriate intervals, the whole band occupied by the interfered-with transmission.
+It is then necessary to compare the resulting calculated values of C/I with the mutually acceptable single entry values. If these calculations show that acceptable values of C/I result in all cases, then a successful coordination has been effected.
+If the interference criteria are not satisfied in one or more cases, then each case must be individually considered. Where the criteria are only slightly exceeded, it may be agreed that these interference levels could be tolerated by either network. In particular, the applicant administration may decide unilaterally that interference into its network, although somewhat exceeding the criteria value(s), would be acceptable and, if there is no other area of disagreement, it could claim immediately successful coordination. Otherwise, a number of measures may need to be considered in order to meet the mutually acceptable criteria.
+Annex 2 provides the method for calculating the C/I for GSO satellite networks.
+3.2.2	Power density technique
+This technique may be most applicable to the following cases:
+–	in frequency bands in which satellite networks are in the early stages of development and in which the satellite population is small;
+–	for modulations which have a nearly uniform power spectral density, e.g., digital modulations;
+–	where initial T/T calculations result in values which are acceptable to each administration. This may be the case for some common domains between the networks;
+–	where there is a considerable degree of flexibility in one or both networks so that power density values can be modified.
+In this approach, the initial assessment of interference may be made using the Appendix S4 data for each of the interference domains. This assessment can identify the particular domains in which potential interference is most severe and also whether uplink or downlink interference is most dominant. Each party could use the I0/N0 values acceptable to him based on his carrier modulation types.
+It is possible that these calculations could result in mutually acceptable values of I0/N0, in which case a successful coordination would have been effected. If the I0/N0 values are not acceptable, then several other steps may be taken. If uplink interference is the dominant source, changes in the uplink power densities and transmission gains may be made to reduce the mutual interference. Additionally, rearrangement of accesses by band segments may be made i.e., a modification of interference domains, so that a greater degree of homogeneity exists between the two networks, thus reducing the mutual interference.
+The average power density in a transponder can be used to determine a minimum practical satellite spacing which may be an effective measure of achievable satellite spacing in the coordination process. Since power of a transponder is limited, the power density averaged over the transponder bandwidth is also limited. Using this average power density, a satellite spacing can be determined for a given interference criteria, taking into account expected inhomogeneities in traffic in detailed coordination between the networks. This satellite spacing can be used in the coordination process as a basis for determining achievable satellite spacings. If power densities higher than this average power density exist in a portion of the bandwidth of the transponder, then power densities lower than the average must also exist in other portions of the transponder bandwidth; a condition which can be used in a coordination process.
+It may also be appropriate to use reference or averaging bandwidths consistent with the carriers employed instead of the 4 kHz and 1 MHz reference bandwidths of the Radio Regulations. These will generally result in lower values of I0/N0, and can facilitate the coordination process, particularly where narrow-band carriers in one satellite operate opposite wideband carriers in another satellite. In this case, a satellite spacing based upon narrow-band carrier interference criteria may be used to obtain an acceptable interference criteria for the wideband carriers, thus avoiding detailed carrier frequency planning. Interference to narrow-band carriers from wideband carriers will be relatively uniform if the wideband carrier power density is relatively uniform.
+The techniques enumerated above have formed a basis for the development of a power density-averaging bandwidth method of determining interference between satellite networks. The method is based on providing a sufficient number of power density-averaging bandwidth data points so that the interference in any bandwidth of interest may be reasonably approximated using the methods described in Appendix S8 of the Radio Regulations. This method may also be used in determining the need to coordinate. The details of this method are described in Annex 3.
+Where wideband carriers exhibit higher power densities in small portions of a transponder (analogue FM-TV or high density, low index FDM-FM), minimum satellite spacing may be achieved by the narrow-band carriers avoiding the high power density regions. In this situation, better spectrum utilization may be achieved if triangular function energy dispersal is not used on wideband carriers. However, there may be other factors which would justify the use of some minimal energy dispersal, e.g. consideration of existing systems and protection of terrestrial radio systems.
+The C0/I0 approach to coordination is essentially an extension of the I0/N0 approach. In this approach, an additional parameter, the minimum power density in each network is identified. It may be determined that mutually acceptable C0/I0 values are achievable even though acceptable I0/N0 values were not achievable. This approach allows consideration of power compensation in transponders i.e., higher powers could be assigned transmissions subject to greater interference and less power to those with little interference, thus eliminating or moderating individual interference severity. Power compensation would be an operational measure. This C0/I0 approach needs further study and clarification.
+3.2.3	Isolation techniques
+The conventional and link isolation concepts discussed in Annex 4 offer another coordination method which does not involve the use of transmitted powers, power densities and noise powers.
+3.2.3.1	Conventional isolation method
+Under the conventional isolation approach a comparison is made between the available inter-network isolation – a measure of the electromagnetic coupling between two networks – and the isolation required between two interfering transmissions.
+The required isolation is a fairly precise measure of the interference “incompatibility” between two transmissions, larger required isolation values indicating greater incompatibility. It is expressed in terms of the permissible wanted-to-unwanted carrier power ratio between two transmissions and their respective performance requirements (in the form of the required total link carrier-to-noise density ratio, C/N0, for each transmission).
+To apply the isolation concept, one identifies the isolation domains and determines in each domain the available isolation. An isolation domain is characterized by any two networks’ earth and space station antenna radiation characteristics, their receiving system noise temperatures and their link transmission gains.
+In each domain, the interfering combinations of carriers are identified. From tables or graphs the required isolation between any two specific carriers is obtained and compared with the isolation available in the appropriate domain. A combination of carriers whose required isolation exceeds the available isolation in the pertinent domain requires that these carriers be coordinated with each other.
+The difference between required and available isolation is a quantitative measure of the severity of the incompatibility; its magnitude is a useful guide for the steps to be taken to bring compatibility about.
+3.2.3.2	Link isolation method
+In this method, the available link isolation is also compared with the required carrier isolation to determine the need for coordination. When the value of available link isolation is less than the required carrier isolation, detailed coordination would be necessary.
+Under this approach, the available link isolation is determined on the basis of information concerning the input and output back-offs of the transponder, the satellite e.i.r.p. and saturation flux density together with the major link design parameters. It is not necessary to resort to detailed carrier parameters as needed for the conventional isolation method.
+The required carrier isolations are expressed in terms of the applicable single entry wanted-to-unwanted carrier power ratios between two transmissions and their respective downlink carrier-to-noise density ratios.
+4	Multilateral coordination
+Although the coordination process is typically performed on a bilateral basis, coordination can also be performed on a multilateral basis. This could be the most expeditious means for achieving coordination when satellite networks of more than two administrations are affected. The general methods and techniques described in this Recommendation which may be employed during coordination are applicable to both bilateral and multilateral processes. Several more specific concepts and methods have been developed.
+ANNEX  2
+Method of calculating carrier-to-interference ratios
+in fixed-satellite service networks
+1	Method
+The interference geometry between two satellite networks is shown in Figs. 1a and 1b. The minimum topocentric (as seen from a point on the Earth) satellite spacing angles should take into account the nominal geocentric satellite spacing angle, the satellite position uncertainties (longitude of the orbit nodes and orbit inclinations) and the geographical locations of the earth stations. The use of the geocentric angular spacing, , instead of the topocentric satellite spacing angle, is simpler for the computation and its use is justified by the fact that the two angles are nearly equal. Also, the topocentric spacing angle is always greater than the geocentric spacing angle and hence the calculations based on geocentric spacing angles are conservative.
+Radiocommunication satellites require frequency assignments in two frequency bands, one for the uplink and the other for the downlink. It is current practice for frequency bands to be associated in pairs, one band being used for uplinks and the other for downlinks. Case I below, is concerned with the possibility of interference between two networks which have been assigned frequency bands in this way; thus interference from an uplink enters the wanted uplink and interference from a downlink enters the wanted downlink. However, some networks may use a pair of frequency bands in the reverse sense, the uplink band for one network being the same as the downlink band for the network using an adjacent satellite; in these circumstances interference from an uplink enters the wanted downlink and interference from a downlink enters the wanted uplink. This is Case II.
+1.1	Case I
+The following propagation conditions are assumed to apply to the uplink and downlink wanted-to-interfering carrier ratios:
+–	due to propagation effects and local precipitation both the wanted and the interfering signals which are transmitted by earth stations situated at different points on the Earth’s surface will fluctuate. Unless the e.i.r.p.s of the earth stations are adjusted so that the levels received by the satellites are always the same, a margin should be introduced in calculating the mean interference value to the uplink equation;
+–	the ratio of the wanted signal level to the interference level on the downlink does not vary with time. Any interference strong enough to have an appreciable effect would be caused by other satellites close to those of the wanted network so that the discrimination due to the directivity of the earth-station antenna is insufficient to separate the wanted from the interfering signals. Hence the wanted and interfering signals will be attenuated to the same degree when propagation conditions vary, since they will travel through the same disturbed areas. Consequently, fluctuations caused in the received wanted signal will have no significant effect on the level of interference produced in the baseband and, therefore, a downlink margin may usually be neglected.
+The computation procedure requires solution of the two equations:
+(1)
+and
+(2)
+where:
+(C/I)U, D :	uplink and downlink wanted-to-interfering carrier ratios (dB)
+Pt, pt :	transmit powers of wanted and interfering carriers delivered to the associated earth-station antenna (dBW)
+G1, G4 :	transmit and receive antenna gains of one or more wanted earth stations (dB)
+LU :	path loss differential in the uplink to the wanted satellite from the two earth stations,
+L  Lwanted – Linterfering               dB
+LD :	path loss differential in the downlink to the wanted earth station from the two satellites, L as above (dB)
+MU :	uplink margin in the wanted network (dB)
+g1() :	antenna gain component at the unwanted earth station towards the wanted satellite (dB)
+ :	geocentric minimum angular satellite spacing at the interfering earth station
+G2 :	differential in receive antenna gains at the wanted satellite toward the two earth stations,
+G2  G2 wanted – G2 interfering               dB
+YU :	minimum polarization discrimination between interfering uplink carrier and wanted satellite receive antenna (dB)
+YD :	minimum polarization discrimination between interfering downlink carrier and wanted earth-station receive antenna (dB)
+E, e :	e.i.r.p. of the wanted and interfering carriers in the direction of the wanted earth station (dBW)
+G4() :	antenna gain component at the wanted earth station toward the interfering satellite (dB).
+Notes on some of the factors in the above equations:
+–	Powers and antenna gains associated with the wanted network are in capitals, those associated with the interfering network use lower case letters. Suffixes associated with the various antenna gains follow the signal path, viz: 1  earth-station transmit, 2  satellite receive, 3  satellite transmit, 4  earth-station receive.
+–	The antenna gains g1() and G4() should, if possible, be computed using measured earth-station antenna patterns. However, for preliminary calculations, the generalized earth-station antenna radiation pattern given in Recommendation ITU-R S.465 may be applied.
+–	For very precise calculations the topocentric angles may be used in the expressions for g1 and G4.
+–	The terms G2, E and e should, if possible, be computed using measured satellite antenna patterns. Variations of path geometry with time may affect these terms; however, these variations are likely to be small and may usually be neglected.
+–	In the absence of information on satellite antenna polarization, the factors YU and YD must be set at 0 dB. The subject of polarization discrimination is discussed in ex-CCIR Volume IV.
+1.2	Case II
+When a given uplink frequency assignment in a wanted network is the same as the downlink frequency assignment in an interfering network, the uplink carrier-to-interference ratio in the wanted network may be approximated by:
+(3)
+where (in addition to the preceding definitions):
+:	differential in receive antenna gains at the wanted satellite, in the directions of the wanted transmitting earth station and the interfering satellite:
+e :	satellite e.i.r.p. of the interfering carrier in the direction of the wanted satellite (dBW)
+Y  :	minimum polarization discriminations between the interfering-satellite carrier and the wanted-satellite receive antenna (dB)
+ :	geocentric minimum angular satellite spacing for the wanted earth station (degrees).
+The calculation of interference from an unwanted uplink to the wanted downlink, that is, from an earth-station transmitter into the wanted earth station receiver should be based on the techniques discussed in ex-CCIR Volume IV/IX, Part 2. However, it should be possible to reduce such interference to a negligible level by a careful choice of earth station sites.
+1.3	Link wanted-to-interfering carrier ratio
+–	For Case I, the overall wanted-to-interfering carrier ratio is obtained by combining the results of equations (1) and (2) using the following:
+(4)
+–	For Case II, the wanted-to-interfering carrier ratio* is obtained directly from equation (3).
+2	General algorithm
+A step-by-step method for the calculation of carrier-to-interference levels between two fixed-satellite networks for one set of parameters encompasses the following:
+2.1	designate one satellite as the “wanted”, the other as the “interfering” satellite;
+2.2	choose the parameters required to solve equations (1), (2) or (3) for one of the potential interference entries and designate the parameters in accordance with § 2.1 above;
+2.3	solve, for the set of parameters chosen, equations (1), (2) or (3);
+2.4	determine the network wanted-to-interfering carrier ratio in accordance with § 1.3 of this Annex, as applicable;
+2.5	using the result of § 2.4 and the modulation and frequency spacing data pertaining to the carriers under investigation, determine, by means of Recommendation ITU-R S.741 the interference noise power in the interfered-with carrier;
+2.6	repeat the above steps with the designations of “wanted” and “interfering” satellites reversed, wherever applicable;
+2.7	repeat the above steps for all combinations of carrier and earth stations which might be expected to cause interference in the two networks.
+NOTE 1 – In some cases a given carrier will be subject to interference from more than one interfering carrier. In such cases, it is permissible to add interference noise contributions on a power basis.
+ANNEX  3
+A power density-averaging bandwidth method of determining
+interference between satellite networks*
+1	Introduction
+In the process of computing interference between satellite networks, three levels of detail may be postulated:
+a)	the initial T/T calculations using Appendix S8 of the Radio Regulations (RR) and RR Appendix S4 data;
+b)	if the T/T threshold is exceeded more detailed calculations based on additional information (such as might be contained in RR Appendix S4) where the interference power in carrier bandwidths of interest are estimated; and
+c)	if unacceptable interference remains after b), carrier frequency planning may be necessary.
+A simple method for determining the interference between satellite networks at the level of detail postulated in a) and b) above is described in the following sections.
+2	Description
+This method for estimating the mutual interference levels among satellite networks is based on providing sufficient information to allow computation of the interference power I in any interfered-with carrier bandwidth. The interference power I is proportional to the interfering power density p0 times the interfered-with bandwidth of interest br. The worst-case p0 is determined for any transmitting bandwidth bt by finding the portion of a band having a bandwidth bt in which the total power p is maximum and thus p0(bt)  p/bt.
+In order to determine I for any carrier bandwidth br it is necessary to have a quantitative power density-averaging bandwidth function over the bandwidths of interest. The total band over which such a function would be provided, is the band over which contiguous or potentially contiguous carriers could exist. This would typically be a transponder bandwidth for the fixed-satellite service. It can be demonstrated that only a small number of averaging bandwidths with associated power densities are needed to reasonably accurately describe a complete power density-averaging bandwidth function over a transponder bandwidth. Judicious selection of the values of averaging bandwidths can result in small reconstruction errors for the total functions (see Appendix 1, § 1 of this Annex).
+These power density-averaging bandwidth data points would be provided for the up path (values of Pe and associated bandwidths) and for the down path (values of Ps and associated bandwidths) including the values of Pe and Ps for the currently defined averaging bandwidths. An administration with an interfered-with network could then construct a total function.
+Using these reconstructed functions, or the appropriate equations, values for Ts and Te can be computed for all carrier bandwidths of interest using RR Appendix S8. From these values, T/T ’s can be computed for all carriers and the interference power for all carriers can also be computed; i.e. I  T  k  br where k is Boltzmann’s constant. Thus the administration with the interfered-with network can compute for each carrier: T/T, I, I/N, and (knowing the carrier power C), C/I. From this interference information an administration can decide if there is a need to coordinate or that more detailed analyses are required, or that the interference levels are acceptable.
+An important requirement for any interference determination method is the ability to properly account for multiple interference sources into a wider band carrier; for example: a number of SCPC carriers transmitted from different earth stations and received by different earth stations in one network which are common sources of interference to a wide bandwidth carrier in an interfered-with network. This method addresses this requirement and accounts for multiple source interference in the determination of the power densities where this situation exists. The power density values where multiple carriers must be taken into account would be limited to very few averaging bandwidths. The important point to note is that these would be determined by the administration for its own network.
+Where the transmitting earth stations are identical the power densities and off-axis e.i.r.p. densities can be obtained and will have the same power density-bandwidth functions as the satellite transponder function. When there are differences in the earth-station transmitting antenna gains, the composite power density-bandwidth function can be different from the e.i.r.p. density function. One method which may be used to provide information for estimating up-path interference in a given bandwidth is to provide a power density-bandwidth function for each station type (carriers into all earth stations of one type are assumed to be in one earth station of that type). The off-axis interference from each earth station type can then be computed for bandwidths of interest. The worst-case interference for a given bandwidth can then be estimated by comparing the values from the different earth station types.
+A specific implementation of this method is described in Appendix 1 to this Annex and examples are given using this specific implementation to indicate the improvement in accuracy that may be achieved when compared to the current RR Appendix S8 method.
+APPENDIX  1
+
+TO  ANNEX  3
+Application of the power density-averaging bandwidth method
+1	General formulation
+Given a band of contiguous, or potentially contiguous, carriers, the worst-case power density p0 in a bandwidth b is determined by finding the portion of the band having a bandwidth b in which the total power p is maximum.
+p0  p/b	(5)
+Given values of power density p01 and p02 for bandwidths b1 and b2, the maximum value of p0 between b1 and b2 is limited as follows:
+for     b1    b    b2 (p02 /p01)	(6)
+for     b2 (p02 /p01)    b    b2	(7)
+and the minimum p0 between b1 and b2 is:
+for     b1    b    b2 (p01 /p02)	(8)
+for     b1 (p02 /p01)    b    b2	(9)
+The difference between these functions obtained by connecting the data points is the maximum possible error.
+When the power densities are expressed in dB(W/Hz), and plotted against bandwidth on a logarithmic scale, the error parallelogram is formed as shown in Fig. 2. As shown in the Figure, the same process is used between subsequent points (P02, b2 and P03, b3, etc.). The error is a function of b and (P01 – P02).
+For an equal error between points (P01, b1), (P02, b2), (P03, b3), (P04, b4) etc., a geometric spacing i.e. b2/b1  b3/b2  b4/b3 etc., should be used.
+2	Specific formulation
+The power density, p, averaged over any bandwidth, b, can be computed by the following expressions, which apply to both the Earth-to-space and space-to-Earth directions:
+(10)
+and continuing to b  bt.
+Single carrier case
+The data point (p1, b1) is currently required data. The next most important data point is (pt, bt). For the FSS, bt is most commonly a transponder bandwidth and pt is the transponder power limit pt divided by bt for the space-to-Earth direction. For the Earth-to-space direction pt would be limited to the earth-station transmitter power required to produce the maximum transponder output.
+The data point (pt, bt) limits the bandwidth over which p1 can exist and thus extrapolation of p1 to larger bandwidths will not result in unrealistic total powers. Thus with these two data points:
+(11)
+This represents a worst-case power density-averaging bandwidth envelope for a single carrier of bandwidth bt and for the case of multiple carriers in a given bandwidth.
+Multiple carrier case
+When multiple carriers are contained in bt it is likely that the power densities for averaging bandwidths between b1 and bt will be lower than given by equation (11). A third data point can be derived for this case from the following information:
+–	the largest single carrier power pa and
+–	the carrier power pb and its occupied bandwidth bb of the carrier in which pb /bb is largest.
+Thus pb /bb is p2 and b2 is bb pa /pb. The worst-case density for any bandwidth b is:
+(12)
+3	Examples
+Single carrier case
+A common single carrier access would be a FM/TV carrier. For an example, 36 MHz transponder operating in the 6/4 GHz band with a maximum output power of 4 W is assumed and this carrier uses a 1 MHz frame rate spreading. From this for the space-to-Earth direction:
+Pt		6 dBW(4 W) (maximum transponder power)
+bt		36 MHz (transponder bandwidth)
+b1		4 kHz (averaging bandwidth per RR Appendix S8)
+P1		6 – 10 log (1 MHz)  – 54 dB(W/Hz) (maximum power density in 4 kHz due to frame rate energy dispersal).
+For this case equation (11) defines the worst case for density as a function of averaging bandwidth:
+The Earth-to-space function for a particular earth station would be the same shape with different values for Pt and P1. Example parameters for determining the Earth-to-space power density-averaging bandwidth function are:
+Earth-station transmitting antenna gain  55 dB
+Earth-station antenna receiving gain  51 dB
+Satellite transmitting antenna gain  22 dB
+Satellite receiving antenna gain  22 dB
+Transmission gain  – 13 dB
+Equivalent link noise temperature  275 K.
+The earth-station transmitting power to produce a transponder output power of 6 dBW is 19 dBW. Using a bar to designate up-path parameters:
+19 dBW (maximum earth-station transmitter power)
+36 MHz (width corresponding to )
+4 kHz (averaging bandwidth per RR Appendix S8)
+19 – 10 log (1 MHz)  – 41 dB(W/Hz) (maximum power density in 4 kHz).
+From which the worst-case power density as a function of average bandwidth is:
+These up-path and down-path functions are shown in Fig. 3.
+Multiple carrier case
+For an example of a multiple carrier accessed transponder the same transponder parameters are assumed as for the single carrier case. The single carrier with the highest power Pa is assumed to be a FDM/FM carrier requiring – 3 dBW of transponder power and has a bandwidth ba of 2 MHz. The bandwidth of this carrier should be greater than the reference averaging bandwidth, in this case 4 kHz. The value of Pa /ba is – 66 dB(W/Hz). FM/SCPC carriers are also assumed each requiring -18 dBW of transponder power Pb and 25 kHz of bandwidth bb. The value of Pb /bb is - 62 dB(W/Hz) which is higher than that of the carrier with the highest power. For this type SCPC, Pb can exist in 4 kHz so that P1 is – 54 dB(W/Hz) which is assumed to be the highest power density averaged over 4 kHz in the transponder. Equation (12) applies and the pertinent parameters for the space-to-Earth direction are:
+Pt  	6 dBW(4 W) (maximum transponder power)
+bt  	36 MHz (transponder bandwidth)
+Pa  	– 3 dBW (highest single carrier power)
+ba  	2 MHz (bandwidth of Pa)
+Pb  	– 18 dBW (power of carrier with highest (Pb /bb))
+bb  	25 kHz (bandwidth of Pb)
+P1  	– 54 dB(W/Hz) (maximum power density in 4 kHz)
+b1  	4 kHz (averaging bandwidth per RR Appendix S8).
+Thus the worst-case power density for any averaging bandwidth between 4 kHz and 36 MHz is:
+Example parameters for determining the Earth-to-space power density-averaging bandwidth functions are those given for the single carrier access example above plus the following additional earth-station parameters:
+Earth-station transmitting antenna gain  47 dB
+Earth-station receiving antenna gain  43 dB
+Transmission gain  – 21 dB
+Equivalent link noise temperature  212 K
+These earth-station antenna gains correspond to an antenna diameter of about 4.5 m, while those given previously correspond to a diameter of about 11 m. The 2 MHz carriers are not used with the 4.5 m earth-station antennas. The SCPC carriers are used between any combination of 4.5 m and 11 m earth-station antennas. From this, a set of parameters for each earth-station type is developed. For example purposes, a very worst case is assumed for the Pt for each earth-station type, i.e. the Pt which would produce maximum transponder output power. Again using a bar to denote up-path parameters, the following are the parameters for each earth-station type.
+For the 11 m earth stations
+19 dBW	 36 MHz
+10 dBW	 2 MHz
+– 5 dBW	 25 kHz
+– 41 dB(W/Hz)	 4 kHz
+For the 4.5 m earth stations
+27 dBW	 36 MHz
+Pb    3 dBW	  25 kHz
+– 33 dB(W/Hz)	 4 kHz
+Applying equation (12) results in the following:
+For the 11 m earth stations
+For the 4.5 m earth stations
+These functions are shown in Figs. 4 and 5.
+The up-path interference is also a function of the off-axis earth-station transmitting antenna gains as well as the power densities. If the off-axis gains were the same for the above examples, then the envelope of the two functions is the worst-case power density for any averaging bandwidth. If the off-axis gains are different, then a worst-case off-axis e.i.r.p. density function can be developed.
+Using the above multiple carrier example, T/T calculations may be made where p(b)max is used for ps and  is used for pe in RR Appendix S8. A topocentric angle of 4°, an earth station side-lobe envelope of 29 – 25 log  and co-coverage conditions are assumed. The interfered-with network has the same characteristics as the interfering network except for the carriers. The results of these calculations are shown in Fig. 6. The current RR Appendix S8 calculations show a T/T of 36% for all interfered-with bandwidths. Using this method a T of 14% is indicated for interfered-with carrier bandwidths of 25 kHz to 126 kHz and the T is less than 6% for interfered-with carrier bandwidths greater than 600 kHz. With this method, the numerical value of T/T is equal to the I/N in the interfered-with carrier bandwidth.
+4	Data requirements
+This power density-averaging bandwidth method has been developed with the view of minimizing the amount of additional data required and the availability of that data and at the same time providing a very significant improvement in the interference estimates.
+The data required for the specific implementation can be related to Appendix S4 items of the Radio Regulations.
+TABLE  1
+Data requirements
+*	Optional items: the additional data for Appendix 3 are the asterisk items which are:
+–	the power and bandwidth of two particular carriers for both up path and down path; and
+–	the aggregate earth station transmitter powers for each earth-station type.
+5	Example based on additional information available during coordination
+The previous examples were based on information which could be available at the time of submission of RR Appendix S4 data. The following example is used to demonstrate how this method may be used during coordination where the network parameters are more accurately known.
+The example parameters given in the multiple carrier case will be used in the following discussion. Since the example considers two different carrier types and two different earth station types, it is sufficient to describe the process that can be used for larger numbers of carrier types and earth-station types. The additional information consists of transponder power by carrier types between the two earth-station types; i.e. number of carriers by type for each earth station connectivity. Table 2 shows an example of the carrier types for different connectivities.
+TABLE  2
+For the down path, the worst-case power density-averaging bandwidth function is obtained by ordering the connectivities in decreasing power density values; i.e., worst-case carrier frequency placement. The power density-averaging function is determined by the cumulative power in the associated cumulative bandwidth.
+This function is shown in Fig. 7 along with the function developed for a multiple carrier case shown in Fig. 4. A substantial reduction in power density for some bandwidth ranges is shown.
+For the up path, the earth-station off-axis antenna gain is a factor in determining the interference to another satellite network. If the off-axis gain function is the same for all earth stations, an up-path power density-averaging bandwidth function may be derived in the same manner as the downlink function. If this is not the case, then an off-axis e.i.r.p. density-averaging bandwidth function needs to be developed. To demonstrate this case, it is assumed that the 11 m antenna has a 29 – 25 log  off-axis gain while the 4.5 m antenna has a 32 – 25 log  off-axis gain. The earth-station power densities given in Table 2 are multiplied by the constant in the off-axis gain function and the connectivities are arranged in decreasing off-axis e.i.r.p. density constants. The power density-averaging bandwidth function for this case is shown in Fig. 8 along with the worst-case function for the multiple access case given in Fig. 5. A substantial reduction in power density is shown for bandwidths greater than 500 kHz.
+Given these up-path and down-path density functions, the interference power to another network can be computed for any interfered-with carrier bandwidth.
+However, it is noted that there is a difference in the connectivity ordering between the up path and down path, i.e. the worst-case earth station carrier placements are different than the satellite. Thus using the two functions given in Figs. 7 and 8 one may overestimate the sum of up-path and down-path interferences. If down-path interference is dominant, then an up-path function based on the down-path carrier connectivity could be used or, vice versa, if up-path interference is dominant. If the up-path and down-path interferences are comparable, then the higher interference level of the down-path or up-path arrangement might be used.
+ANNEX  4
+Isolation method
+1	The concept of isolation
+1.1	Conventional isolation method
+The isolation between two networks can be derived as follows: in the basic c/i equation (see Table 3 of this Annex for a definition of symbols):
+(13)
+the ratios and  can be substituted from the internal uplink and downlink power budgets in the interfering and interfered-with networks as follows:
+(14)
+(15)
+Defining
+(16)
+(17)
+and transferring b,  (c/n) and (c/n) to the left-hand side produces the “isolation equation”:
+(18)
+The left-hand side of equation (18) contains only parameters describing interfering transmissions and their interaction, and its magnitude is called the required isolation; the right-hand side comprises predominantly major network design characteristics, is equal to the inter-network coupling loss and is called the available isolation. Since the two parameters  and  are topocentric inter-satellite spacings, the available isolation is a function of intersatellite spacing.
+TABLE  3
+Definition of symbols used
+From equation (14), required and available isolation may be defined as follows:
+Required isolation is defined as the wanted-to-unwanted carrier power ratio c/i required to protect one transmission against unacceptable interference from another, normalized with respect to the necessary carrier-to-noise density ratios c/n0 of the two transmissions.
+and:
+Available isolation (inter-network coupling loss) of a network A relative to a network B is defined as the ratio of powers received at two points from a transmission originating in network B, normalized with respect to the effective noise temperatures at the points of reception. The two points of reception are the receivers in network B and network A, respectively.
+The basic isolation equation is subject to further refinement:
+–	when an interfering transmission has a smaller necessary bandwidth than the wanted transmission, some allowance for additional interference contributions in the c/i term must be made. It would be convenient to assume that, in such a case, all interference would be due to an array of interfering carriers of the same type, equally spaced in frequency. In the case of interfered-with FM transmissions, if (c/i)req j were to denote the required c/i ratio for the j-th interfering carrier, and if it were assumed to produce the total permitted interference, the effective c/i which should be used for the c/i term of the left-hand side of equation (18) would be:
+(19)
+with the summation of the contributions of all carriers whose necessary bandwidths overlap that of the interfered-with carrier. An equivalent expression can be derived for the case of a digital transmission that is subject to interference;
+–	in some cases, uplink and downlink polarization discrimination may be available. Such discrimination would increase the available isolation or decrease the required inter-satellite spacing. Good estimates of polarization discrimination are available for conditions of satellite collocation and co-coverage (,  , ,   0). For other conditions, additional data should be collected;
+–	the terms ,  and  are not independent of the transmission parameters assumed. The term is controllable through the incorporation of suitable satellite gain steps in the satellite design and the choice of appropriate settings, thereby affecting uplink power requirements. The link noise temperatures  and  could be split into transmission-dependent and transmission-independent components; the transmission-dependent components could be made part of required isolation;
+–	the isolation concept needs to be adapted to be usable with networks which have only uplink or only downlink interference, or have other than simple frequency-translating satellite transponders;
+–	account needs to be taken of the condition  and/or    0, i.e. where service areas overlap.
+One type of homogeneity implies equality of all major design and operating parameters in the two (or more) networks. Another type of homogeneity implies equal reciprocal required intersatellite spacing for two networks. Equality in the value of available isolation for two networks, each with respect to the other, generally does not imply equality in the corresponding required intersatellite spacing, i.e. equal reciprocal available isolation does not produce intersatellite spacing homogeneity. The same holds true for the generalized parameters C/I and T/T. Two systems are homogeneous if while calculating actual interference, a permissible value in one direction is achieved at a satellite angular separation 1-2 and inversely at 2-1, and 1-2  2-1. These homogeneous systems may change their parameters and still have the same required isolation.
+Examples of application
+Table 4 shows a matrix of carrier types, giving the isolation that would be required between networks to limit the single-entry interference to 600 pW0p and to 4% of the baseband noise for TV.
+TABLE  4*
+Required isolation** between transmissions (dB)
+1.2	Link isolation method
+In the link isolation method, equation (18) is further modified by replacing the c/n cluster in the right-hand bracketed term by appropriate alternative terms. From ITU-R Recommendation ITU-R S.738 Annex 1 with a slight modification of equation (14):
+(20)
+where:
+u :	wavelength of uplink carrier
+bi, b0 :	input and output transponder back-off, respectively
+esat :	transponder saturated e.i.r.p.
+fsat :	saturation power flux-density.
+Combining the parameters of (20) for the wanted and interfering networks and inserting its result into (18) yields:
+(21)
+It is noted that although the square-bracketed term of equation (21) is basically independent of carrier-combination,  and  are both carrier specific.
+The dependency of the available isolation on the carrier parameters is dealt with in the following way.
+The link noise temperature  is expressed as follows:
+(22)
+where T4 is the receive noise temperature of the earth station. By substituting equation (22) into equation (21), the terms (c/n) and (c/n) appear on both sides of equation (21) and they can be eliminated. Furthermore, moving the terms (c/n)d and (c/n)d to the left-hand side yields the link isolation equation as follows:
+(23)
+where h  b1/b0 and  Since h and h are the transponder operating parameters, they are constants for all carriers involved in the concerned links* (linear and non linear transponder operations would yield different constant values of h and h).
+By analogy with the conventional isolation method, the left-hand side of equation (23) is called the required carrier isolation and the right-hand side is the available link isolation.
+The available link isolation is uniquely determined given information on transponder gain-setting and operating back-offs along with the major network characteristics including transmit and receive earth-station types. The available link isolation for a pair of links is, therefore, constant irrespective of the specific carriers transmitted on either link.
+The required carrier isolations are link-specific, but representative values can be determined through theoretical analysis and/or statistical analysis of data available for existing satellite networks.
+Examples of the required isolation values for some carrier combinations are given in Table 5. These values were obtained by analysing operational carrier parameters as well as using appropriate ITU-R criteria for single entry interference.
+If interference is either in the uplink only or in the downlink only, a slightly different expression for equation (23) will result. However, the main features of the link isolation method described above remain the same.
+TABLE  5
+Means and standard deviations of required carrier isolation,
+derived from the link isolation method (dB)

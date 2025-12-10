@@ -15,40 +15,8 @@
 
 import os
 from pathlib import Path
-
-# ----------------- 模型配置 -----------------
-# 指定你的Qwen2.5-VL模型的存放路径
-# 可通过环境变量 QWEN_MODEL_PATH 设置，否则使用默认路径
-MODEL_PATH = os.getenv(
-    "QWEN_MODEL_PATH",
-    str(Path.home() / "models" / "Qwen2.5-VL-7B-Instruct")
-)
-
-# ----------------- 路径配置 -----------------
-# 使用相对于项目根目录的路径，可通过环境变量覆盖
 BASE_DIR = Path(__file__).parent
+INPUT_IMAGE_DIR = str(BASE_DIR / "data" / "total")
+OUTPUT_REPORT_DIR = str(BASE_DIR / "data" / "output_reports")
 
-# 输入的干扰图存放目录
-INPUT_IMAGE_DIR = os.getenv(
-    "INPUT_IMAGE_DIR",
-    str(BASE_DIR / "data" / "total")
-)
-
-# 生成的Word报告输出目录
-OUTPUT_REPORT_DIR = os.getenv(
-    "OUTPUT_REPORT_DIR",
-    str(BASE_DIR / "data" / "output_reports")
-)
-
-# ----------------- 报告元数据 -----------------
-# 在报告中显示的公司或机构名称
-# 可通过环境变量 ORGANIZATION_NAME 设置
-ORGANIZATION_NAME = os.getenv(
-    "ORGANIZATION_NAME",
-    "Your Organization Name"
-)
-
-# ----------------- 网络配置 -----------------
-# 代理服务器配置（可选）
-# 可通过环境变量 PROXY 设置，不设置则不使用代理
-PROXY = os.getenv("PROXY", None)
+ORGANIZATION_NAME = "FDU-INC"

@@ -28,3 +28,7 @@ import config
 
 app = FastAPI(title="ITU Report Generator Microservice")
 
+_orchestrator = None
+
+
+

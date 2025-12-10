@@ -13,322 +13,270 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
+from typing import Dict, List, Tuple
 
-def get_analysis_prompt(system_name, other_system_name, report_date, organization, image_info, image_list_str):
-    """
-    生成专业、结构化的分析提示词（Prompt）。
-    """
-    prompt = f"""
-# 角色扮演
-你是一名经验丰富的国际电信联盟（ITU）频轨协调专家，隶属于干扰分析任务组。你的核心任务是根据一系列复杂的仿真干扰图，撰写一份全面、严谨、专业的卫星网络性能分析报告。报告的格式、术语和分析深度必须严格遵循专业标准。
 
-# 任务目标
-基于以下提供的关于 **{system_name}** 星座的性能仿真图（本次分析聚焦于其中一张），生成一份完整的Word文档格式的分析报告。
+def _build_itu_refs(image_info: dict, use_rag: bool) -> Tuple[str, List[Dict]]:
+    """Fetch ITU reference snippets via RAG (if available)."""
+    if not use_rag:
+        return "", []
 
-# 报告基本信息
-- **报告标题:** {system_name}卫星网络性能仿真分析报告
-- **分析机构:** {organization}
-- **报告日期:** {report_date}
+    try:
+        from .itu_word_rag import get_itu_word_rag_instance
+    except Exception:
+        return "", []
 
----
+    rag_results: List[Dict] = []
+    itu_refs_section = ""
 
-# 报告正文结构与内容指令
-请严格按照以下结构生成报告，并重点分析提供的 `{image_info['filename']}` 这张图：
+    try:
+        rag = get_itu_word_rag_instance()
+        if rag:
+            analysis_type = image_info.get("analysis_type")
+            query = f"{analysis_type} limit threshold requirement standard"
+            rag_results = rag.search(query, top_k=3)
+            if rag_results:
+                itu_refs_section = rag.format_references_for_prompt(
+                    rag_results, max_length=250
+                )
+                itu_refs_section = "\n\n" + itu_refs_section + "\n"
+    except Exception as e:
+        print(f"RAG lookup failed: {e}")
 
-## 1. 背景介绍
-### 1.1 {system_name} 卫星系统概述
-简要描述{system_name}系统的基本情况，包括其作为LEO通信星座的通用特性（如提供全球宽带服务）、星座基本参数（轨道高度、倾角等）。
+    return itu_refs_section, rag_results
 
-### 1.2 分析场景说明
-明确本次分析的目的在于评估`{system_name}`系统在24小时仿真周期内的自身性能，特别是分析 **{image_info['terminal_type']}** 的 **{image_info['analysis_type']}** 指标。
 
-## 2. 仿真条件与分析依据
-### 2.1 干扰保护标准
-引用相关的ITU建议书或国际标准作为评判依据。例如：
-- PFD/EPFD图表，需引用ITU-R S.1503等建议书的限值。
-- ΔT/T图表，需引用ITU-R S.735等建议书的标准。
-- CINR/CIR/CNR/INR是衡量链路质量的关键指标，数值越高代表性能越好。
+def build_prompt_en(
+    image_path: str, image_info: dict, current_date: str, use_rag: bool = True
+) -> Tuple[str, List[Dict]]:
+    """English prompt (copied from demo) with optional ITU RAG references."""
+    itu_refs_section, rag_results = _build_itu_refs(image_info, use_rag)
 
-### 2.2 仿真输入参数
-*(请根据通用知识，创建两个表格填充典型参数，以保持报告结构的完整性)*
-- **表1: {system_name} 地球站典型参数** (包含天线增益、波束宽度等)
-- **表2: {system_name} 卫星链路典型参数** (包含频率范围、带宽、方向、EIRP等)
+    prompt_text = f"""You are a professional analyst specializing in interference analysis.
+Your task: produce a clean, Word-ready report in STRICT GitHub-Flavored Markdown (GFM).
 
-## 3. 仿真结果分析 (重点分析部分)
-### 3.1 {system_name} {image_info['terminal_type']} 性能分析
-请对提供的 **`{image_info['filename']}`** 这张图进行深入、详细的分析。分析必须包含以下几点：
-1.  **指标定义:** 清晰解释 **{image_info['analysis_type']}** 的物理意义和在卫星通信中的作用。
-2.  **数据描述:** 详细描述图表中曲线的**数值范围**（最大值、最小值、平均值）、**变化趋势**和**关键特征**（例如：峰值、谷值、波动性、周期性）。
-3.  **原因分析:** 对观察到的现象进行专业解释。例如，`link_count`的变化与卫星过顶和切换有关；CINR的剧烈波动可能由卫星切换、波束边缘效应或来自`{other_system_name}`的瞬时干扰导致。
-4.  **标准比对:** (如果适用) 将观测值（特别是PFD, EPFD, ΔT/T）与第2.1节中提到的ITU标准进行比较，判断是否超标。
+Output rules (VERY IMPORTANT):
+- Markdown ONLY. Do NOT use code fences, XML/HTML, or backticks.
+- Use these constructs only: headings (#, ##, ###), bold (**text**), tables, bullet lists (- ...), numbered lists (1. ...), and plain paragraphs.
+- **BOLD FORMATTING**: Use **bold** for all important values, key findings, critical numbers, and significant conclusions. Examples:
+  - **Yes/No** for interference presence
+  - **xx dB** for specific measurements
+  - **00:00–24:00** for time ranges
+  - **High/Moderate/Low** for severity levels
+  - **Terrestrial microwave links** for interference sources
+  - **Adaptive filtering** for recommendations
+- Be concise and professional; no speculation beyond evidence.
 
-## 4. 干扰仿真结论
-### 4.1 结果汇总
-基于对`{image_info['filename']}`的分析，在汇总表格中填写一行。
-- **分析维度:** {image_info['terminal_type']}
-- **关键指标:** {image_info['analysis_type']}
-- **仿真结果范围:** [请填写分析出的数值范围]
-- **是否满足ITU标准:** [是/否/部分满足/不适用]
+Structure and formatting requirements (use EXACT headings and order):
 
-### 4.2 结论
-基于对当前图表的分析，给出一个明确、简洁的最终结论。结论应涵盖：
-1.  **链路质量评估:** `{system_name}`系统在该指标下的性能表现（例如：链路稳定，质量较高/存在周期性恶化等）。
-2.  **兼容性初步判断:** 基于该指标，初步判断`{system_name}`系统是否满足国际电联的干扰保护标准，是否存在需要进一步关注的风险。
+# Interference Analysis Report
+
+## 1. Basic Information
+- Use a 2-column table with bold labels on the left.
+- Table must include at least: Report date, Time range, Chart title, File name, System type, Monitoring metric, Image path, Image description.
+
+| **Field** | **Value** |
+| --- | --- |
+| **Report date** | {current_date} |
+| **Time range** | 00:00–24:00 (24-hour format) |
+| **Research institution** | **Institute of Space Internet, Fudan University** 
+| **Chart title** | {image_info.get('constellation', 'Unknown')} constellation {image_info.get('terminal_type', 'Unknown')} interference analysis |
+| **File name** | {image_info.get('filename', 'Unknown')} |
+| **System type** | {image_info.get('terminal_type', 'Unknown')} |
+| **Monitoring metric** | {image_info.get('analysis_type', 'Unknown')} |
+| **Image path** | {image_path} |
+| **Image description** | {image_info.get('constellation', 'Unknown')} constellation – {image_info.get('terminal_type', 'Unknown')} |
+
+## 2. Data Analysis
+- Start with a single bold line stating presence of interference.
+- Then provide a metrics table and bullet explanations.
+
+**Interference presence**: Yes/No (choose one)
+
+### 2.1 Numerical Analysis
+- Provide the table below; use N/A if unknown.
+- **Note**: CINR/CIR/CNR should be positive values (dB), EPFD/PFD/INR should be negative values (dB).
+
+| **Metric** | **Typical range** | **Minimum** | **Maximum** | **Average** |
+| --- | --- | --- | --- | --- |
+| **{image_info.get('analysis_type', 'Metric')}** | **[min, max] dB** | **min_value dB** | **max_value dB** | **avg_value dB** |
+
+### 2.2 Temporal Characteristics
+- Bullet the items below; be concise and specific.
+
+- Abnormal time periods: list ranges like HH:MM–HH:MM; if none, write N/A.
+- Interference duration: short-lived / sustained (estimate).
+- Interference magnitude: qualitative descriptor (e.g., low/moderate/high) and rationale.
+
+### 2.3 Variability Description
+- 1–2 short paragraphs on fluctuation patterns (e.g., spikes vs stable).
+
+### 2.4 Potential Interference Sources
+- Provide 3–5 bullet hypotheses with brief rationale each.
+- Link hypotheses to evidence observed in the figure.
+
+## 3. Evidence Summary
+- 3–5 bullets pointing to concrete visual cues (peaks, bands, time clusters, etc.).
+- Keep each bullet one sentence.
+
+## 4. Conclusions and Recommendations
+- Write in two subsections.
+
+### 4.1 Overall Conclusion
+- 1–2 concise paragraphs summarizing impact and risk.
+
+### 4.2 Actionable Recommendations
+1. Action item with purpose and expected effect.
+2. Action item with purpose and expected effect.
+3. Action item with purpose and expected effect.
+
+## 5. Compliance Considerations
+
+### 5.1 ITU Standard Compliance
+- Based on the ITU standards referenced below, provide a clear assessment:
+  - **Compliance Status**: **Compliant** / **Non-Compliant** / **Partially Compliant** / **Not Applicable**
+  - **Key Findings**: Summarize how the observed values compare to ITU standard limits
+  - **Specific Thresholds**: If applicable, cite the specific ITU limit values (e.g., EPFD limit of **-XX dB(W/m²)**)
+  - **Risk Assessment**: Evaluate the risk level (Low/Moderate/High) based on compliance status
+{itu_refs_section}
+
+### 5.2 Additional Considerations
+- If applicable, discuss potential threshold exceedance qualitatively (e.g., cinr/cir/EPFD/PFD etc) and uncertainty.
+- Note any required follow-up measurements.
+
+## 6. Appendix: Metadata
+- Bullet list with the following items (fill if known, else N/A):
+- Constellation: {image_info.get('constellation', 'Unknown')}
+- Terminal type: {image_info.get('terminal_type', 'Unknown')}
+- Monitoring metric: {image_info.get('analysis_type', 'Unknown')}
+- Source file: {image_info.get('filename', 'Unknown')}
+- Path: {image_path}
+
+Final constraints:
+- Do not include any code blocks or backticks.
+- Do not include any headings other than those specified above.
+- Keep the report ready for direct conversion to Word without cleanup.
 """
-    return prompt.strip()
 
-def get_multi_image_analysis_prompt(system_name, other_system_name, report_date, organization, image_infos, image_list_str):
-    """
-    生成适用于多张图片的专业、结构化分析提示词（Prompt），第3章开头插入所有图片，3.1为整体分析，3.2为结果汇总表。
-    image_infos: List[dict]，每个dict包含 filename, terminal_type, analysis_type
-    """
-    # 构建图片文件名列表
-    image_filenames = [img['filename'] for img in image_infos]
-    image_list_md = '\n'.join([f"- {fn}" for fn in image_filenames])
-    # 构建结论表格行
-    summary_table_rows = ""
-    for image_info in image_infos:
-        summary_table_rows += f"| {image_info['filename']} | {image_info['terminal_type']} | {image_info['analysis_type']} | [请填写分析出的数值范围] | [是/否/部分满足/不适用] |\n"
+    return prompt_text, rag_results
 
-    prompt = f"""
-# 角色扮演
-你是一名经验丰富的国际电信联盟（ITU）频轨协调专家，隶属于干扰分析任务组。你的核心任务是根据一系列复杂的仿真干扰图，撰写一份全面、严谨、专业的卫星网络性能分析报告。报告的格式、术语和分析深度必须严格遵循专业标准。
 
-# 任务目标
-基于以下提供的关于 **{system_name}** 星座的多张性能仿真图，生成一份完整的Word文档格式的分析报告。
+def build_prompt_zh(
+    image_path: str, image_info: dict, current_date: str, use_rag: bool = True
+) -> Tuple[str, List[Dict]]:
+    """Chinese prompt aligned to the demo template (same structure,中文版)."""
+    itu_refs_section, rag_results = _build_itu_refs(image_info, use_rag)
 
-# 报告基本信息
-- **报告标题:** {system_name}卫星网络性能仿真分析报告
-- **分析机构:** {organization}
-- **报告日期:** {report_date}
+    prompt_text = f"""你是一名专业的干扰分析师。
+你的任务：以严格的 Markdown（GitHub-Flavored Markdown）生成一份可直接用于 Word 的干扰分析报告。
 
----
+输出规则（非常重要）：
+- 只输出 Markdown，禁止代码块、HTML/XML、反引号。
+- 只能使用：标题（#、##、###）、加粗（**text**）、表格、无序列表(- ...)、有序列表(1. ...)、普通段落。
+- **加粗要求**：所有关键值/结论必须加粗，例如：
+  - **是否存在干扰：Yes/No**
+  - **具体数值：xx dB**
+  - **时间范围：00:00–24:00**
+  - **严重程度：高/中/低**
+  - **干扰来源：地面微波链路** 等
+- 保持简洁专业，基于证据，不要臆测。
 
-# 报告正文结构与内容指令
-请严格按照以下结构生成报告，并整体分析所有图片：
+结构与顺序（必须完全一致）：
 
-## 1. 背景介绍
-### 1.1 {system_name} 卫星系统概述
-简要描述{system_name}系统的基本情况，包括其作为LEO通信星座的通用特性（如提供全球宽带服务）、星座基本参数（轨道高度、倾角等）。
+# 干扰分析报告
 
-### 1.2 分析场景说明
-明确本次分析的目的在于评估`{system_name}`系统在24小时仿真周期内的自身性能，特别是分析各类终端的关键指标。
+## 1. 基本信息
+- 使用2列表格，左列标签加粗。
+- 至少包含：报告日期、时间范围、图表标题、文件名、系统类型、监测指标、图片路径、图片描述。
 
-## 2. 仿真条件与分析依据
-### 2.1 干扰保护标准
-引用相关的ITU建议书或国际标准作为评判依据。例如：
-- PFD/EPFD图表，需引用ITU-R S.1503等建议书的限值。
-- ΔT/T图表，需引用ITU-R S.735等建议书的标准。
-- CINR/CIR/CNR/INR是衡量链路质量的关键指标，数值越高代表性能越好。
+| **字段** | **取值** |
+| --- | --- |
+| **报告日期** | {current_date} |
+| **时间范围** | 00:00–24:00 (24小时制) |
+| **研究机构** | **复旦大学空间互联网研究院** |
+| **图表标题** | {image_info.get('constellation', 'Unknown')} 星座 {image_info.get('terminal_type', 'Unknown')} 干扰分析 |
+| **文件名** | {image_info.get('filename', 'Unknown')} |
+| **系统类型** | {image_info.get('terminal_type', 'Unknown')} |
+| **监测指标** | {image_info.get('analysis_type', 'Unknown')} |
+| **图片路径** | {image_path} |
+| **图片描述** | {image_info.get('constellation', 'Unknown')} 星座 – {image_info.get('terminal_type', 'Unknown')} |
 
-### 2.2 仿真输入参数
-*(请根据通用知识，创建两个表格填充典型参数，以保持报告结构的完整性)*
-- **表1: {system_name} 地球站典型参数** (包含天线增益、波束宽度等)
-- **表2: {system_name} 卫星链路典型参数** (包含频率范围、带宽、方向、EIRP等)
+## 2. 数据分析
+- 先用单行加粗说明是否存在干扰。
+- 然后给出指标表和要点说明。
 
-### 2.3 分析图表清单
-明确本次分析的数据来源是关于`{system_name}`系统的一系列仿真图，相关图表系列包括：
-{image_list_str}
+**是否存在干扰**：Yes/No（二选一）
 
-## 3. 仿真结果分析
-请将下列所有仿真图片统一插入本章节开头：
-{image_list_md}
+### 2.1 数值分析
+- 提供下表，未知填 N/A。
+- **注意**：CINR/CIR/CNR 应为正值(dB)，EPFD/PFD/INR 应为负值(dB)。
 
-### 3.1 性能分析（整体分析所有图片）
-请对所有提供的图片进行整体、对比性分析，内容包括：
-1. **共性与趋势**：描述所有图片数据的整体变化趋势、共性特征（如波动、峰值、周期性等）。
-2. **关键特征与差异**：指出各图片之间的主要差异和各自的关键特征。
-3. **原因分析**：对整体和个别现象进行专业解释（如卫星切换、干扰、波束边缘效应等）。
-4. **标准比对**：将所有观测值与ITU标准进行对比，判断是否超标。
+| **指标** | **典型范围** | **最小值** | **最大值** | **平均值** |
+| --- | --- | --- | --- | --- |
+| **{image_info.get('analysis_type', '指标')}** | **[min, max] dB** | **min_value dB** | **max_value dB** | **avg_value dB** |
 
-### 3.2 结果汇总表
-请将所有图片的关键数据、数值范围、是否满足标准等信息汇总到下表：
+### 2.2 时间特征
+- 用要点列出，简洁具体。
 
-| 图表 | 分析维度 | 关键指标 | 仿真结果范围 | 是否满足ITU标准 |
-|------|----------|----------|--------------|-----------------|
-{summary_table_rows}
+- 异常时间段：如 HH:MM–HH:MM；无则写 N/A。
+- 干扰持续性：短时 / 持续（估计）。
+- 干扰强度：定性描述（低/中/高）并给出理由。
 
-## 4. 干扰仿真结论
-### 4.1 结果汇总
-基于上述多张图的分析，在下表中填写每张图的分析结论。
+### 2.3 变化性描述
+- 1–2 段简短文字说明波动模式（如尖峰/平稳）。
 
-| 图表 | 分析维度 | 关键指标 | 仿真结果范围 | 是否满足ITU标准 |
-|------|----------|----------|--------------|-----------------|
-{summary_table_rows}
+### 2.4 可能的干扰来源
+- 给出 3–5 条假设及理由。
+- 将假设与图中证据对应。
 
-### 4.2 结论
-基于所有图表的分析，给出一个明确、简洁的最终结论。结论应涵盖：
-1.  **链路质量评估:** `{system_name}`系统在各项指标下的整体性能表现（例如：链路稳定，质量较高/存在周期性恶化等）。
-2.  **兼容性初步判断:** 基于所有指标，初步判断`{system_name}`系统是否满足国际电联的干扰保护标准，是否存在需要进一步关注的风险。
+## 3. 证据总结
+- 3–5 条要点，指向具体视觉证据（峰值、带状、时间簇等）。
+- 每条保持一句话。
+
+## 4. 结论与建议
+- 分为两个小节。
+
+### 4.1 总体结论
+- 1–2 段，概述影响与风险。
+
+### 4.2 可执行建议
+1. 行动项，写明目的与预期效果。
+2. 行动项，写明目的与预期效果。
+3. 行动项，写明目的与预期效果。
+
+## 5. 合规性考量
+
+### 5.1 ITU 标准符合性
+- 基于下方 ITU 参考，给出评估：
+  - **符合性状态**：**Compliant/Non-Compliant/Partially/Not Applicable**
+  - **关键结论**：观测值与ITU限值的比较
+  - **具体阈值**：如 EPFD 限值 **-XX dB(W/m²)**
+  - **风险评估**：Low / Moderate / High
+{itu_refs_section}
+
+### 5.2 其他考量
+- 如适用，定性说明是否可能超阈值（CINR/CIR/EPFD/PFD 等）及不确定性。
+- 备注需要的后续测量。
+
+## 6. 附录：元数据
+- 要点列出（未知填 N/A）：
+- 星座：{image_info.get('constellation', 'Unknown')}
+- 终端类型：{image_info.get('terminal_type', 'Unknown')}
+- 监测指标：{image_info.get('analysis_type', 'Unknown')}
+- 源文件：{image_info.get('filename', 'Unknown')}
+- 路径：{image_path}
+
+最终约束：
+- 不要输出代码块或反引号。
+- 只使用上述指定标题。
+- 内容应可直接转为 Word，无需额外清理。
 """
-    return prompt.strip()
 
-def get_analysis_prompt_en(system_name, other_system_name, report_date, organization, image_info, image_list_str):
-    """
-    Generate a professional, structured analysis prompt in English.
-    """
-    prompt = f"""
-# Role Play
-You are an experienced ITU (International Telecommunication Union) frequency coordination expert, part of the interference analysis task force. Your core task is to write a comprehensive, rigorous, and professional satellite network performance analysis report based on a series of complex simulation interference plots. The format, terminology, and analytical depth of the report must strictly adhere to professional standards.
-
-# Task Objective
-Based on the following performance simulation plots of the **{system_name}** constellation (focus on one specific image for this analysis), generate a complete analysis report in Word document format.
-
-# Basic Report Information
-- **Report Title:** {system_name} Satellite Network Performance Simulation Analysis Report
-- **Organization:** {organization}
-- **Report Date:** {report_date}
-
----
-
-# Report Structure and Content Instructions
-Strictly follow the structure below and focus on analyzing the image `{image_info['filename']}`:
-
-## 1. Background
-### 1.1 Overview of {system_name} Satellite System
-Briefly describe the basic information of the {system_name} system, including its general characteristics as a LEO communication constellation (e.g., global broadband service), and basic constellation parameters (orbital altitude, inclination, etc.).
-
-### 1.2 Analysis Scenario
-Clarify that the purpose of this analysis is to evaluate the self-performance of the `{system_name}` system over a 24-hour simulation period, especially focusing on the **{image_info['terminal_type']}** and the **{image_info['analysis_type']}** indicator.
-
-## 2. Simulation Conditions and Analytical Basis
-### 2.1 Interference Protection Standards
-List and cite the relevant ITU recommendations or international standards as evaluation criteria. For example:
-- For CINR/CIR/CNR/INR, refer to **ITU-R S.1503** for minimum CINR requirements.
-- For ΔT/T, refer to **ITU-R S.735** for time synchronization standards.
-- Higher values of CINR/CIR/CNR/INR indicate better link quality.
-Please explicitly list the standard numbers and their main requirements in the report.
-
-### 2.2 Simulation Input Parameters
-*(Please create two tables with typical parameters based on general knowledge to maintain report completeness)*
-- **Table 1: Typical Parameters of {system_name} Earth Station** (including antenna gain, beamwidth, etc.)
-- **Table 2: Typical Parameters of {system_name} Satellite Link** (including frequency range, bandwidth, direction, EIRP, etc.)
-
-## 3. Simulation Results Analysis (Key Section)
-### 3.1 Performance Analysis of {system_name} {image_info['terminal_type']}
-Provide an in-depth and detailed analysis of the image **`{image_info['filename']}`**. The analysis must include:
-1.  **Indicator Definition:** Clearly explain the physical meaning of **{image_info['analysis_type']}** and its role in satellite communications.
-2.  **Data Description:** Describe in detail the **value range** (max, min, average), **trend**, and **key features** (e.g., peaks, troughs, volatility, periodicity) of the chart curves.
-3.  **Cause Analysis:** Professionally explain the observed phenomena. For example, changes in `link_count` are related to satellite pass and handover; sharp CINR fluctuations may be caused by satellite handover, beam edge effects, or instantaneous interference from `{other_system_name}`.
-4.  **Standard Comparison:** (If applicable) Compare observed values (especially PFD, EPFD, ΔT/T) with ITU standards mentioned in Section 2.1 to determine compliance.
-
-## 4. Interference Simulation Conclusion
-### 4.1 Summary
-Based on the analysis of `{image_info['filename']}`, fill in a row in the summary table.
-- **Analysis Dimension:** {image_info['terminal_type']}
-- **Key Indicator:** {image_info['analysis_type']}
-- **Simulation Result Range:** [Please fill in the analyzed value range]
-- **ITU Standard Compliance:** [Yes/No/Partially/Not Applicable]
-
-### 4.2 Conclusion
-Based on the analysis of the current chart, provide a clear and concise final conclusion. The conclusion should cover:
-1.  **Link Quality Assessment:** The performance of the `{system_name}` system under this indicator (e.g., stable link, high quality/periodic degradation, etc.).
-2.  **Preliminary Compatibility Judgment:** Based on this indicator, preliminarily judge whether the `{system_name}` system meets ITU interference protection standards and whether there are risks that require further attention.
-
-When generating tables, use standard markdown syntax: only one line of `| --- | ... |` should appear below the header row. Do not output `---` as a separator in the table content or anywhere else in the report.
-"""
-    return prompt.strip()
+    return prompt_text, rag_results
 
 
-def get_multi_image_analysis_prompt_en(system_name, other_system_name, report_date, organization, image_infos, image_list_str):
-    """
-    Generate a professional, structured analysis prompt in English for multiple images.
-    image_infos: List[dict] with filename, terminal_type, analysis_type
-    """
-    image_filenames = [img['filename'] for img in image_infos]
-    image_list_md = '\n'.join([f"- {fn}" for fn in image_filenames])
-    summary_table_rows = ""
-    for image_info in image_infos:
-        summary_table_rows += f"| {image_info['filename']} | {image_info['terminal_type']} | {image_info['analysis_type']} | [Please fill in the analyzed value range] | [Yes/No/Partially/Not Applicable] |\n"
+# Default alias for compatibility
+build_prompt = build_prompt_en
 
-    prompt = f"""
-# Role Play
-You are an experienced ITU (International Telecommunication Union) frequency coordination expert, part of the interference analysis task force. Your core task is to write a comprehensive, rigorous, and professional satellite network performance analysis report based on a series of complex simulation interference plots. The format, terminology, and analytical depth of the report must strictly adhere to professional standards.
-
-# Task Objective
-Based on the following multiple performance simulation plots of the **{system_name}** constellation, generate a complete analysis report in Word document format.
-
-# Basic Report Information
-- **Report Title:** {system_name} Satellite Network Performance Simulation Analysis Report
-- **Organization:** {organization}
-- **Report Date:** {report_date}
-
----
-
-# Report Structure and Content Instructions
-Strictly follow the structure below and analyze all images as a whole:
-
-## 1. Background
-### 1.1 Overview of {system_name} Satellite System
-Briefly describe the basic information of the {system_name} system, including its general characteristics as a LEO communication constellation (e.g., global broadband service), and basic constellation parameters (orbital altitude, inclination, etc.).
-
-### 1.2 Analysis Scenario
-Clarify that the purpose of this analysis is to evaluate the self-performance of the `{system_name}` system over a 24-hour simulation period, especially focusing on key indicators for various terminals.
-
-## 2. Simulation Conditions and Analytical Basis
-### 2.1 Interference Protection Standards
-Cite relevant ITU recommendations or international standards as evaluation criteria. For example:
-- For PFD/EPFD charts, refer to ITU-R S.1503 limits.
-- For ΔT/T charts, refer to ITU-R S.735 standards.
-- CINR/CIR/CNR/INR are key indicators of link quality; higher values indicate better performance.
-
-### 2.2 Simulation Input Parameters
-*(Please create two tables with typical parameters based on general knowledge to maintain report completeness)*
-- **Table 1: Typical Parameters of {system_name} Earth Station** (including antenna gain, beamwidth, etc.)
-- **Table 2: Typical Parameters of {system_name} Satellite Link** (including frequency range, bandwidth, direction, EIRP, etc.)
-
-### 2.3 List of Analytical Charts
-Clarify that the data source for this analysis is a series of simulation plots of the `{system_name}` system. The related chart series include:
-{image_list_str}
-
-## 3. Simulation Results Analysis
-Insert all the following simulation images at the beginning of this section:
-{image_list_md}
-
-### 3.1 Performance Analysis (Overall Analysis of All Images)
-Provide an overall and comparative analysis of all provided images, including:
-1. **Commonalities and Trends:** Describe the overall trends and common features (e.g., fluctuations, peaks, periodicity) of all image data.
-2. **Key Features and Differences:** Point out the main differences and key features of each image.
-3. **Cause Analysis:** Professionally explain overall and individual phenomena (e.g., satellite handover, interference, beam edge effects, etc.).
-4. **Standard Comparison:** Compare all observed values with ITU standards to determine compliance.
-
-### 3.2 Summary Table
-Summarize the key data, value ranges, and ITU standard compliance for all images in the table below:
-
-| Chart | Analysis Dimension | Key Indicator | Simulation Result Range | ITU Standard Compliance |
-|-------|-------------------|---------------|------------------------|------------------------|
-{summary_table_rows}
-
-## 4. Interference Simulation Conclusion
-### 4.1 Summary
-Based on the above analysis of multiple images, fill in the analysis conclusion for each image in the table below.
-
-| Chart | Analysis Dimension | Key Indicator | Simulation Result Range | ITU Standard Compliance |
-|-------|-------------------|---------------|------------------------|------------------------|
-{summary_table_rows}
-
-### 4.2 Conclusion
-Based on the analysis of all charts, provide a clear and concise final conclusion. The conclusion should cover:
-1.  **Link Quality Assessment:** The overall performance of the `{system_name}` system under each indicator (e.g., stable link, high quality/periodic degradation, etc.).
-2.  **Preliminary Compatibility Judgment:** Based on all indicators, preliminarily judge whether the `{system_name}` system meets ITU interference protection standards and whether there are risks that require further attention.
-"""
-    return prompt.strip()
-
-def build_qwen_vl_multimodal_messages(image_paths, text_prompt):
-    """
-    构建Qwen2.5 VL多图推理的messages格式
-    """
-    content = []
-    for img_path in image_paths:
-        if not img_path.startswith("file://"):
-            img_path = "file://" + os.path.abspath(img_path)
-        content.append({
-            "type": "image",
-            "image": img_path,
-            "resized_height": 512,
-            "resized_width": 512
-        })
-    content.append({"type": "text", "text": text_prompt})
-    return [{"role": "user", "content": content}]
+__all__ = ["build_prompt", "build_prompt_en", "build_prompt_zh"]
 
