@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>干扰分析报告生成器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-strong: #0ea5e9;
+      --border: #1f2937;
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(120% 120% at 30% 20%, #111827 0%, #0b1222 40%, #050910 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      padding: 24px 32px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(15,23,42,0.85);
+      backdrop-filter: blur(6px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(56,189,248,0.12);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    main {
+      padding: 24px 32px 48px;
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .panel {
+      background: linear-gradient(180deg, rgba(31,41,55,0.95) 0%, rgba(17,24,39,0.98) 100%);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 18px 18px 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #f3f4f6;
+    }
+    .panel small {
+      color: var(--muted);
+    }
+    .section {
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.1px;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #0b1220;
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+    select:focus, input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.12);
+    }
+    .radio-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .radio-item {
+      flex: 1;
+      padding: 10px 12px;
+      background: #0b1220;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .radio-item input { margin: 0; }
+    .radio-item.active {
+      border-color: var(--accent);
+      background: rgba(56,189,248,0.08);
+    }
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .toggle input { transform: scale(1.1); }
+    button {
+      width: 100%;
+      border: none;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 100%);
+      color: #0b1220;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(56,189,248,0.35);
+      transition: transform .15s, box-shadow .15s;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    .preview {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #0b1220;
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    .preview img {
+      max-width: 100%;
+      max-height: 340px;
+      object-fit: contain;
+    }
+    .output {
+      min-height: 320px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(15,23,42,0.8);
+      border: 1px solid rgba(255,255,255,0.07);
+      overflow: auto;
+      line-height: 1.6;
+    }
+    .status {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .links {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(56,189,248,0.12);
+      color: var(--text);
+      font-size: 12px;
+      margin-right: 6px;
+    }
+    .section h4 {
+      margin: 0 0 8px;
+      color: #e5e7eb;
+      font-size: 14px;
+    }
+    code {
+      background: #0f172a;
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #f3f4f6;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>干扰分析报告生成器 <span class="badge">前端预览</span></h1>
+    <div class="pill">基于 demo_v2 流程</div>
+  </header>
+
+  <main>
+    <div class="panel">
+      <h2>输入设置 <small>选择图像并配置推理选项</small></h2>
+
+      <div class="section">
+        <h4>图像来源</h4>
+        <div class="radio-group">
+          <label class="radio-item active" id="optSample">
+            <input type="radio" name="imageOption" value="sample" checked>
+            示例图库
+          </label>
+          <label class="radio-item" id="optUpload">
+            <input type="radio" name="imageOption" value="upload">
+            本地上传
+          </label>
+        </div>
+        <div id="samplePicker">
+          <label>示例图像</label>
+          <select id="sampleSelect"></select>
+        </div>
+        <div id="uploadPicker" style="display:none;">
+          <label>上传 PNG/JPG</label>
+          <input type="file" id="fileInput" accept="image/png,image/jpeg">
+        </div>
+      </div>
+
+      <div class="section">
+        <h4>推理参数</h4>
+        <div class="toggle">
+          <input type="checkbox" id="useRag" checked>
+          启用 ITU RAG 检索 (Mongo / 文件)
+        </div>
+        <label style="margin-top:10px;">模型名称</label>
+        <input type="text" id="modelName" placeholder="默认：gemini-2.5-flash">
+        <label style="margin-top:10px;">Base URL</label>
+        <input type="text" id="baseUrl" placeholder="默认：https://api.aikeji.vip/v1">
+        <label style="margin-top:10px;">API Key (可选)</label>
+        <input type="text" id="apiKey" placeholder="不填则使用环境变量">
+      </div>
+
+      <button id="runBtn">开始生成报告</button>
+      <div class="status" id="statusText">等待提交...</div>
+
+      <div class="section">
+        <h4>图像预览</h4>
+        <div class="preview" id="previewBox">
+          <span style="color: var(--muted);">请选择图像</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>输出结果 <small>Markdown 预览与下载链接</small></h2>
+      <div class="links" id="links"></div>
+      <div class="section">
+        <h4>Markdown 预览</h4>
+        <div class="output" id="outputBox">暂无内容</div>
+      </div>
+      <div class="section">
+        <h4>RAG 检索参考</h4>
+        <div id="ragBox" class="status">尚未检索</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const sampleSelect = document.getElementById('sampleSelect');
+    const fileInput = document.getElementById('fileInput');
+    const previewBox = document.getElementById('previewBox');
+    const statusText = document.getElementById('statusText');
+    const outputBox = document.getElementById('outputBox');
+    const links = document.getElementById('links');
+    const ragBox = document.getElementById('ragBox');
+    const runBtn = document.getElementById('runBtn');
+
+    async function loadImages() {
+      const res = await fetch('/api/images');
+      const data = await res.json();
+      sampleSelect.innerHTML = '';
+      (data.samples || []).forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.path;
+        opt.textContent = item.name;
+        sampleSelect.appendChild(opt);
+      });
+      if (sampleSelect.value) renderPreview(`/${sampleSelect.value}`);
+    }
+
+    function renderPreview(src) {
+      previewBox.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = 'preview';
+      previewBox.appendChild(img);
+    }
+
+    document.getElementById('optSample').onclick = () => {
+      document.getElementById('optSample').classList.add('active');
+      document.getElementById('optUpload').classList.remove('active');
+      document.getElementById('samplePicker').style.display = 'block';
+      document.getElementById('uploadPicker').style.display = 'none';
+    };
+    document.getElementById('optUpload').onclick = () => {
+      document.getElementById('optUpload').classList.add('active');
+      document.getElementById('optSample').classList.remove('active');
+      document.getElementById('samplePicker').style.display = 'none';
+      document.getElementById('uploadPicker').style.display = 'block';
+    };
+
+    sampleSelect.onchange = () => {
+      const path = sampleSelect.value;
+      if (path) renderPreview(`/${path}`);
+    };
+
+    fileInput.onchange = () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => renderPreview(e.target.result);
+      reader.readAsDataURL(file);
+    };
+
+    runBtn.onclick = async () => {
+      const imageOption = document.querySelector('input[name="imageOption"]:checked').value;
+      const form = new FormData();
+      form.append('image_option', imageOption);
+      form.append('use_rag', document.getElementById('useRag').checked);
+      form.append('model_name', document.getElementById('modelName').value);
+      form.append('base_url', document.getElementById('baseUrl').value);
+      form.append('api_key', document.getElementById('apiKey').value);
+      if (imageOption === 'sample') {
+        if (!sampleSelect.value) {
+          alert('请选择示例图像');
+          return;
+        }
+        form.append('image_path', sampleSelect.value);
+      } else {
+        if (!fileInput.files[0]) {
+          alert('请先上传图像');
+          return;
+        }
+        form.append('file', fileInput.files[0]);
+      }
+      statusText.textContent = '正在生成报告，请稍候...';
+      runBtn.disabled = true;
+      outputBox.textContent = '';
+      links.innerHTML = '';
+      ragBox.textContent = '检索中...';
+      try {
+        const resp = await fetch('/api/generate', { method: 'POST', body: form });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.detail || '生成失败');
+        statusText.textContent = '生成完成';
+        outputBox.innerHTML = marked.parse(data.markdown || '');
+        links.innerHTML = '';
+        if (data.markdown_path) {
+          const a = document.createElement('a');
+          a.href = `/${data.markdown_path}`;
+          a.textContent = '下载 Markdown';
+          links.appendChild(a);
+        }
+        if (data.docx_path) {
+          const a = document.createElement('a');
+          a.href = `/${data.docx_path}`;
+          a.textContent = '下载 Word';
+          links.appendChild(a);
+        }
+        if (data.image_path) {
+          const a = document.createElement('a');
+          a.href = `/${data.image_path}`;
+          a.textContent = '查看输入图像';
+          links.appendChild(a);
+        }
+        if (data.rag_results && data.rag_results.length) {
+          ragBox.innerHTML = data.rag_results.map((r, i) => {
+            const source = r.source || 'unknown';
+            const text = (r.text || '').slice(0, 160) + '...';
+            return `<div style="margin-bottom:6px;"><strong>[${i+1}] ${source}</strong><br><span style="color:var(--muted);">${text}</span></div>`;
+          }).join('');
+        } else {
+          ragBox.textContent = '未返回 RAG 参考（可能未启用或未命中）';
+        }
+      } catch (err) {
+        statusText.textContent = '生成失败: ' + err.message;
+        outputBox.textContent = '';
+      } finally {
+        runBtn.disabled = false;
+      }
+    };
+
+    loadImages().catch(() => {
+      sampleSelect.innerHTML = '<option>加载失败</option>';
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,20 @@
+# Calference 项目 - 统一依赖文件
+# 自动生成，包含所有子模块的依赖（已去重）
+# 生成时间: 2026-02-07
+
+Flask==3.0.3
+PyPDF2>=3.0.0  # 用于 PDF 文档解析（可选）
+accelerate>=0.20.0
+fastapi>=0.104.0
+numpy>=1.25.0,<2.0
+openai>=1.0.0
+pillow>=10.0.0
+pydantic>=2.0.0
+python-docx>=1.0.0
+requests>=2.31.0  # 用于 ITU 数据获取（可选）
+sentence-transformers>=2.2.0  # 用于生成embeddings
+sentencepiece>=0.1.99
+sgp4>=2.21
+torch>=2.0.0
+transformers>=4.40.0
+uvicorn>=0.24.0
