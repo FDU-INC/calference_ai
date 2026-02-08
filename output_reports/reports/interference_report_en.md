@@ -87,35 +87,68 @@ The following ITU-R Recommendations are referenced in this analysis:
 
 | Parameter | Value |
 |-----------|-------|
-| Visual Patterns | random fluctuations throughout the day |
+| Visual Patterns | No significant patterns observed |
 
-## 4. Conclusions and Recommendations
+## 4. Technical Analysis
+
+**The following technical analysis evaluates the interference characteristics and potential impact on system performance.**
+
+**Interference Presence**: No - The data shows no signs of abnormal interference levels that would indicate external interference affecting the system's performance.
+
+### Numerical Analysis
+
+| Item | Description |
+|------|-------------|
+| Min Value | 58 dB |
+| Max Value | 62 dB |
+| Average | 60 dB |
+| Range | 4 dB |
+| Assessment | The values appear typical for a ground terminal system under normal operating conditions without any concerning patterns. |
+
+### Temporal Characteristics
+
+| Item | Description |
+|------|-------------|
+| Abnormal Periods | None |
+| Duration | Sustained throughout the monitoring period |
+| Magnitude | Moderate fluctuations within expected operational range |
+
+### Pattern Analysis
+The graph displays a series of small fluctuations around an average value of approximately 60 dB. There are no significant peaks or drops that would suggest intermittent or sustained high-level interference. The pattern appears consistent and stable over the entire 24-hour period, indicating reliable performance of the ground terminal system.
+
+### Potential Interference Sources
+
+| Item | Description |
+|------|-------------|
+| Hypothesis | The slight variations could be due to minor environmental factors such as atmospheric conditions or slight changes in signal strength. |
+| Hypothesis | The regularity of the fluctuations might also be attributed to internal system noise or calibration inaccuracies. |
+| Hypothesis | The absence of major spikes suggests that there are no significant external interferences like other communication systems or electronic devices causing disruptions. |
+
+## 5. Conclusions and Recommendations
 
 **Based on the comprehensive analysis presented above, the following conclusions and recommendations are provided.**
 
-| Field               | Value                |
-|---------------------|----------------------|
-| Report date         | 2026-02-08           |
-| System type         | Ground Terminal System|
-| Monitoring metric   | CINR                 |
-| Research institution| Institute of Space Internet, Fudan University|
+| Field               | Value                                                                                     |
+|---------------------|------------------------------------------------------------------------------------------|
+| Report date         | 2026-02-08                                                                               |
+| System type         | Ground Terminal System                                                                    |
+| Monitoring metric   | CINR (Carrier-to-Interference-plus-Noise Ratio)                                           |
+| Research institution| Institute of Space Internet, Fudan University                                             |
 
-The graph depicts the variation of the CINR (Carrier-to-Interference-plus-Noise Ratio) for the oneweb constellation's ground terminal system over a 24-hour period. The CINR values show random fluctuations throughout the day, ranging from a minimum value of 58 dB to a maximum value of 62 dB, with an average value of 60 dB. The range of these fluctuations is 4 dB, indicating moderate variability.
+The provided graph depicts the CINR values for the ground terminal system over a 24-hour period. The CINR is measured in decibels (dB), which represents the ratio of the desired signal power to the total power of unwanted signals (interference plus noise). 
 
-The system demonstrates non-compliance with ITU standards due to the significant variability in CINR levels, which can lead to degraded communication quality and reliability. The observed fluctuations suggest that the system may be susceptible to interference, necessitating further investigation and mitigation measures to ensure stable operation within acceptable ITU guidelines.
+Key observations include:
 
-Based on the analysis, the following conclusions and recommendations are made:
+1. The CINR values fluctuate between approximately 58 dB and 62 dB.
+2. There is no clear trend or pattern indicating significant interference events.
+3. The overall distribution of CINR values appears relatively uniform, suggesting stable performance without major disruptions.
 
-1. **Conclusions**:
-2. There is evidence of interference present in the system.
-3. The CINR values exhibit random fluctuations without a clear pattern.
-4. The magnitude of the interference is moderate.
-5. The system does not comply with ITU standards due to the variability in CINR.
+Based on the analysis, the ground terminal system demonstrates acceptable CINR values within the specified range. However, it is essential to continue monitoring to ensure ongoing compliance with required standards.
 
-1. **Recommendations**:
-2. Conduct a thorough environmental survey to identify and mitigate potential electromagnetic interference (EMI) sources near the ground terminal.
-3. Implement adaptive modulation techniques to dynamically adjust the signal quality in response to changing interference conditions.
-4. Schedule regular maintenance checks on the ground terminal equipment to ensure optimal performance and minimize internal noise contributions.
+| Item | Description |
+|------|-------------|
+| **Conclusion** | The ground terminal system exhibits stable performance with minimal interference during the monitored period. |
+| **Recommendation** | Continue regular monitoring to detect any potential shifts in CINR values that may indicate emerging interference issues. |
 
 | Item | Description |
 |------|-------------|
@@ -125,7 +158,7 @@ Based on the analysis, the following conclusions and recommendations are made:
 | Date | 2026-02-08 |
 
 ---
-## 5. References
+## 6. References
 
 ### ITU-R Recommendations
 
@@ -140,7 +173,7 @@ Based on the analysis, the following conclusions and recommendations are made:
 5. **ITU-R P.618-13** (2017): Propagation data and prediction methods required for the design of Earth-space telecommunication systems
 
 ---
-## 6. Appendix: Report Metadata
+## 7. Appendix: Report Metadata
 
 | Parameter | Value |
 |-----------|-------|
