@@ -33,14 +33,14 @@ from autogen_agentchat.messages import MultiModalMessage
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 
 # ============================================================================
-# API 配置
+# API 配置 - 使用 Gemini API（兼容 OpenAI 格式）
 # ============================================================================
-LLM_API_KEY = "sk-ant-api03-rHPBzv2u8cIlfGpYDpzefxjl1pT9GASmlKqBdt-sCAEsByKWPP-OFQBvVJdgs6ANqJuvs96aoh-Xz3nlejfE_A"
-LLM_BASE_URL = "https://api.aicodemirror.com/api/gemini"
-LLM_MODEL_NAME = "gemini-2.5-flash"
-
-# 代理配置（如不需要可注释掉）
-HTTP_PROXY = "http://10.192.54.148:7897"
+LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "gemini-2.0-flash")
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.aicodemirror.com/api/gemini")
+LLM_API_KEY = os.getenv(
+    "LLM_API_KEY",
+    os.getenv("OPENAI_API_KEY", ""),
+)
 
 # ============================================================================
 # Agent 角色定义
@@ -272,30 +272,27 @@ class AgentConfigBuilder:
         return AgentConfig(
             name="report_agent",
             role=AgentRole.REPORT,
-            description="Generate final formatted report",
-            max_tokens=1536,
+            description="Generate final conclusions and recommendations",
+            max_tokens=1024,
             temperature=0.2,
             system_message=(
-                "You are the Report Agent. Your job is to generate the final formatted report.\n\n"
-                "INPUT: You will receive review results from Review Agent.\n"
-                "OUTPUT: Generate the complete report in markdown format:\n\n"
-                "# Interference Analysis Report\n\n"
-                "## 1. Basic Information\n"
-                "| Field | Value |\n"
-                "|-------|-------|\n"
-                "| Report date | [date] |\n"
-                "| System type | [type] |\n"
-                "| Monitoring metric | [metric] |\n"
-                "| Research institution | Institute of Space Internet, Fudan University |\n\n"
-                "## 2. Data Analysis\n"
-                "[Include analysis results from Review Agent]\n\n"
-                "## 3. Compliance Assessment\n"
-                "[Include compliance review from Review Agent]\n\n"
-                "## 4. Conclusions and Recommendations\n"
-                "[Include recommendations from Review Agent]\n\n"
-                "IMPORTANT: Integrate all previous agent outputs into a cohesive, well-formatted report.\n"
-                "Use **bold** for key values and statuses.\n"
-                "End with: [REPORT_DONE]"
+                "You are the Report Agent. Write ONLY conclusions and recommendations.\n\n"
+                "INPUT: Review results from Review Agent.\n"
+                "OUTPUT: Generate ONLY the following (NO tables, NO repeated content):\n\n"
+                "### Key Conclusions\n"
+                "[2-3 sentences summarizing overall findings and significance]\n\n"
+                "### Recommended Actions\n"
+                "1. **[Action Title]**: [Specific action with expected outcome]\n"
+                "2. **[Action Title]**: [Specific action with expected outcome]\n"
+                "3. **[Action Title]**: [Specific action with expected outcome]\n\n"
+                "### Next Steps\n"
+                "[1-2 sentences on immediate priorities]\n\n"
+                "DO NOT include:\n"
+                "- Basic information tables\n"
+                "- Compliance status (already covered)\n"
+                "- Visual cues or evidence lists\n"
+                "- Numerical data or measurements\n\n"
+                "Be concise. End with: [REPORT_DONE]"
             ),
             input_source="review",
             output_format="markdown",
@@ -377,13 +374,6 @@ class AgentSequenceValidator:
 # ============================================================================
 # 辅助函数
 # ============================================================================
-def configure_proxies() -> None:
-    """配置 HTTP 代理"""
-    os.environ["HTTP_PROXY"] = HTTP_PROXY
-    os.environ["HTTPS_PROXY"] = HTTP_PROXY
-    print(f"[INFO] HTTP(S) proxy configured: {HTTP_PROXY}")
-
-
 def parse_image_info(filename: str) -> Dict:
     """从文件名解析图像信息"""
     parts = filename.split("_")
@@ -437,22 +427,14 @@ def compress_image(image_path: str, max_size: int = 800, quality: int = 80) -> s
 
 def create_model_client(max_tokens: int = 2048, temperature: float = 0.3) -> OpenAIChatCompletionClient:
     """创建 LLM 客户端"""
-    base_url = LLM_BASE_URL.rstrip("/")
-    if base_url.endswith("/v1"):
-        base_url = base_url[:-3]
-
     return OpenAIChatCompletionClient(
         model=LLM_MODEL_NAME,
-        base_url=base_url,
+        base_url=LLM_BASE_URL,
         api_key=LLM_API_KEY,
         model_capabilities={
             "vision": True,
             "function_calling": True,
             "json_output": True,
-        },
-        create_args={
-            "max_tokens": max_tokens,
-            "temperature": temperature,
         },
     )
 
@@ -630,13 +612,13 @@ Please analyze this interference map and extract structured data."""
 
         # 尝试多种格式的键值对提取
         patterns = [
-            r'^\\s*([A-Za-z_\\s]+):\\s*(.+)$',  # Key: Value
-            r'^\\s*([A-Za-z_\\s]+)\\s*=\\s*(.+)$',  # Key = Value
-            r'^\\s*-\\s*([A-Za-z_\\s]+):\\s*(.+)$',  # - Key: Value
-            r'^\\s*\\*\\s*([A-Za-z_\\s]+):\\s*(.+)$',  # * Key: Value
+            r'^\s*([A-Za-z_\s]+):\s*(.+)$',  # Key: Value
+            r'^\s*([A-Za-z_\s]+)\s*=\s*(.+)$',  # Key = Value
+            r'^\s*-\s*([A-Za-z_\s]+):\s*(.+)$',  # - Key: Value
+            r'^\s*\*\s*([A-Za-z_\s]+):\s*(.+)$',  # * Key: Value
         ]
 
-        lines = text.split('\\n')
+        lines = text.split('\n')
         for line in lines:
             line = line.strip()
             if not line:
@@ -654,7 +636,7 @@ Please analyze this interference map and extract structured data."""
 
         # 如果没有提取到数据，尝试从 JSON 代码块中提取
         if not table_data:
-            json_match = re.search(r'```(?:json)?\\s*(\\{[\\s\\S]*?\\})\\s*```', text)
+            json_match = re.search(r'```(?:json)?\s*(\{[\s\S]*?\})\s*```', text)
             if json_match:
                 try:
                     json_data = json.loads(json_match.group(1))
@@ -788,131 +770,72 @@ Please analyze this interference map and extract structured data."""
         cleaned = output.strip()
 
         # 移除所有代码块标记（包括 ```json, ```markdown 等）
-        cleaned = re.sub(r'```(?:json|markdown|text)?\\s*', '', cleaned)
+        cleaned = re.sub(r'```(?:json|markdown|text)?\s*', '', cleaned)
+        cleaned = re.sub(r'```\s*', '', cleaned)
 
-        # 移除独立的 JSON 对象（不在代码块中的）
-        cleaned = re.sub(r'^\\s*\\{[\\s\\S]*?\\}\\s*$', '', cleaned, flags=re.MULTILINE)
-        # 移除多行 JSON 对象
-        cleaned = re.sub(r'\\{\\s*"[^"]+\"\\s*:\\s*\\{[\\s\\S]*?\\}\\s*\\}', '', cleaned)
-        cleaned = re.sub(r'\\{\\s*"basic_info"[\\s\\S]*?\\}\\s*\\}', '', cleaned)
-        # 移除残留的单独大括号
-        cleaned = re.sub(r'^\\s*[\\{\\}]\\s*$', '', cleaned, flags=re.MULTILINE)
+        # 移除独立的 JSON 对象
+        cleaned = re.sub(r'^\s*\{[\s\S]*?\}\s*$', '', cleaned, flags=re.MULTILINE)
+        cleaned = re.sub(r'\{\s*"basic_info"[\s\S]*?\}\s*\}', '', cleaned)
+        cleaned = re.sub(r'^\s*[\{\}]\s*$', '', cleaned, flags=re.MULTILINE)
 
-        # 移除重复的章节标题
+        # 移除重复的章节标题（更全面的匹配）
         headers_to_remove = [
-            r'^#+\\s*ITU\\s*Interference Analysis Report\\s*$',
-            r'^#+\\s*Interference Analysis Report\\s*$',
-            r'^#+\\s*\\d+\\.\\s*Basic Information\\s*$',
-            r'^#+\\s*\\d+\\.\\s*Data Analysis\\s*$',
-            r'^#+\\s*\\d+\\.\\s*Compliance Assessment\\s*$',
-            r'^#+\\s*\\d+\\.\\s*Conclusions.*$',
-            r'^#+\\s*\\d+\\.\\s*Appendix.*$',
-            r'^#+\\s*Data Analysis Results\\s*$',
-            r'^#+\\s*Compliance Review\\s*$',
-            r'^#+\\s*Report Overview\\s*$',
-            r'^#+\\s*Data Extraction Results\\s*$',
-            r'^#+\\s*Technical Analysis\\s*$',
-            r'^#+\\s*ITU Compliance Assessment\\s*$',
+            r'^#+\s*ITU\s*Interference Analysis Report\s*$',
+            r'^#+\s*Interference Analysis Report\s*$',
+            r'^#+\s*\d*\.?\s*Basic Information\s*$',
+            r'^#+\s*\d*\.?\s*Data Analysis\s*$',
+            r'^#+\s*\d*\.?\s*Data Analysis Results\s*$',
+            r'^#+\s*\d*\.?\s*Compliance Assessment\s*$',
+            r'^#+\s*\d*\.?\s*Compliance Review\s*$',
+            r'^#+\s*\d*\.?\s*Conclusions.*$',
+            r'^#+\s*\d*\.?\s*Appendix.*$',
+            r'^#+\s*\d*\.?\s*Report Overview\s*$',
+            r'^#+\s*\d*\.?\s*Data Extraction Results\s*$',
+            r'^#+\s*\d*\.?\s*Technical Analysis\s*$',
+            r'^#+\s*\d*\.?\s*ITU Compliance Assessment\s*$',
+            r'^#+\s*\d*\.?\s*ITU Standard Compliance\s*$',
+            r'^#+\s*\d*\.?\s*Evidence Summary\s*$',
+            r'^#+\s*\d*\.?\s*Logical Consistency Check\s*$',
+            r'^#+\s*\d*\.?\s*Recommendations\s*$',
+            r'^#+\s*\d*\.?\s*Numerical Analysis\s*$',
+            r'^#+\s*\d*\.?\s*Temporal Characteristics\s*$',
+            r'^#+\s*\d*\.?\s*Pattern Analysis\s*$',
+            r'^#+\s*\d*\.?\s*Potential Interference Sources\s*$',
+            r'^#+\s*Conclusions and Recommendations\s*$',
         ]
         for pattern in headers_to_remove:
             cleaned = re.sub(pattern, '', cleaned, flags=re.MULTILINE | re.IGNORECASE)
 
         # 移除只有表头没有内容的表格
-        cleaned = re.sub(r'\\|\\s*Field\\s*\\|\\s*Value\\s*\\|\\s*\\n\\|[-\\s|]+\\|\\s*\\n(?!\\|)', '', cleaned)
-        cleaned = re.sub(r'\\|\\s*Item\\s*\\|\\s*Value\\s*\\|\\s*\\n\\|[-\\s|]+\\|\\s*\\n(?!\\|)', '', cleaned)
-        cleaned = re.sub(r'\\|\\s*Item\\s*\\|\\s*Description\\s*\\|\\s*\\n\\|[-\\s|]+\\|\\s*\\n(?!\\|)', '', cleaned)
+        cleaned = re.sub(r'\|\s*Field\s*\|\s*Value\s*\|\s*\n\|[-\s|]+\|\s*\n(?!\|)', '', cleaned)
+        cleaned = re.sub(r'\|\s*Item\s*\|\s*Value\s*\|\s*\n\|[-\s|]+\|\s*\n(?!\|)', '', cleaned)
+        cleaned = re.sub(r'\|\s*Item\s*\|\s*Description\s*\|\s*\n\|[-\s|]+\|\s*\n(?!\|)', '', cleaned)
 
         # 移除 "End with:" 等提示文本
-        cleaned = re.sub(r'^End with:\\s*$', '', cleaned, flags=re.MULTILINE)
+        cleaned = re.sub(r'^End with:\s*$', '', cleaned, flags=re.MULTILINE)
 
         # 移除占位符文本
         placeholder_patterns = [
-            r'\\[1 paragraph explaining.*?\\]',
-            r'\\[Visual cue \\d+ with specifics\\]',
-            r'\\[.*?placeholder.*?\\]',
-            r'<\\|observation\\|>',
-            r'<\\|.*?\\|>',
+            r'\[1 paragraph explaining.*?\]',
+            r'\[Visual cue \d+ with specifics\]',
+            r'\[.*?placeholder.*?\]',
+            r'<\|observation\|>',
+            r'<\|.*?\|>',
         ]
         for pattern in placeholder_patterns:
             cleaned = re.sub(pattern, '', cleaned, flags=re.IGNORECASE)
 
-        # 处理行
-        lines = cleaned.split('\\n')
-        result_lines = []
-        list_items = []
-        in_list = False
+        # 移除空的列表项（如 "- :" 或 "- " 后面没有内容）
+        cleaned = re.sub(r'^[-*]\s*:\s*$', '', cleaned, flags=re.MULTILINE)
+        cleaned = re.sub(r'^[-*]\s*$', '', cleaned, flags=re.MULTILINE)
+        cleaned = re.sub(r'^\d+\.\s*$', '', cleaned, flags=re.MULTILINE)
 
-        for line in lines:
-            stripped = line.strip()
-
-            # 跳过空行（在开头）
-            if not result_lines and not stripped:
-                continue
-
-            # 检测列表项
-            is_list_item = stripped.startswith('- ') or stripped.startswith('* ') or re.match(r'^\\d+\\.\\s', stripped)
-
-            if is_list_item:
-                in_list = True
-                # 提取列表内容
-                if stripped.startswith('- ') or stripped.startswith('* '):
-                    content = stripped[2:]
-                else:
-                    content = re.sub(r'^\\d+\\.\\s*', '', stripped)
-                list_items.append(content)
-            else:
-                # 如果之前在列表中，现在不是列表项了
-                if in_list and list_items:
-                    # 如果列表项包含 "Key: Value" 格式，转换为表格
-                    if all(':' in item for item in list_items[:3]) and len(list_items) >= 2:
-                        result_lines.append("")
-                        result_lines.append("| Item | Description |")
-                        result_lines.append("|------|-------------|")
-                        for item in list_items:
-                            if ':' in item:
-                                key, val = item.split(':', 1)
-                                result_lines.append(f"| {key.strip()} | {val.strip()} |")
-                            else:
-                                result_lines.append(f"| - | {item} |")
-                        result_lines.append("")
-                    else:
-                        # 保持为列表，但使用数字编号
-                        result_lines.append("")
-                        for i, item in enumerate(list_items, 1):
-                            result_lines.append(f"{i}. {item}")
-                        result_lines.append("")
-                    list_items = []
-                    in_list = False
-
-                if stripped:
-                    result_lines.append(line)
-                elif result_lines and result_lines[-1].strip():
-                    result_lines.append("")
-
-        # 处理最后的列表
-        if list_items:
-            if all(':' in item for item in list_items[:3]) and len(list_items) >= 2:
-                result_lines.append("")
-                result_lines.append("| Item | Description |")
-                result_lines.append("|------|-------------|")
-                for item in list_items:
-                    if ':' in item:
-                        key, val = item.split(':', 1)
-                        result_lines.append(f"| {key.strip()} | {val.strip()} |")
-                    else:
-                        result_lines.append(f"| - | {item} |")
-                result_lines.append("")
-            else:
-                result_lines.append("")
-                for i, item in enumerate(list_items, 1):
-                    result_lines.append(f"{i}. {item}")
-                result_lines.append("")
-
-        cleaned = '\\n'.join(result_lines)
+        # 修复列表项格式（"- :" 开头的行，移除多余的冒号）
+        cleaned = re.sub(r'^([-*])\s*:\s+', r'\1 ', cleaned, flags=re.MULTILINE)
 
         # 清理多余空行
-        while '\\n\\n\\n' in cleaned:
-            cleaned = cleaned.replace('\\n\\n\\n', '\\n\\n')
+        while '\n\n\n' in cleaned:
+            cleaned = cleaned.replace('\n\n\n', '\n\n')
 
         return cleaned.strip()
 
@@ -984,9 +907,15 @@ Please analyze this interference map and extract structured data."""
             report_parts.append("")
 
             subsection = 1
+            # 尝试从代码块中提取 JSON
+            json_str = parser_output
+            json_match = re.search(r'```(?:json)?\s*(\{[\s\S]*?\})\s*```', parser_output)
+            if json_match:
+                json_str = json_match.group(1)
+
             try:
                 # 尝试解析 JSON
-                parser_data = json.loads(parser_output)
+                parser_data = json.loads(json_str)
                 self._add_structured_data_section_v2(report_parts, parser_data, section_num, subsection)
             except (json.JSONDecodeError, KeyError, TypeError) as e:
                 print(f"[DEBUG] JSON parsing failed: {e}, converting raw output to table format")
@@ -995,7 +924,10 @@ Please analyze this interference map and extract structured data."""
                 if table_data:
                     self._add_extracted_data_table_v2(report_parts, table_data, section_num)
                 else:
-                    report_parts.append(parser_output)
+                    # 清理 JSON 代码块，不直接输出
+                    cleaned_parser = re.sub(r'```(?:json)?\s*[\s\S]*?```', '', parser_output).strip()
+                    if cleaned_parser:
+                        report_parts.append(cleaned_parser)
                     report_parts.append("")
 
             section_num += 1
@@ -1082,7 +1014,7 @@ Please analyze this interference map and extract structured data."""
         return final_report
 
     def _create_docx_with_image(self, md_path: str, docx_path: str, image_path: str) -> None:
-        """将 Markdown 转换为 DOCX 并插入图片"""
+        """将 Markdown 转换为 DOCX 并插入图片（图片放在开头）"""
         try:
             from docx import Document
             from docx.shared import Inches, Pt
@@ -1101,6 +1033,8 @@ Please analyze this interference map and extract structured data."""
                     )
                     doc = Document(docx_path)
                     print("[INFO] Pandoc conversion successful")
+                    # 对 pandoc 生成的表格应用美观样式
+                    self._format_all_tables(doc)
                 except subprocess.CalledProcessError as e:
                     print(f"[WARNING] Pandoc conversion failed: {e.stderr}")
                     doc = self._create_docx_from_markdown(md_path)
@@ -1108,21 +1042,42 @@ Please analyze this interference map and extract structured data."""
                 print("[INFO] pandoc not found, using python-docx")
                 doc = self._create_docx_from_markdown(md_path)
 
-            # 插入图片
+            # 在文档开头插入图片（在第一个标题之后）
             if os.path.exists(image_path):
-                print(f"[INFO] Inserting image from: {image_path}")
+                print(f"[INFO] Inserting image at the beginning: {image_path}")
+
+                # 找到插入位置（在第一个标题之后，或者在文档开头）
+                insert_index = 0
+                for idx, para in enumerate(doc.paragraphs):
+                    if para.style.name.startswith('Heading'):
+                        insert_index = idx + 1
+                        break
+
+                # 创建图片段落
                 img_para = doc.add_paragraph()
                 img_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 run = img_para.add_run()
                 run.add_picture(image_path, width=Inches(5.5))
 
+                # 创建图片标题
                 caption_para = doc.add_paragraph()
                 caption_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 caption_run = caption_para.add_run(
-                    f"Figure 1: {self.image_info.get('filename', 'Interference Map')}"
+                    f"Figure 1: {self.image_info.get('analysis_type', 'Interference')} Analysis - {self.image_info.get('filename', 'Interference Map')}"
                 )
                 caption_run.font.size = Pt(10)
                 caption_run.font.italic = True
+
+                # 移动图片段落到正确位置
+                # 获取图片段落的 XML 元素
+                img_element = img_para._element
+                caption_element = caption_para._element
+
+                # 获取目标位置的段落
+                if insert_index < len(doc.paragraphs) - 2:
+                    target_para = doc.paragraphs[insert_index]
+                    target_para._element.addprevious(img_element)
+                    target_para._element.addprevious(caption_element)
 
             doc.save(docx_path)
             print(f"[INFO] DOCX saved: {docx_path}")
@@ -1258,11 +1213,14 @@ Please analyze this interference map and extract structured data."""
                 i += 1
                 continue
 
-            # 处理数字列表
-            match = re.match(r"^\d+\.\s+(.+)$", line.strip())
+            # 处理数字列表 - 不使用 List Number 样式，手动添加编号
+            match = re.match(r"^(\d+)\.\s+(.+)$", line.strip())
             if match:
-                para = doc.add_paragraph(style="List Number")
-                self._add_formatted_text(para, match.group(1))
+                num = match.group(1)
+                text = match.group(2)
+                para = doc.add_paragraph()
+                # 手动添加编号
+                self._add_formatted_text(para, f"{num}. {text}")
                 i += 1
                 continue
 
@@ -1282,6 +1240,155 @@ Please analyze this interference map and extract structured data."""
         print(f"[DEBUG] Total tables created: {len(doc.tables)}")
 
         return doc
+
+    def _format_all_tables(self, doc: "Document") -> None:
+        """
+        对文档中所有表格应用美观样式。
+
+        Args:
+            doc: Document 对象
+        """
+        from docx.shared import Pt, RGBColor
+        from docx.oxml.ns import nsdecls
+        from docx.oxml import parse_xml
+
+        print(f"[DEBUG] Formatting {len(doc.tables)} tables")
+
+        for table_idx, table in enumerate(doc.tables):
+            try:
+                num_rows = len(table.rows)
+                num_cols = len(table.columns)
+
+                if num_rows == 0 or num_cols == 0:
+                    continue
+
+                print(f"[DEBUG] Formatting table {table_idx + 1}: {num_rows} rows x {num_cols} cols")
+
+                # 设置表格属性
+                tbl = table._element
+                tblPr = tbl.tblPr
+                if tblPr is None:
+                    tblPr = parse_xml(r'<w:tblPr {}/>'.format(nsdecls('w')))
+                    tbl.insert(0, tblPr)
+
+                # 移除旧的边框设置
+                for old_borders in tblPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tblBorders'):
+                    tblPr.remove(old_borders)
+
+                # 设置表格边框
+                tblBorders = parse_xml(
+                    r'<w:tblBorders {}>'
+                    r'<w:top w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                    r'<w:left w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                    r'<w:bottom w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                    r'<w:right w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                    r'<w:insideH w:val="single" w:sz="6" w:space="0" w:color="B4C6E7"/>'
+                    r'<w:insideV w:val="single" w:sz="6" w:space="0" w:color="B4C6E7"/>'
+                    r'</w:tblBorders>'.format(nsdecls('w'))
+                )
+                tblPr.append(tblBorders)
+
+                # 格式化每一行
+                for row_idx, row in enumerate(table.rows):
+                    # 设置行高
+                    row.height = Pt(28)
+
+                    for col_idx, cell in enumerate(row.cells):
+                        tcPr = cell._element.get_or_add_tcPr()
+
+                        # 移除旧的阴影设置
+                        for old_shd in tcPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}shd'):
+                            tcPr.remove(old_shd)
+
+                        # 移除旧的边框设置
+                        for old_borders in tcPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tcBorders'):
+                            tcPr.remove(old_borders)
+
+                        if row_idx == 0:
+                            # 表头行：深蓝色背景
+                            shading_elm = parse_xml(
+                                r'<w:shd {} w:fill="4472C4"/>'.format(nsdecls('w'))
+                            )
+                            tcPr.append(shading_elm)
+
+                            # 表头单元格边框
+                            tcBorders = parse_xml(
+                                r'<w:tcBorders {}>'
+                                r'<w:top w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'<w:left w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'<w:bottom w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'<w:right w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'</w:tcBorders>'.format(nsdecls('w'))
+                            )
+                            tcPr.append(tcBorders)
+
+                            # 设置表头文字样式
+                            for paragraph in cell.paragraphs:
+                                paragraph.alignment = 1  # 居中
+                                for run in paragraph.runs:
+                                    run.font.bold = True
+                                    run.font.size = Pt(11)
+                                    run.font.color.rgb = RGBColor(255, 255, 255)
+                                    run.font.name = "Calibri"
+                        else:
+                            # 数据行：斑马纹背景
+                            if row_idx % 2 == 1:
+                                fill_color = "F2F2F2"  # 浅灰色
+                            else:
+                                fill_color = "FFFFFF"  # 白色
+
+                            shading_elm = parse_xml(
+                                r'<w:shd {} w:fill="{}"/>'.format(nsdecls('w'), fill_color)
+                            )
+                            tcPr.append(shading_elm)
+
+                            # 数据行单元格边框
+                            tcBorders = parse_xml(
+                                r'<w:tcBorders {}>'
+                                r'<w:top w:val="single" w:sz="4" w:space="0" w:color="D0D0D0"/>'
+                                r'<w:left w:val="single" w:sz="4" w:space="0" w:color="D0D0D0"/>'
+                                r'<w:bottom w:val="single" w:sz="4" w:space="0" w:color="D0D0D0"/>'
+                                r'<w:right w:val="single" w:sz="4" w:space="0" w:color="D0D0D0"/>'
+                                r'</w:tcBorders>'.format(nsdecls('w'))
+                            )
+                            tcPr.append(tcBorders)
+
+                            # 设置数据行文字样式
+                            for paragraph in cell.paragraphs:
+                                paragraph.alignment = 0  # 左对齐
+                                for run in paragraph.runs:
+                                    run.font.size = Pt(10)
+                                    run.font.color.rgb = RGBColor(64, 64, 64)
+                                    run.font.name = "Calibri"
+
+                        # 设置单元格垂直对齐
+                        vAlign = parse_xml(
+                            r'<w:vAlign {} w:val="center"/>'.format(nsdecls('w'))
+                        )
+                        # 移除旧的垂直对齐设置
+                        for old_vAlign in tcPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}vAlign'):
+                            tcPr.remove(old_vAlign)
+                        tcPr.append(vAlign)
+
+                        # 设置单元格内边距
+                        for old_mar in tcPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tcMar'):
+                            tcPr.remove(old_mar)
+                        tcMar = parse_xml(
+                            r'<w:tcMar {}>'
+                            r'<w:top w:w="80" w:type="dxa"/>'
+                            r'<w:left w:w="120" w:type="dxa"/>'
+                            r'<w:bottom w:w="80" w:type="dxa"/>'
+                            r'<w:right w:w="120" w:type="dxa"/>'
+                            r'</w:tcMar>'.format(nsdecls('w'))
+                        )
+                        tcPr.append(tcMar)
+
+                print(f"[DEBUG] Table {table_idx + 1} formatted successfully")
+
+            except Exception as e:
+                print(f"[WARNING] Failed to format table {table_idx + 1}: {e}")
+                import traceback
+                traceback.print_exc()
 
     def _add_table_to_doc(self, doc: "Document", rows: List[List[str]]) -> None:
         """
@@ -1622,8 +1729,6 @@ Please analyze this interference map and extract structured data."""
 # ============================================================================
 async def main(image_path: str) -> None:
     """主入口"""
-    configure_proxies()
-
     print("==== ITU Interference Report Generation (Standalone) ====")
     print(f"[INFO] Image path: {image_path}")
     print(f"[INFO] Model: {LLM_MODEL_NAME}")
