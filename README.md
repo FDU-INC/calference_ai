@@ -167,9 +167,9 @@ python run.py prepare-rag
 编辑 `itu_report_generator/config.py` 或设置环境变量：
 
 ```bash
-# Gemini 配置（推荐）
-export LLM_MODEL_NAME="gemini-2.0-flash"
-export LLM_BASE_URL="https://api.aicodemirror.com/api/gemini"
+# GLM 配置（推荐）
+export LLM_MODEL_NAME="glm-4v-flash"
+export LLM_BASE_URL="https://open.bigmodel.cn/api/paas/v4"
 export LLM_API_KEY="your_api_key_here"
 
 # 或 Claude 配置

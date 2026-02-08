@@ -43,12 +43,12 @@ OUTPUT_DATAFLOW_DIR = str(BASE_DIR / "output_reports" / "data_flow")
 ORGANIZATION_NAME = "FDU-INC"
 
 # 默认模型与密钥
-# 使用 Gemini 2.0 Flash（兼容 OpenAI 格式）
-LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "gemini-2.0-flash")
-LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.aicodemirror.com/api/gemini")
+# 使用 GLM-4V Flash（智谱 AI）
+LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "glm-4v-flash")
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://open.bigmodel.cn/api/paas/v4")
 LLM_API_KEY = os.getenv(
     "LLM_API_KEY",
-    os.getenv("OPENAI_API_KEY", ""),
+    os.getenv("OPENAI_API_KEY", "870846a4f1834fb8b0b5857cbbbe3080.uc16dTxZBl3YNnhZ"),
 )
 
 # 备选：Claude 中转（支持 200K context，但 AutoGen 集成可能有问题）
