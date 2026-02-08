@@ -64,9 +64,9 @@ python src/prepare_data.py
 
 **注意**：此步骤只需运行一次，除非更新了ITU标准文档。
 
-### 3. 配置 API 密钥（智谱 GLM-4V，OpenAI 兼容接口）
+### 3. 配置 API 密钥（Gemini 2.0 Flash，OpenAI 兼容接口）
 
-默认已经内置了一套可用的智谱 GLM-4V 配置，集中在 `config.py` 中。你可以通过环境变量或直接修改配置文件来切换：
+默认已经内置了一套可用的 Gemini 2.0 Flash 配置，集中在 `config.py` 中。你可以通过环境变量或直接修改配置文件来切换：
 
 ```python
 from pathlib import Path
@@ -74,12 +74,12 @@ import os
 
 BASE_DIR = Path(__file__).parent
 
-# LLM 配置（默认：智谱 GLM-4V OpenAI 兼容接口）
-LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "glm-4v-flash")
-LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://open.bigmodel.cn/api/paas/v4")
+# LLM 配置（默认：Gemini 2.0 Flash OpenAI 兼容接口）
+LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "gemini-2.0-flash")
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.aicodemirror.com/api/gemini")
 LLM_API_KEY = os.getenv(
     "LLM_API_KEY",
-    os.getenv("OPENAI_API_KEY", "your-zhipu-api-key-here"),
+    os.getenv("OPENAI_API_KEY", "your-api-key-here"),
 )
 ```
 
@@ -88,9 +88,9 @@ LLM_API_KEY = os.getenv(
 - 在 shell 中设置环境变量（优先级最高）：
 
 ```bash
-export LLM_API_KEY="your-zhipu-api-key-here"
-export LLM_BASE_URL="https://open.bigmodel.cn/api/paas/v4"
-export LLM_MODEL_NAME="glm-4v-flash"
+export LLM_API_KEY="your-api-key-here"
+export LLM_BASE_URL="https://api.aicodemirror.com/api/gemini"
+export LLM_MODEL_NAME="gemini-2.0-flash"
 ```
 
 也可以用 `OPENAI_API_KEY` 兼容变量名。
@@ -136,12 +136,12 @@ BASE_DIR = Path(__file__).parent
 INPUT_IMAGE_DIR = str(BASE_DIR / "data" / "total")
 OUTPUT_REPORT_DIR = str(BASE_DIR / "data" / "output_reports")
 
-# LLM 配置（默认使用智谱 GLM-4V，可通过环境变量覆盖）
-LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "glm-4v-flash")
-LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://open.bigmodel.cn/api/paas/v4")
+# LLM 配置（默认使用 Gemini 2.0 Flash，可通过环境变量覆盖）
+LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "gemini-2.0-flash")
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.aicodemirror.com/api/gemini")
 LLM_API_KEY = os.getenv(
     "LLM_API_KEY",
-    os.getenv("OPENAI_API_KEY", "your-zhipu-api-key-here"),
+    os.getenv("OPENAI_API_KEY", "your-api-key-here"),
 )
 
 # RAG 配置：文件系统 RAG（无需 MongoDB）
@@ -192,7 +192,7 @@ NumPy数组，形状：`(num_chunks, embedding_dim)`
 4. **大模型分析**：调用 LLM 对图片及 prompt 进行分析，输出结构化文本
 5. **Word 报告生成**：插入图片、分析内容，自动生成 docx 报告（依赖 pandoc）
 
-### 网络与证书问题排查（智谱 GLM-4V）
+### 网络与证书问题排查（Gemini 2.0 Flash）
 
 - 若报 `openai.APIConnectionError: Connection error.`，优先检查：
   - 是否设置了需要但不可用的代理：`env | egrep -i 'http_proxy|https_proxy|all_proxy|no_proxy'`
