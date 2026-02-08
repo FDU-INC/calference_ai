@@ -51,14 +51,15 @@ class CalferenceRunner:
 
         try:
             # 检查依赖
-            self._check_dependencies(["autogen", "sentence_transformers"])
+            self._check_dependencies(["autogen_core", "autogen_agentchat", "sentence_transformers"])
 
             # 导入并运行
             sys.path.insert(0, str(self.itu_module))
             from itu_interference_analyzer import main
+            import asyncio
 
-            # 调用主函数
-            main(image_path=image_path, use_rag=use_rag)
+            # 调用异步主函数
+            asyncio.run(main(image_path=image_path, use_rag=use_rag))
 
             print("\n" + "=" * 70)
             print("✅ 报告生成完成！")
@@ -136,7 +137,7 @@ class CalferenceRunner:
             sys.path.insert(0, str(self.itu_module))
             from src.prepare_data import main
 
-            main()
+            main(auto_overwrite=True)
 
             print("\n" + "=" * 70)
             print("✅ RAG 数据准备完成！")

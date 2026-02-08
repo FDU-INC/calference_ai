@@ -211,7 +211,7 @@ class AgentConfigBuilder:
             name="analysis_agent",
             role=AgentRole.ANALYSIS,
             description="Analyze parsed data and identify patterns and interference",
-            max_tokens=2048,
+            max_tokens=1536,
             temperature=0.3,
             system_message=(
                 "You are the Analysis Agent. Your job is to analyze the structured data from Parser Agent.\n\n"
@@ -250,7 +250,7 @@ class AgentConfigBuilder:
             name="review_agent",
             role=AgentRole.REVIEW,
             description="Review analysis for ITU compliance and logical consistency",
-            max_tokens=1536,
+            max_tokens=1024,
             temperature=0.3,
             system_message=(
                 "You are the Review Agent. Your job is to verify the analysis from Analysis Agent.\n\n"
@@ -287,7 +287,7 @@ class AgentConfigBuilder:
             name="report_agent",
             role=AgentRole.REPORT,
             description="Generate final formatted report",
-            max_tokens=2048,
+            max_tokens=1536,
             temperature=0.2,
             system_message=(
                 "You are the Report Agent. Your job is to generate the final formatted report.\n\n"

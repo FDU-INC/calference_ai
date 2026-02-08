@@ -207,8 +207,8 @@ def example_6_custom_configuration() -> None:
     print("主要配置项:")
     print("""
 # LLM 配置
-LLM_MODEL_NAME = "glm-4v-flash"
-LLM_BASE_URL = "https://open.bigmodel.cn/api/paas/v4"
+LLM_MODEL_NAME = "gemini-2.0-flash"
+LLM_BASE_URL = "https://api.aicodemirror.com/api/gemini"
 LLM_API_KEY = "your_api_key_here"
 
 # RAG 配置

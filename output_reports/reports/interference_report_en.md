@@ -2,13 +2,13 @@
 
 ---
 
-**Report Date:** 2026-02-07
+**Report Date:** 2026-02-08
 
 **Organization:** Institute of Space Internet, Fudan University
 
 **Analysis System:** Calference - Satellite Interference Analysis Platform
 
-**Document ID:** ITU-RPT-20260207-ONE
+**Document ID:** ITU-RPT-20260208-ONE
 
 ---
 
@@ -52,8 +52,8 @@ The following ITU-R Recommendations are referenced in this analysis:
 
 | Parameter | Value |
 |-----------|-------|
-| Report Date | 2026-02-07 |
-| Time Range | 00:00-24:00 |
+| Report Date | 2026-02-08 |
+| Time Range | 00:00-23:59 |
 | System Type | Ground Terminal System |
 | Monitoring Metric | CINR |
 | Filename | oneweb_total_earth_cinr.png |
@@ -77,9 +77,9 @@ The following ITU-R Recommendations are referenced in this analysis:
 
 | Parameter | Value |
 |-----------|-------|
-| Abnormal Periods | 10:00-11:00 |
-| Duration Type | short-lived |
-| Magnitude | high |
+| Abnormal Periods |  |
+| Duration Type | sustained |
+| Magnitude | moderate |
 
 ### 3.4 General
 
@@ -87,121 +87,45 @@ The following ITU-R Recommendations are referenced in this analysis:
 
 | Parameter | Value |
 |-----------|-------|
-| Visual Patterns | Overall fluctuation within a range of 58-62 dB |
+| Visual Patterns | random fluctuations throughout the day |
 
-## 4. Technical Analysis
-
-**The following technical analysis evaluates the interference characteristics and potential impact on system performance.**
-
-**Interference Presence**: Yes - The graph shows significant fluctuations in the CINR values, indicating possible interference events.
-
-### Numerical Analysis
-
-| Item | Description |
-|------|-------------|
-| Min Value | 58 dB |
-| Max Value | 62 dB |
-| Average | 60 dB |
-| Range | 4 dB |
-| Assessment | The values seem typical for a CINR measurement but the presence of high peaks suggests potential interference. |
-
-### Temporal Characteristics
-
-| Item | Description |
-|------|-------------|
-| Abnormal Periods | 10:00-11:00 |
-| Duration | Short-lived |
-| Magnitude | High |
-
-### Pattern Analysis
-The graph displays an overall fluctuation within a range of 58-62 dB. There are noticeable spikes during certain periods, particularly around 10:00-11:00, which could indicate instances of interference or signal degradation.
-
-### Potential Interference Sources
-
-| Item | Description |
-|------|-------------|
-| **Peak at 10 | 00-11:00:** The sharp peak observed during these hours might be due to increased interference from other communication systems or environmental factors such as weather conditions affecting signal quality. |
-| **Consistent Fluctuations | ** The consistent fluctuations throughout the day may suggest intermittent interference sources like nearby electronic devices or varying atmospheric conditions impacting the signal consistently over time. |
-
-### Conclusion
-The analysis indicates that while the CINR values are generally within expected ranges, there are specific periods where interference is likely present, most notably between 10:00-11:00. Further investigation into these peak times and their causes would be beneficial to mitigate any potential disruptions.
-
-## 5. ITU Compliance Assessment
-
-**This section assesses the system's compliance with applicable ITU Radio Regulations and Recommendations.**
-
-### ITU Standard Compliance
-
-| Item | Description |
-|------|-------------|
-| **Compliance Status** | Non-Compliant |
-| **Key Findings** | The graph shows significant fluctuations in the CINR values, indicating possible interference events. |
-| **Risk Level** | High |
-
-The graph displays an overall fluctuation within a range of 58-62 dB. There are noticeable spikes during certain periods, particularly around 10:00-11:00, which could indicate instances of interference or signal degradation. These findings suggest non-compliance with ITU standards due to the presence of high interference levels.
-
-### Evidence Summary
-
-| Item | Description |
-|------|-------------|
-|  | Significant fluctuations in CINR values throughout the day. |
-|  | Sharp peak observed during 10:00-11:00. |
-|  | Overall fluctuation within a range of 58-62 dB. |
-|  | No clear pattern of consistent behavior. |
-
-### Logical Consistency Check
-The analysis is logically consistent and well-supported by the visual cues provided in the graph.
-
-### Recommendations
-
-| Item | Description |
-|------|-------------|
-| **Investigate Peak Times** | Investigate the cause of the sharp peak observed between 10:00-11:00 to determine if it is due to interference or signal degradation. |
-| **Monitor Consistent Fluctuations** | Monitor and analyze the consistent fluctuations throughout the day to identify potential intermittent interference sources. |
-| **Implement Mitigation Measures** | Based on the findings, implement measures to reduce interference and improve signal quality. |
-
-## 6. Conclusions and Recommendations
+## 4. Conclusions and Recommendations
 
 **Based on the comprehensive analysis presented above, the following conclusions and recommendations are provided.**
 
 | Field               | Value                |
 |---------------------|----------------------|
-| Report date         | 2026-02-07           |
+| Report date         | 2026-02-08           |
 | System type         | Ground Terminal System|
 | Monitoring metric   | CINR                 |
 | Research institution| Institute of Space Internet, Fudan University|
 
-The graph displays an overall fluctuation within a range of 58-62 dB. There are noticeable spikes during certain periods, particularly around 10:00-11:00, which could indicate instances of interference or signal degradation. These findings suggest non-compliance with ITU standards due to the presence of high interference levels.
+The graph depicts the variation of the CINR (Carrier-to-Interference-plus-Noise Ratio) for the oneweb constellation's ground terminal system over a 24-hour period. The CINR values show random fluctuations throughout the day, ranging from a minimum value of 58 dB to a maximum value of 62 dB, with an average value of 60 dB. The range of these fluctuations is 4 dB, indicating moderate variability.
 
-| Item | Description |
-|------|-------------|
-| **Compliance Status** | Non-Compliant |
-| **Key Findings** | The graph shows significant fluctuations in the CINR values, indicating possible interference events. |
-| **Risk Level** | High |
+The system demonstrates non-compliance with ITU standards due to the significant variability in CINR levels, which can lead to degraded communication quality and reliability. The observed fluctuations suggest that the system may be susceptible to interference, necessitating further investigation and mitigation measures to ensure stable operation within acceptable ITU guidelines.
 
-The graph displays an overall fluctuation within a range of 58-62 dB. There are noticeable spikes during certain periods, particularly around 10:00-11:00, which could indicate instances of interference or signal degradation. These findings suggest non-compliance with ITU standards due to the presence of high interference levels.
+Based on the analysis, the following conclusions and recommendations are made:
 
-Based on the analysis, the following conclusions and recommendations can be made:
+1. **Conclusions**:
+2. There is evidence of interference present in the system.
+3. The CINR values exhibit random fluctuations without a clear pattern.
+4. The magnitude of the interference is moderate.
+5. The system does not comply with ITU standards due to the variability in CINR.
 
-1. The CINR values show significant fluctuations throughout the day, indicating potential interference events.
-2. The sharp peak observed between 10:00-11:00 suggests a high level of interference during this period.
-3. The consistent fluctuations throughout the day may be due to intermittent interference sources.
-
-Recommendations:
-
-1. Investigate the cause of the sharp peak observed between 10:00-11:00 to determine if it is due to interference or signal degradation.
-2. Monitor and analyze the consistent fluctuations throughout the day to identify potential intermittent interference sources.
-3. Implement measures to reduce interference and improve signal quality.
+1. **Recommendations**:
+2. Conduct a thorough environmental survey to identify and mitigate potential electromagnetic interference (EMI) sources near the ground terminal.
+3. Implement adaptive modulation techniques to dynamically adjust the signal quality in response to changing interference conditions.
+4. Schedule regular maintenance checks on the ground terminal equipment to ensure optimal performance and minimize internal noise contributions.
 
 | Item | Description |
 |------|-------------|
 | Constellation | oneweb |
 | Terminal type | Ground Terminal System |
 | Analysis type | CINR |
-| Date | 2026-02-07 |
+| Date | 2026-02-08 |
 
 ---
-## 7. References
+## 5. References
 
 ### ITU-R Recommendations
 
@@ -216,13 +140,13 @@ Recommendations:
 5. **ITU-R P.618-13** (2017): Propagation data and prediction methods required for the design of Earth-space telecommunication systems
 
 ---
-## 8. Appendix: Report Metadata
+## 6. Appendix: Report Metadata
 
 | Parameter | Value |
 |-----------|-------|
 | Report Type | Multi-Agent Dialogue-Based Analysis |
 | Analysis Pipeline | Parser → Analysis → Review → Report |
-| Generation Date | 2026-02-07 |
+| Generation Date | 2026-02-08 |
 | Analysis System | Calference v1.0 |
 | Organization | Institute of Space Internet, Fudan University |
 

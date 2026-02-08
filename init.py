@@ -97,23 +97,36 @@ class ProjectInitializer:
         """检查依赖包"""
         print("\n🔍 检查依赖包...")
 
-        required_packages = [
-            "numpy",
-            "scipy",
-            "sgp4",
-            "autogen",
-            "openai",
-            "sentence_transformers",
-            "fastapi",
-            "uvicorn",
-            "python_docx",
-            "PIL",
-        ]
+        # 包名称映射（pip 包名 -> Python 导入名）
+        package_mapping = {
+            "Flask": "flask",
+            "pillow": "PIL",
+            "python-docx": "docx",
+            "sentence-transformers": "sentence_transformers",
+        }
+
+        # 从 requirements.txt 中解析依赖包
+        required_packages = []
+        requirements_file = self.project_root / "requirements.txt"
+
+        if requirements_file.exists():
+            with open(requirements_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    # 跳过注释和空行
+                    if not line or line.startswith('#'):
+                        continue
+                    # 提取包名（去掉版本号）
+                    package_name = line.split('>=')[0].split('==')[0].split('<')[0].split('>')[0].strip()
+                    if package_name:
+                        required_packages.append(package_name)
 
         missing = []
         for package in required_packages:
+            # 获取导入名称（如果有映射则使用映射，否则使用包名）
+            import_name = package_mapping.get(package, package)
             try:
-                __import__(package)
+                __import__(import_name)
                 print(f"  ✅ {package}")
             except ImportError:
                 print(f"  ❌ {package}")
@@ -221,13 +234,20 @@ class ProjectInitializer:
             return False
 
         # 检查 LLM 配置
-        api_key = os.getenv("LLM_API_KEY")
-        if not api_key:
-            self.warnings.append("LLM_API_KEY 环境变量未设置")
-            print(f"  ⚠️  LLM_API_KEY 环境变量未设置")
-            print(f"     请运行: export LLM_API_KEY='your_api_key'")
-        else:
-            print(f"  ✅ LLM_API_KEY 已配置")
+        try:
+            # 动态导入 config 模块
+            sys.path.insert(0, str(self.project_root / "itu_report_generator"))
+            import config
+
+            api_key = config.LLM_API_KEY
+            if api_key and api_key.strip():
+                print(f"  ✅ LLM_API_KEY 已在 config.py 中配置")
+            else:
+                self.warnings.append("LLM_API_KEY 在 config.py 中为空")
+                print(f"  ⚠️  LLM_API_KEY 在 config.py 中为空")
+        except Exception as e:
+            self.warnings.append(f"无法读取 config.py: {e}")
+            print(f"  ⚠️  无法读取 config.py: {e}")
 
         print(f"  ✅ config.py 存在")
         return True
@@ -251,11 +271,9 @@ class ProjectInitializer:
         if not self.errors:
             print("\n✅ 初始化成功！")
             print("\n下一步:")
-            print("  1. 配置 LLM API 密钥:")
-            print("     export LLM_API_KEY='your_api_key'")
-            print("\n  2. 运行示例:")
+            print("  1. 运行示例:")
             print("     python run.py example itu_report")
-            print("\n  3. 启动服务:")
+            print("\n  2. 启动服务:")
             print("     python run.py web-api")
         else:
             print("\n❌ 初始化失败，请解决上述错误后重试")

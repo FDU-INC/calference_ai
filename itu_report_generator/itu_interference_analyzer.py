@@ -357,11 +357,22 @@ Please analyze this interference map and extract structured data."""
             # First try to convert markdown to docx using pandoc
             pandoc_exe = shutil.which("pandoc")
             if pandoc_exe:
-                subprocess.run(
-                    [pandoc_exe, "--from", "gfm", "--to", "docx", md_path, "-o", docx_path],
-                    check=True,
-                )
-                doc = Document(docx_path)
+                print("[INFO] Using pandoc to convert markdown to DOCX")
+                try:
+                    subprocess.run(
+                        [pandoc_exe, "--from", "gfm", "--to", "docx", md_path, "-o", docx_path],
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                    )
+                    doc = Document(docx_path)
+                    print("[INFO] Pandoc conversion successful")
+                    # 对 pandoc 生成的表格应用美观样式
+                    self._format_all_tables(doc)
+                except subprocess.CalledProcessError as e:
+                    print(f"[WARNING] Pandoc conversion failed: {e.stderr}")
+                    print("[INFO] Falling back to python-docx")
+                    doc = self._create_docx_from_markdown(md_path)
             else:
                 # 没有 pandoc，使用纯 python-docx 创建文档
                 print("[INFO] pandoc not found, using python-docx to create DOCX")
@@ -369,12 +380,14 @@ Please analyze this interference map and extract structured data."""
 
             # 插入图片
             if os.path.exists(image_path):
+                print(f"[INFO] Inserting image from: {image_path}")
                 # Find the position to insert image (after "Data Analysis" section header)
                 insert_index = -1
                 for i, para in enumerate(doc.paragraphs):
                     # 查找 "Data Analysis" 或 "Basic Information" 标题
                     if "Data Analysis" in para.text or "Basic Information" in para.text:
                         insert_index = i + 1
+                        print(f"[DEBUG] Found insertion point at paragraph {i}: {para.text[:50]}")
                         break
 
                 # 如果没找到，在报告标题后插入
@@ -382,39 +395,49 @@ Please analyze this interference map and extract structured data."""
                     for i, para in enumerate(doc.paragraphs):
                         if "Interference Analysis Report" in para.text:
                             insert_index = i + 1
+                            print(f"[DEBUG] Found insertion point at title paragraph {i}")
                             break
 
                 # 如果还是没找到，在开头插入
                 if insert_index == -1:
                     insert_index = 1
+                    print(f"[DEBUG] Using default insertion point: {insert_index}")
 
-                # 创建图片段落
-                img_para = doc.add_paragraph()
-                img_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                run = img_para.add_run()
-                run.add_picture(image_path, width=Inches(5.5))
+                try:
+                    # 创建图片段落
+                    img_para = doc.add_paragraph()
+                    img_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    run = img_para.add_run()
+                    run.add_picture(image_path, width=Inches(5.5))
 
-                # 创建图片标题段落
-                caption_para = doc.add_paragraph()
-                caption_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                caption_run = caption_para.add_run(
-                    f"Figure 1: {self.image_info.get('filename', 'Interference Map')}"
-                )
-                caption_run.font.size = Pt(10)
-                caption_run.font.italic = True
+                    # 创建图片标题段落
+                    caption_para = doc.add_paragraph()
+                    caption_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    caption_run = caption_para.add_run(
+                        f"Figure 1: {self.image_info.get('filename', 'Interference Map')}"
+                    )
+                    caption_run.font.size = Pt(10)
+                    caption_run.font.italic = True
 
-                # 添加空行
-                spacer_para = doc.add_paragraph()
+                    # 添加空行
+                    spacer_para = doc.add_paragraph()
 
-                # 将新创建的段落移动到正确位置
-                if insert_index < len(doc.paragraphs) - 3:
-                    target_element = doc.paragraphs[insert_index]._element
-                    # 移动三个新段落到目标位置之前
-                    target_element.addprevious(img_para._element)
-                    target_element.addprevious(caption_para._element)
-                    target_element.addprevious(spacer_para._element)
+                    # 将新创建的段落移动到正确位置
+                    if insert_index < len(doc.paragraphs) - 3:
+                        target_element = doc.paragraphs[insert_index]._element
+                        # 移动三个新段落到目标位置之前
+                        target_element.addprevious(img_para._element)
+                        target_element.addprevious(caption_para._element)
+                        target_element.addprevious(spacer_para._element)
+                        print(f"[INFO] Image inserted at position {insert_index}")
+                    else:
+                        print(f"[INFO] Image appended at end of document")
 
-                print(f"[INFO] Image integrated into DOCX")
+                    print(f"[INFO] Image integrated into DOCX")
+                except Exception as img_error:
+                    print(f"[ERROR] Failed to insert image: {img_error}")
+                    import traceback
+                    traceback.print_exc()
             else:
                 print(f"[WARNING] Image file not found: {image_path}")
 
@@ -456,6 +479,8 @@ Please analyze this interference map and extract structured data."""
         in_table = False
         table_rows = []
 
+        print(f"[DEBUG] Processing {len(lines)} lines from markdown")
+
         while i < len(lines):
             line = lines[i]
 
@@ -484,26 +509,38 @@ Please analyze this interference map and extract structured data."""
                 continue
 
             # 处理表格
-            if line.strip().startswith("|"):
+            if line.strip().startswith("|") and "|" in line.strip()[1:]:
                 if not in_table:
                     in_table = True
                     table_rows = []
-                # 跳过分隔行
-                if re.match(r"^\|[\s\-:|]+\|$", line.strip()):
+                    print(f"[DEBUG] Table started at line {i}")
+                # 跳过分隔行（包含 --- 或 :-- 或 --: 等）
+                stripped_line = line.strip()
+                # 更精确的分隔行检测：必须包含连续的 - 符号
+                if re.match(r"^\|[\s\-:|]+\|$", stripped_line) and "---" in stripped_line:
+                    print(f"[DEBUG] Skipping separator line at {i}: {stripped_line[:50]}")
                     i += 1
                     continue
                 # 解析表格行
                 cells = [cell.strip() for cell in line.strip().split("|")[1:-1]]
-                if cells:
+                # 过滤掉空行和只有空格的行
+                if cells and any(cell.strip() for cell in cells):
+                    print(f"[DEBUG] Adding table row at line {i} with {len(cells)} cells")
                     table_rows.append(cells)
+                else:
+                    print(f"[DEBUG] Skipping empty table row at line {i}")
                 i += 1
                 continue
             elif in_table:
                 # 表格结束，创建表格
                 in_table = False
-                if table_rows:
+                print(f"[DEBUG] Table ended at line {i}, total rows: {len(table_rows)}")
+                if table_rows and len(table_rows) >= 1:  # 至少要有表头
                     self._add_table_to_doc(doc, table_rows)
                     table_rows = []
+                else:
+                    print(f"[DEBUG] Skipping table creation - insufficient rows")
+                # 注意：不要 continue，让当前行继续被处理
 
             # 处理标题
             if line.startswith("# "):
@@ -555,18 +592,177 @@ Please analyze this interference map and extract structured data."""
             i += 1
 
         # 处理最后的表格
-        if in_table and table_rows:
+        if in_table and table_rows and len(table_rows) >= 1:
+            print(f"[DEBUG] Processing final table with {len(table_rows)} rows")
             self._add_table_to_doc(doc, table_rows)
+
+        print(f"[DEBUG] Markdown processing complete, total paragraphs: {len(doc.paragraphs)}")
+        print(f"[DEBUG] Total tables created: {len(doc.tables)}")
 
         return doc
 
-    def _add_table_to_doc(self, doc: "Document", rows: List[List[str]]) -> None:
+    def _format_all_tables(self, doc: "Document") -> None:
+        """
+        对文档中所有表格应用美观样式。
+
+        Args:
+            doc: Document 对象
+        """
+        from docx.shared import Pt, RGBColor
+        from docx.oxml.ns import nsdecls
+        from docx.oxml import parse_xml
+
+        print(f"[DEBUG] Formatting {len(doc.tables)} tables")
+
+        for table_idx, table in enumerate(doc.tables):
+            try:
+                num_rows = len(table.rows)
+                num_cols = len(table.columns)
+
+                if num_rows == 0 or num_cols == 0:
+                    continue
+
+                print(f"[DEBUG] Formatting table {table_idx + 1}: {num_rows} rows x {num_cols} cols")
+
+                # 设置表格属性
+                tbl = table._element
+                tblPr = tbl.tblPr
+                if tblPr is None:
+                    tblPr = parse_xml(r'<w:tblPr {}/>'.format(nsdecls('w')))
+                    tbl.insert(0, tblPr)
+
+                # 移除旧的边框设置
+                for old_borders in tblPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tblBorders'):
+                    tblPr.remove(old_borders)
+
+                # 设置表格边框
+                tblBorders = parse_xml(
+                    r'<w:tblBorders {}>'
+                    r'<w:top w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                    r'<w:left w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                    r'<w:bottom w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                    r'<w:right w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                    r'<w:insideH w:val="single" w:sz="6" w:space="0" w:color="B4C6E7"/>'
+                    r'<w:insideV w:val="single" w:sz="6" w:space="0" w:color="B4C6E7"/>'
+                    r'</w:tblBorders>'.format(nsdecls('w'))
+                )
+                tblPr.append(tblBorders)
+
+                # 格式化每一行
+                for row_idx, row in enumerate(table.rows):
+                    # 设置行高
+                    row.height = Pt(28)
+
+                    for col_idx, cell in enumerate(row.cells):
+                        tcPr = cell._element.get_or_add_tcPr()
+
+                        # 移除旧的阴影设置
+                        for old_shd in tcPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}shd'):
+                            tcPr.remove(old_shd)
+
+                        # 移除旧的边框设置
+                        for old_borders in tcPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tcBorders'):
+                            tcPr.remove(old_borders)
+
+                        if row_idx == 0:
+                            # 表头行：深蓝色背景
+                            shading_elm = parse_xml(
+                                r'<w:shd {} w:fill="4472C4"/>'.format(nsdecls('w'))
+                            )
+                            tcPr.append(shading_elm)
+
+                            # 表头单元格边框
+                            tcBorders = parse_xml(
+                                r'<w:tcBorders {}>'
+                                r'<w:top w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'<w:left w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'<w:bottom w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'<w:right w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'</w:tcBorders>'.format(nsdecls('w'))
+                            )
+                            tcPr.append(tcBorders)
+
+                            # 设置表头文字样式
+                            for paragraph in cell.paragraphs:
+                                paragraph.alignment = 1  # 居中
+                                for run in paragraph.runs:
+                                    run.font.bold = True
+                                    run.font.size = Pt(11)
+                                    run.font.color.rgb = RGBColor(255, 255, 255)
+                                    run.font.name = "Calibri"
+                        else:
+                            # 数据行：斑马纹背景
+                            if row_idx % 2 == 1:
+                                fill_color = "F2F2F2"  # 浅灰色
+                            else:
+                                fill_color = "FFFFFF"  # 白色
+
+                            shading_elm = parse_xml(
+                                r'<w:shd {} w:fill="{}"/>'.format(nsdecls('w'), fill_color)
+                            )
+                            tcPr.append(shading_elm)
+
+                            # 数据行单元格边框
+                            tcBorders = parse_xml(
+                                r'<w:tcBorders {}>'
+                                r'<w:top w:val="single" w:sz="4" w:space="0" w:color="D0D0D0"/>'
+                                r'<w:left w:val="single" w:sz="4" w:space="0" w:color="D0D0D0"/>'
+                                r'<w:bottom w:val="single" w:sz="4" w:space="0" w:color="D0D0D0"/>'
+                                r'<w:right w:val="single" w:sz="4" w:space="0" w:color="D0D0D0"/>'
+                                r'</w:tcBorders>'.format(nsdecls('w'))
+                            )
+                            tcPr.append(tcBorders)
+
+                            # 设置数据行文字样式
+                            for paragraph in cell.paragraphs:
+                                paragraph.alignment = 0  # 左对齐
+                                for run in paragraph.runs:
+                                    run.font.size = Pt(10)
+                                    run.font.color.rgb = RGBColor(64, 64, 64)
+                                    run.font.name = "Calibri"
+
+                        # 设置单元格垂直对齐
+                        vAlign = parse_xml(
+                            r'<w:vAlign {} w:val="center"/>'.format(nsdecls('w'))
+                        )
+                        # 移除旧的垂直对齐设置
+                        for old_vAlign in tcPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}vAlign'):
+                            tcPr.remove(old_vAlign)
+                        tcPr.append(vAlign)
+
+                        # 设置单元格内边距
+                        for old_mar in tcPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tcMar'):
+                            tcPr.remove(old_mar)
+                        tcMar = parse_xml(
+                            r'<w:tcMar {}>'
+                            r'<w:top w:w="80" w:type="dxa"/>'
+                            r'<w:left w:w="120" w:type="dxa"/>'
+                            r'<w:bottom w:w="80" w:type="dxa"/>'
+                            r'<w:right w:w="120" w:type="dxa"/>'
+                            r'</w:tcMar>'.format(nsdecls('w'))
+                        )
+                        tcPr.append(tcMar)
+
+                print(f"[DEBUG] Table {table_idx + 1} formatted successfully")
+
+            except Exception as e:
+                print(f"[WARNING] Failed to format table {table_idx + 1}: {e}")
+                import traceback
+                traceback.print_exc()
+
+    def _add_table_to_doc(self, doc: "Document", rows: List[List[str]], table_title: str = None, table_description: str = None, table_number: int = None, table_note: str = None, add_summary_row: bool = False, add_row_numbers: bool = False) -> None:
         """
         向文档添加专业格式的表格。
 
         Args:
             doc: Document 对象
             rows: 表格行数据
+            table_title: 表格标题（可选）
+            table_description: 表格描述（可选）
+            table_number: 表格编号（可选）
+            table_note: 表格注释/页脚（可选）
+            add_summary_row: 是否添加汇总行（可选）
+            add_row_numbers: 是否添加行号（可选）
         """
         from docx.shared import Pt, Inches, RGBColor
         from docx.enum.table import WD_TABLE_ALIGNMENT
@@ -575,44 +771,410 @@ Please analyze this interference map and extract structured data."""
         import re
 
         if not rows or len(rows) < 1:
+            print("[DEBUG] No rows to add to table")
             return
 
-        # 确定列数
-        num_cols = max(len(row) for row in rows)
+        # 计算列数
+        num_cols = len(rows[0]) if rows else 0
+
+        # 如果需要添加行号，在每行前面插入行号
+        if add_row_numbers:
+            new_rows = []
+            for idx, row in enumerate(rows):
+                if idx == 0:
+                    # 表头行添加"No."列
+                    new_rows.append(["No."] + row)
+                else:
+                    # 数据行添加行号
+                    new_rows.append([str(idx)] + row)
+            rows = new_rows
+            num_cols += 1
+
         if num_cols == 0:
+            print("[DEBUG] Column count is 0")
             return
 
-        # 创建表格
-        table = doc.add_table(rows=len(rows), cols=num_cols)
-        table.style = "Table Grid"
-        table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        print(f"[DEBUG] Creating table with {len(rows)} rows and {num_cols} columns")
 
-        # 填充表格
-        for i, row_data in enumerate(rows):
-            row = table.rows[i]
-            for j, cell_text in enumerate(row_data):
-                if j < num_cols:
-                    cell = row.cells[j]
-                    # 清空默认段落
-                    cell.text = ""
-                    para = cell.paragraphs[0]
+        # 标准化所有行的列数
+        normalized_rows = []
+        for row in rows:
+            if len(row) < num_cols:
+                # 补齐缺失的列
+                row = row + [""] * (num_cols - len(row))
+            elif len(row) > num_cols:
+                # 截断多余的列
+                row = row[:num_cols]
+            normalized_rows.append(row)
 
-                    # 处理 markdown 加粗语法 **text**
-                    self._add_formatted_cell_text(para, cell_text, Pt(10), is_header=(i == 0))
+        try:
+            # 添加表格标题编号（如果有）
+            if table_number:
+                title_para = doc.add_paragraph()
+                title_para.paragraph_format.space_before = Pt(12)
+                title_para.paragraph_format.space_after = Pt(6)
+                title_run = title_para.add_run(f"Table {table_number}: {table_title if table_title else 'Data Table'}")
+                title_run.font.size = Pt(12)
+                title_run.font.bold = True
+                title_run.font.color.rgb = RGBColor(68, 114, 196)
+                title_para.alignment = 0  # 左对齐
+            elif table_title:
+                title_para = doc.add_paragraph()
+                title_para.paragraph_format.space_before = Pt(12)
+                title_para.paragraph_format.space_after = Pt(6)
+                title_run = title_para.add_run(table_title)
+                title_run.font.size = Pt(12)
+                title_run.font.bold = True
+                title_run.font.color.rgb = RGBColor(68, 114, 196)
+                title_para.alignment = 0  # 左对齐
 
-            # 设置表头行背景色
-            if i == 0:
-                for j in range(num_cols):
-                    if j < len(row.cells):
+            # 添加表格描述（如果有）
+            if table_description:
+                desc_para = doc.add_paragraph()
+                desc_para.paragraph_format.space_before = Pt(0)
+                desc_para.paragraph_format.space_after = Pt(8)
+                desc_run = desc_para.add_run(table_description)
+                desc_run.font.size = Pt(10)
+                desc_run.font.italic = True
+                desc_run.font.color.rgb = RGBColor(128, 128, 128)
+                desc_para.alignment = 0  # 左对齐
+
+            # 创建表格
+            table = doc.add_table(rows=len(normalized_rows), cols=num_cols)
+            table.style = "Table Grid"
+            table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+            # 设置表格属性
+            tbl = table._element
+            tblPr = tbl.tblPr
+            if tblPr is None:
+                tblPr = parse_xml(r'<w:tblPr {}/>', nsdecls('w'))
+                tbl.insert(0, tblPr)
+
+            # 设置表格宽度为页面宽度
+            tblW = parse_xml(
+                r'<w:tblW {} w:w="5000" w:type="pct"/>'.format(nsdecls('w'))
+            )
+            tblPr.append(tblW)
+
+            # 设置表格边框（所有边都有黑色边框）
+            tblBorders = parse_xml(
+                r'<w:tblBorders {}>'
+                r'<w:top w:val="single" w:sz="12" w:space="0" w:color="000000"/>'
+                r'<w:left w:val="single" w:sz="12" w:space="0" w:color="000000"/>'
+                r'<w:bottom w:val="single" w:sz="12" w:space="0" w:color="000000"/>'
+                r'<w:right w:val="single" w:sz="12" w:space="0" w:color="000000"/>'
+                r'<w:insideH w:val="single" w:sz="12" w:space="0" w:color="000000"/>'
+                r'<w:insideV w:val="single" w:sz="12" w:space="0" w:color="000000"/>'
+                r'</w:tblBorders>'.format(nsdecls('w'))
+            )
+            tblPr.append(tblBorders)
+
+            # 设置表格单元格间距
+            tblCellMar = parse_xml(
+                r'<w:tblCellMar {}>'
+                r'<w:top w:w="50" w:type="dxa"/>'
+                r'<w:left w:w="50" w:type="dxa"/>'
+                r'<w:bottom w:w="50" w:type="dxa"/>'
+                r'<w:right w:w="50" w:type="dxa"/>'
+                r'</w:tblCellMar>'.format(nsdecls('w'))
+            )
+            tblPr.append(tblCellMar)
+
+            # 设置表格阴影效果
+            tblShd = parse_xml(
+                r'<w:tblShd {} w:val="clear" w:color="auto" w:fill="FFFFFF"/>'.format(nsdecls('w'))
+            )
+            tblPr.append(tblShd)
+
+            # 添加表格布局设置
+            tblLayout = parse_xml(
+                r'<w:tblLayout {} w:type="auto"/>'.format(nsdecls('w'))
+            )
+            tblPr.append(tblLayout)
+
+            # 计算每列的宽度（均匀分配）
+            col_width = Inches(5.5 / num_cols) if num_cols > 0 else Inches(1)
+
+            # 设置列宽
+            for row in table.rows:
+                for idx, cell in enumerate(row.cells):
+                    if idx < num_cols:
+                        tcPr = cell._element.get_or_add_tcPr()
+
+                        # 如果是行号列，设置较小的宽度
+                        if add_row_numbers and idx == 0:
+                            col_width_value = int(800 / num_cols)  # 行号列宽度较小
+                        else:
+                            col_width_value = int(5000 / num_cols)
+
+                        tcW = parse_xml(
+                            r'<w:tcW {} w:w="{}" w:type="dxa"/>'.format(nsdecls('w'), col_width_value)
+                        )
+                        # 移除旧的宽度设置
+                        for tcW_old in tcPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tcW'):
+                            tcPr.remove(tcW_old)
+                        tcPr.insert(0, tcW)
+
+            # 添加表格阴影效果（可选）
+            try:
+                # 设置表格的阴影效果
+                tblShd = parse_xml(
+                    r'<w:tblShd {} w:val="clear" w:color="auto" w:fill="FFFFFF"/>'.format(nsdecls('w'))
+                )
+                # 检查是否已存在阴影设置，如果存在则替换
+                existing_shd = tblPr.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tblShd')
+                if existing_shd is not None:
+                    tblPr.remove(existing_shd)
+                tblPr.append(tblShd)
+            except Exception as e:
+                print(f"[DEBUG] Could not set table shadow: {e}")
+
+            # 设置表格分页符处理（防止表格被分割）
+            try:
+                # 设置表格在分页时保持完整
+                tblPr_elem = tbl.tblPr
+                if tblPr_elem is not None:
+                    # 添加表格行分页符设置
+                    for row in table.rows:
+                        trPr = row._element.get_or_add_trPr()
+                        # 设置行不能分页
+                        cantSplit = parse_xml(
+                            r'<w:cantSplit {} w:val="1"/>'.format(nsdecls('w'))
+                        )
+                        # 检查是否已存在
+                        existing_cantSplit = trPr.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}cantSplit')
+                        if existing_cantSplit is not None:
+                            trPr.remove(existing_cantSplit)
+                        trPr.append(cantSplit)
+            except Exception as e:
+                print(f"[DEBUG] Could not set table page break handling: {e}")
+
+            # 填充表格
+            for i, row_data in enumerate(normalized_rows):
+                row = table.rows[i]
+
+                # 设置行高
+                row.height = Pt(32)
+
+                for j, cell_text in enumerate(row_data):
+                    if j < num_cols and j < len(row.cells):
                         cell = row.cells[j]
-                        # 设置浅蓝色背景
+
+                        # 设置列宽
+                        tcPr = cell._element.get_or_add_tcPr()
+                        tcW = parse_xml(
+                            r'<w:tcW {} w:w="1000" w:type="auto"/>'.format(nsdecls('w'))
+                        )
+                        tcPr.append(tcW)
+
+                        # 设置单元格内边距
+                        tcMar = parse_xml(
+                            r'<w:tcMar {}>'
+                            r'<w:top w:w="100" w:type="dxa"/>'
+                            r'<w:left w:w="100" w:type="dxa"/>'
+                            r'<w:bottom w:w="100" w:type="dxa"/>'
+                            r'<w:right w:w="100" w:type="dxa"/>'
+                            r'</w:tcMar>'.format(nsdecls('w'))
+                        )
+                        tcPr.append(tcMar)
+
+                        # 设置单元格垂直对齐方式为居中
+                        vAlign = parse_xml(
+                            r'<w:vAlign {} w:val="center"/>'.format(nsdecls('w'))
+                        )
+                        tcPr.append(vAlign)
+
+                        # 清空默认段落
+                        cell.text = ""
+                        para = cell.paragraphs[0]
+
+                        # 设置段落对齐方式
+                        if i == 0:
+                            # 表头居中对齐
+                            para.alignment = 1  # WD_ALIGN_PARAGRAPH.CENTER
+                        else:
+                            # 数据行左对齐
+                            para.alignment = 0  # WD_ALIGN_PARAGRAPH.LEFT
+
+                        # 设置段落行间距
+                        para.paragraph_format.line_spacing = 1.15
+                        para.paragraph_format.space_before = Pt(0)
+                        para.paragraph_format.space_after = Pt(0)
+
+                        # 处理 markdown 加粗语法 **text**
+                        self._add_formatted_cell_text(para, cell_text if cell_text else "", Pt(11), is_header=(i == 0))
+
+                # 设置表头行背景色和文字颜色
+                if i == 0:
+                    for j in range(min(num_cols, len(row.cells))):
+                        cell = row.cells[j]
+                        try:
+                            # 设置深蓝色背景 (4472C4)
+                            tcPr = cell._element.get_or_add_tcPr()
+                            shading_elm = parse_xml(
+                                r'<w:shd {} w:fill="4472C4"/>'.format(nsdecls('w'))
+                            )
+                            tcPr.append(shading_elm)
+
+                            # 设置表头单元格边框为深色
+                            tcBorders = parse_xml(
+                                r'<w:tcBorders {}>'
+                                r'<w:top w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'<w:left w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'<w:bottom w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'<w:right w:val="single" w:sz="12" w:space="0" w:color="2F5496"/>'
+                                r'</w:tcBorders>'.format(nsdecls('w'))
+                            )
+                            tcPr.append(tcBorders)
+
+                            # 设置表头文字为白色、加粗、增大字体
+                            for paragraph in cell.paragraphs:
+                                for run in paragraph.runs:
+                                    run.font.color.rgb = RGBColor(255, 255, 255)
+                                    run.font.bold = True
+                                    run.font.size = Pt(12)
+                        except Exception as e:
+                            print(f"[WARNING] Failed to set header cell style: {e}")
+                else:
+                    # 设置数据行的交替背景色（斑马纹）和边框
+                    for j in range(min(num_cols, len(row.cells))):
+                        cell = row.cells[j]
+                        try:
+                            tcPr = cell._element.get_or_add_tcPr()
+
+                            # 设置交替背景色
+                            if i % 2 == 1:
+                                # 设置浅灰色背景 (F2F2F2)
+                                shading_elm = parse_xml(
+                                    r'<w:shd {} w:fill="F2F2F2"/>'.format(nsdecls('w'))
+                                )
+                            else:
+                                # 白色背景
+                                shading_elm = parse_xml(
+                                    r'<w:shd {} w:fill="FFFFFF"/>'.format(nsdecls('w'))
+                                )
+                            tcPr.append(shading_elm)
+
+                            # 设置数据行单元格边框为浅灰色
+                            tcBorders = parse_xml(
+                                r'<w:tcBorders {}>'
+                                r'<w:top w:val="single" w:sz="8" w:space="0" w:color="D0D0D0"/>'
+                                r'<w:left w:val="single" w:sz="8" w:space="0" w:color="D0D0D0"/>'
+                                r'<w:bottom w:val="single" w:sz="8" w:space="0" w:color="D0D0D0"/>'
+                                r'<w:right w:val="single" w:sz="8" w:space="0" w:color="D0D0D0"/>'
+                                r'</w:tcBorders>'.format(nsdecls('w'))
+                            )
+                            tcPr.append(tcBorders)
+
+                            # 设置数据行文字颜色为深灰色
+                            for paragraph in cell.paragraphs:
+                                for run in paragraph.runs:
+                                    run.font.color.rgb = RGBColor(64, 64, 64)
+                        except Exception as e:
+                            print(f"[WARNING] Failed to set data row style: {e}")
+
+            # 添加汇总行（如果需要）
+            if add_summary_row and len(normalized_rows) > 1:
+                try:
+                    # 添加汇总行
+                    summary_row = table.add_row()
+                    summary_row.height = Pt(32)
+
+                    for j in range(num_cols):
+                        cell = summary_row.cells[j]
+                        tcPr = cell._element.get_or_add_tcPr()
+
+                        # 设置汇总行背景色为浅蓝色
                         shading_elm = parse_xml(
                             r'<w:shd {} w:fill="D9E2F3"/>'.format(nsdecls('w'))
                         )
-                        cell._tc.get_or_add_tcPr().append(shading_elm)
+                        tcPr.append(shading_elm)
 
-        # 添加空行
-        doc.add_paragraph()
+                        # 设置汇总行边框
+                        tcBorders = parse_xml(
+                            r'<w:tcBorders {}>'
+                            r'<w:top w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                            r'<w:left w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                            r'<w:bottom w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                            r'<w:right w:val="single" w:sz="12" w:space="0" w:color="4472C4"/>'
+                            r'</w:tcBorders>'.format(nsdecls('w'))
+                        )
+                        tcPr.append(tcBorders)
+
+                        # 设置单元格内边距
+                        tcMar = parse_xml(
+                            r'<w:tcMar {}>'
+                            r'<w:top w:w="100" w:type="dxa"/>'
+                            r'<w:left w:w="100" w:type="dxa"/>'
+                            r'<w:bottom w:w="100" w:type="dxa"/>'
+                            r'<w:right w:w="100" w:type="dxa"/>'
+                            r'</w:tcMar>'.format(nsdecls('w'))
+                        )
+                        tcPr.append(tcMar)
+
+                        # 设置单元格垂直对齐
+                        vAlign = parse_xml(
+                            r'<w:vAlign {} w:val="center"/>'.format(nsdecls('w'))
+                        )
+                        tcPr.append(vAlign)
+
+                        # 清空默认段落
+                        cell.text = ""
+                        para = cell.paragraphs[0]
+                        para.alignment = 1  # 居中对齐
+
+                        # 添加汇总文本
+                        if j == 0:
+                            run = para.add_run("Summary")
+                            run.font.bold = True
+                            run.font.size = Pt(11)
+                            run.font.color.rgb = RGBColor(68, 114, 196)
+                        else:
+                            run = para.add_run("")
+                            run.font.size = Pt(11)
+                except Exception as e:
+                    print(f"[WARNING] Failed to add summary row: {e}")
+
+            # 添加空行
+            spacer = doc.add_paragraph()
+            spacer.paragraph_format.space_before = Pt(6)
+            spacer.paragraph_format.space_after = Pt(6)
+
+            # 添加表格统计信息（如果有数据）
+            if len(normalized_rows) > 1:
+                stats_para = doc.add_paragraph()
+                stats_para.paragraph_format.space_before = Pt(0)
+                stats_para.paragraph_format.space_after = Pt(12)
+                stats_para.paragraph_format.left_indent = Inches(0.25)
+
+                # 计算表格统计信息
+                total_rows = len(normalized_rows) - 1  # 不包括表头
+                total_cols = num_cols
+
+                stats_text = f"Table Statistics: {total_rows} data row(s), {total_cols} column(s)"
+                stats_run = stats_para.add_run(stats_text)
+                stats_run.font.size = Pt(9)
+                stats_run.font.italic = True
+                stats_run.font.color.rgb = RGBColor(128, 128, 128)
+
+            # 添加表格注释/页脚（如果有）
+            if table_note:
+                note_para = doc.add_paragraph()
+                note_para.paragraph_format.space_before = Pt(0)
+                note_para.paragraph_format.space_after = Pt(12)
+                note_para.paragraph_format.left_indent = Inches(0.25)
+                note_run = note_para.add_run(f"Note: {table_note}")
+                note_run.font.size = Pt(9)
+                note_run.font.italic = True
+                note_run.font.color.rgb = RGBColor(96, 96, 96)
+
+            print(f"[DEBUG] Table added successfully")
+
+        except Exception as e:
+            print(f"[ERROR] Failed to create table: {e}")
+            import traceback
+            traceback.print_exc()
 
     def _add_formatted_cell_text(self, para, text: str, font_size, is_header: bool = False) -> None:
         """
@@ -625,10 +1187,37 @@ Please analyze this interference map and extract structured data."""
             is_header: 是否为表头行
         """
         import re
+        from docx.shared import RGBColor
+
+        # 处理空值
+        if text is None:
+            text = ""
+        text = str(text).strip()
+
+        # 如果文本为空，添加一个空格以保持单元格结构
+        if not text:
+            run = para.add_run(" ")
+            run.font.size = font_size
+            run.font.name = "Calibri"
+            if is_header:
+                run.font.color.rgb = RGBColor(255, 255, 255)
+            return
 
         # 处理 markdown 加粗语法 **text**
         pattern = r'(\*\*(.+?)\*\*|([^*]+))'
         matches = re.findall(pattern, text)
+
+        # 如果没有匹配到任何内容，直接添加原始文本
+        if not matches:
+            run = para.add_run(text)
+            run.font.size = font_size
+            run.font.name = "Calibri"
+            if is_header:
+                run.bold = True
+                run.font.color.rgb = RGBColor(255, 255, 255)
+            else:
+                run.font.color.rgb = RGBColor(64, 64, 64)
+            return
 
         for match in matches:
             full, bold_text, normal_text = match
@@ -636,13 +1225,20 @@ Please analyze this interference map and extract structured data."""
                 run = para.add_run(bold_text)
                 run.bold = True
                 run.font.size = font_size
-                run.font.name = "Arial"
+                run.font.name = "Calibri"
+                if is_header:
+                    run.font.color.rgb = RGBColor(255, 255, 255)
+                else:
+                    run.font.color.rgb = RGBColor(0, 0, 0)
             elif normal_text:
                 run = para.add_run(normal_text)
                 run.font.size = font_size
-                run.font.name = "Arial"
+                run.font.name = "Calibri"
                 if is_header:
                     run.bold = True
+                    run.font.color.rgb = RGBColor(255, 255, 255)
+                else:
+                    run.font.color.rgb = RGBColor(64, 64, 64)
 
     def _add_formatted_text(self, para, text: str) -> None:
         """
@@ -1239,18 +1835,27 @@ Please analyze this interference map and extract structured data."""
         return cleaned.strip()
 
 
-async def main() -> None:
-    """Main entry point"""
+async def main(image_path: str = None, use_rag: bool = True) -> None:
+    """
+    Main entry point
+
+    Args:
+        image_path: 干扰图表路径（可选）
+        use_rag: 是否使用 RAG 检索（可选）
+    """
     configure_proxies()
 
     print("==== ITU Interference Report Generation (Configurable Dialogue-Based Multi-Agent) ====")
 
-    image_path = os.path.join(INPUT_IMAGE_DIR, "oneweb_total_earth_cinr.png")
+    if image_path is None:
+        image_path = os.path.join(INPUT_IMAGE_DIR, "oneweb_total_earth_cinr.png")
+
     filename = os.path.basename(image_path)
     image_info = parse_image_info(filename)
     current_date = datetime.now().strftime("%Y-%m-%d")
 
     print(f"[INFO] Config: model={LLM_MODEL_NAME} | compress_image=False | configurable_mode=True")
+    print(f"[INFO] RAG enabled: {use_rag}")
 
     # Use configurable pipeline
     pipeline = ConfigurableDialoguePipeline(image_info, current_date, image_path)

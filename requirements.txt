@@ -5,6 +5,9 @@
 Flask==3.0.3
 PyPDF2>=3.0.0  # 用于 PDF 文档解析（可选）
 accelerate>=0.20.0
+autogen-core>=0.1.0
+autogen-agentchat>=0.1.0
+autogen-ext>=0.1.0
 fastapi>=0.104.0
 numpy>=1.25.0,<2.0
 openai>=1.0.0

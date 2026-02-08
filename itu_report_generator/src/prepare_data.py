@@ -219,34 +219,42 @@ def save_metadata(chunks: List[Dict], embeddings: np.ndarray, output_file: Path)
     print(f"✅ 保存完成")
 
 
-def main():
-    """主函数"""
+def main(auto_overwrite: bool = False):
+    """
+    主函数
+
+    Args:
+        auto_overwrite: 是否自动覆盖现有文件
+    """
     print("=" * 60)
     print("ITU 数据准备脚本")
     print("=" * 60)
     print(f"输入目录: {INPUT_DIR}")
     print(f"输出目录: {OUTPUT_DIR}")
     print()
-    
+
     # 检查是否已有数据文件
     if CHUNKS_FILE.exists() or EMBEDDINGS_FILE.exists():
         print("⚠️ 警告: 数据文件已存在")
         print(f"  - {CHUNKS_FILE.name}: {'存在' if CHUNKS_FILE.exists() else '不存在'}")
         print(f"  - {EMBEDDINGS_FILE.name}: {'存在' if EMBEDDINGS_FILE.exists() else '不存在'}")
-        
-        response = input("\n是否覆盖现有文件? (y/n): ")
-        if response.lower() != 'y':
-            print("❌ 操作已取消")
-            return
+
+        if auto_overwrite:
+            print("\n自动覆盖现有文件")
+        else:
+            response = input("\n是否覆盖现有文件? (y/n): ")
+            if response.lower() != 'y':
+                print("❌ 操作已取消")
+                return
         print()
-    
+
     # 1. 处理文档，生成chunks
     chunks = process_documents(INPUT_DIR)
-    
+
     if not chunks:
         print("❌ 没有生成任何chunks，请检查输入目录")
         return
-    
+
     # 2. 加载embedding模型
     print(f"\n📥 正在加载embedding模型: {EMBEDDING_MODEL_NAME}")
     try:
@@ -255,15 +263,15 @@ def main():
     except Exception as e:
         print(f"❌ 模型加载失败: {e}")
         return
-    
+
     # 3. 生成embeddings
     embeddings = generate_embeddings(chunks, model)
-    
+
     # 4. 保存数据
     save_chunks(chunks, CHUNKS_FILE)
     save_embeddings(embeddings, EMBEDDINGS_FILE)
     save_metadata(chunks, embeddings, METADATA_FILE)
-    
+
     # 5. 显示统计信息
     print("\n" + "=" * 60)
     print("🎉 数据准备完成！")
