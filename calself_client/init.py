@@ -24,6 +24,6 @@
 @Date: 2025/11/03
 """
 
-from calself_client.client import CalselfClient, CalselfAPIError
+from .client import CalselfClient, CalselfAPIError
 
 __all__ = ["CalselfClient", "CalselfAPIError"]

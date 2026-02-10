@@ -31,7 +31,7 @@ import requests
 from datetime import datetime
 from typing import Optional, Dict
 
-from calself_service import ICalselfService
+from .calself_service import ICalselfService
 
 
 class CalselfAPIError(Exception):

@@ -72,13 +72,19 @@ class CalferenceRunner:
             print(f"\n❌ 错误: {e}")
             return 1
 
-    def run_calself_sim(self, duration_hours: float = 0.1, step: int = 2) -> int:
+    def run_calself_sim(
+        self,
+        duration_hours: float = 0.1,
+        step: int = 2,
+        service_url: str = "http://localhost:8001"
+    ) -> int:
         """
-        运行 Calself 卫星仿真
+        运行 Calself 卫星仿真（通过 REST API）
 
         Args:
             duration_hours: 仿真时长（小时）
             step: 时间步长（秒）
+            service_url: Calself 服务地址
 
         Returns:
             返回码
@@ -88,34 +94,63 @@ class CalferenceRunner:
         print("=" * 70)
 
         try:
-            # 检查 Calself 模块是否存在
-            if not self.calself_module.exists():
-                print("❌ 错误: Calself 模块不存在")
-                print(f"   预期路径: {self.calself_module}")
-                return 1
-
             # 检查依赖
-            self._check_dependencies(["numpy", "sgp4", "scipy"])
+            self._check_dependencies(["requests"])
 
-            # 运行仿真
-            sys.path.insert(0, str(self.calself_module))
-            from main import run_simulation
+            # 导入客户端
+            sys.path.insert(0, str(self.project_root))
+            from calself_client.client import CalselfClient, CalselfAPIError
+            from datetime import datetime
 
+            print(f"🌐 连接微服务: {service_url}")
             print(f"⏱️  仿真时长: {duration_hours} 小时")
             print(f"⏱️  时间步长: {step} 秒")
             print()
 
-            result = run_simulation(duration_hours=duration_hours, step=step)
+            # 创建客户端
+            client = CalselfClient(base_url=service_url)
+
+            # 检查服务健康状态
+            print("🔍 检查服务健康状态...")
+            try:
+                health_response = client._request("GET", "/api/v1/health")
+                print(f"✅ 服务状态: {health_response.get('status', 'unknown')}")
+            except Exception as e:
+                print(f"⚠️  无法检查服务状态: {e}")
+                print(f"💡 请确保 Calself 微服务已启动")
+                print(f"   运行: python run.py calself-service --port 8001")
+                return 1
+
+            print()
+
+            # 使用当前时间作为仿真开始时间
+            start_time = datetime.now()
+
+            print("📡 发送仿真请求...")
+            result = client.run_simulation(
+                start_time=start_time,
+                duration_hours=duration_hours,
+                step=step
+            )
 
             print("\n" + "=" * 70)
             print("✅ 仿真完成！")
             print("=" * 70)
-            print(f"📊 结果文件: {result}")
+            print(f"📊 结果状态: {result.get('status', 'unknown')}")
+            if 'result' in result:
+                print(f"📊 仿真数据: {result['result']}")
             print()
             return 0
 
         except Exception as e:
-            print(f"\n❌ 错误: {e}")
+            error_msg = str(e)
+            print(f"\n❌ 错误: {error_msg}")
+
+            # 检查是否是连接错误
+            if "无法连接" in error_msg or "Connection" in error_msg:
+                print(f"💡 提示: 请先启动 Calself 微服务")
+                print(f"   运行: python run.py calself-service --port 8001")
+
             return 1
 
     def prepare_rag_data(self) -> int:
@@ -229,7 +264,7 @@ class CalferenceRunner:
 
     def start_calself_service(self, host: str = "127.0.0.1", port: int = 8001) -> int:
         """
-        启动 Calself 仿真服务
+        启动 Calself 仿真微服务
 
         Args:
             host: 服务器地址
@@ -239,7 +274,7 @@ class CalferenceRunner:
             返回码
         """
         print("=" * 70)
-        print("🛰️  启动 Calself 仿真服务")
+        print("🛰️  启动 Calself 仿真微服务")
         print("=" * 70)
 
         try:
@@ -253,7 +288,12 @@ class CalferenceRunner:
                 print(f"❌ 错误: 服务文件不存在: {server_file}")
                 return 1
 
-            print(f"🚀 服务启动在 http://{host}:{port}")
+            print(f"🚀 微服务启动在 http://{host}:{port}")
+            print(f"📖 API 文档: http://{host}:{port}/docs")
+            print(f"🔍 健康检查: http://{host}:{port}/api/v1/health")
+            print()
+            print("💡 提示: 在另一个终端运行以下命令来调用仿真:")
+            print(f"   python run.py calself-sim --service-url http://{host}:{port}")
             print()
 
             cmd = [
@@ -405,15 +445,37 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例用法：
+
+【ITU 干扰报告生成】
   python run.py itu-report                    # 生成ITU报告
   python run.py itu-report --image path/to/image.png  # 指定图片
+  python run.py itu-report --no-rag           # 禁用RAG检索
+
+【Calself 卫星仿真（微服务模式）】
+  # 终端1: 启动 Calself 微服务
+  python run.py calself-service --port 8001
+
+  # 终端2: 调用仿真服务
   python run.py calself-sim --duration 0.5   # 运行仿真（0.5小时）
+  python run.py calself-sim --service-url http://localhost:8001  # 指定服务地址
+
+【RAG 数据准备】
   python run.py prepare-rag                   # 准备RAG数据
   python run.py download-model                # 下载embedding模型
-  python run.py web-api --port 8000           # 启动Web服务
-  python run.py calself-service --port 8001  # 启动仿真服务
+
+【Web 服务】
+  python run.py web-api --port 8000           # 启动Web API服务
+  python run.py web-api --host 0.0.0.0 --port 8000  # 指定主机和端口
+
+【示例和状态】
   python run.py example itu_report            # 运行示例
   python run.py status                        # 显示项目状态
+
+【架构说明】
+  Calself 采用微服务架构：
+  - Calself 模块（本地部署，不开源）
+  - 通过 FastAPI 微服务暴露接口
+  - 开源部分通过 REST API 调用 Calself 服务
         """
     )
 
@@ -447,6 +509,12 @@ def main():
         default=2,
         help="时间步长（秒，默认2）"
     )
+    calself_parser.add_argument(
+        "--service-url",
+        type=str,
+        default="http://localhost:8001",
+        help="Calself 服务地址（默认 http://localhost:8001）"
+    )
 
     # RAG 数据准备
     subparsers.add_parser("prepare-rag", help="准备 RAG 数据")
@@ -472,7 +540,7 @@ def main():
     # Calself 服务
     calself_service_parser = subparsers.add_parser(
         "calself-service",
-        help="启动 Calself 仿真服务"
+        help="启动 Calself 仿真微服务（本地部署，不开源）"
     )
     calself_service_parser.add_argument(
         "--host",
@@ -511,7 +579,8 @@ def main():
     elif args.command == "calself-sim":
         return runner.run_calself_sim(
             duration_hours=args.duration,
-            step=args.step
+            step=args.step,
+            service_url=args.service_url
         )
     elif args.command == "prepare-rag":
         return runner.prepare_rag_data()
