@@ -76,15 +76,19 @@ class CalferenceRunner:
         self,
         duration_hours: float = 0.1,
         step: int = 2,
-        service_url: str = "http://localhost:8001"
+        service_url: str = "http://localhost:8001",
+        use_cache: bool = False,
+        company_id: int = None
     ) -> int:
         """
-        运行 Calself 卫星仿真（通过 REST API）
+        运行 Calself 卫星仿真（通过 REST API）或加载缓存数据
 
         Args:
             duration_hours: 仿真时长（小时）
             step: 时间步长（秒）
             service_url: Calself 服务地址
+            use_cache: 是否使用缓存的静态数据而不运行新仿真
+            company_id: 指定公司ID（仅在use_cache=True时有效）
 
         Returns:
             返回码
@@ -101,8 +105,83 @@ class CalferenceRunner:
             sys.path.insert(0, str(self.project_root))
             from calself_client.client import CalselfClient, CalselfAPIError
             from datetime import datetime
+            import json
+            from pathlib import Path
 
-            print(f"🌐 连接微服务: {service_url}")
+            # 如果使用缓存数据
+            if use_cache:
+                print("📦 使用缓存的静态数据")
+                print()
+
+                # 使用 Calself/data 目录
+                data_dir = Path(self.project_root) / "Calself" / "data"
+
+                if company_id is not None:
+                    # 加载特定公司的数据
+                    company_data_dir = data_dir / "earth_station" / str(company_id)
+                    if not company_data_dir.exists():
+                        print(f"❌ 错误: 公司 {company_id} 的数据目录不存在: {company_data_dir}")
+                        return 1
+
+                    # 获取最新的数据文件
+                    json_files = sorted(company_data_dir.glob("*.json"), reverse=True)
+                    if not json_files:
+                        print(f"❌ 错误: 公司 {company_id} 的数据目录中没有JSON文件")
+                        return 1
+
+                    latest_file = json_files[0]
+                    print(f"📂 加载公司 {company_id} 的最新数据")
+                    print(f"📄 文件: {latest_file.name}")
+
+                    with open(latest_file) as f:
+                        data = json.load(f)
+
+                    print(f"✅ 成功加载 {len(data)} 个地球站的数据")
+                    print()
+
+                else:
+                    # 列出所有可用的公司数据
+                    print("📂 可用的缓存数据:")
+                    earth_station_dir = data_dir / "earth_station"
+
+                    if not earth_station_dir.exists():
+                        print(f"❌ 错误: 数据目录不存在: {earth_station_dir}")
+                        return 1
+
+                    companies = {}
+                    for company_dir in sorted(earth_station_dir.iterdir()):
+                        if company_dir.is_dir():
+                            json_files = list(company_dir.glob("*.json"))
+                            if json_files:
+                                latest_file = sorted(json_files, reverse=True)[0]
+                                companies[company_dir.name] = {
+                                    'path': company_dir,
+                                    'file_count': len(json_files),
+                                    'latest': latest_file.name
+                                }
+
+                    if not companies:
+                        print("❌ 错误: 没有找到任何缓存数据")
+                        return 1
+
+                    for company_id_str, info in companies.items():
+                        print(f"  公司 {company_id_str}: {info['file_count']} 个文件")
+                        print(f"    最新: {info['latest']}")
+
+                    print()
+                    print("💡 提示: 使用 --company-id 参数指定要加载的公司")
+                    print(f"   例如: python run.py calself-sim --use-cache --company-id 0")
+                    print()
+
+                print("=" * 70)
+                print("✅ 缓存数据加载完成！")
+                print("=" * 70)
+                print(f"📁 数据目录: {data_dir}")
+                print()
+                return 0
+
+            # 否则调用微服务运行仿真
+            print(f"🌐 连接 Calself 微服务: {service_url}")
             print(f"⏱️  仿真时长: {duration_hours} 小时")
             print(f"⏱️  时间步长: {step} 秒")
             print()
@@ -119,6 +198,9 @@ class CalferenceRunner:
                 print(f"⚠️  无法检查服务状态: {e}")
                 print(f"💡 请确保 Calself 微服务已启动")
                 print(f"   运行: python run.py calself-service --port 8001")
+                print()
+                print("💡 或者使用缓存数据:")
+                print(f"   python run.py calself-sim --use-cache")
                 return 1
 
             print()
@@ -126,7 +208,8 @@ class CalferenceRunner:
             # 使用当前时间作为仿真开始时间
             start_time = datetime.now()
 
-            print("📡 发送仿真请求...")
+            print("📡 发送仿真请求到微服务...")
+            print(f"   开始时间: {start_time.isoformat()}")
             result = client.run_simulation(
                 start_time=start_time,
                 duration_hours=duration_hours,
@@ -137,8 +220,16 @@ class CalferenceRunner:
             print("✅ 仿真完成！")
             print("=" * 70)
             print(f"📊 结果状态: {result.get('status', 'unknown')}")
-            if 'result' in result:
-                print(f"📊 仿真数据: {result['result']}")
+
+            # 显示仿真统计信息
+            if 'result' in result and isinstance(result['result'], dict):
+                sim_result = result['result']
+                if 'total_execution_time' in sim_result:
+                    print(f"⏱️  总执行时间: {sim_result['total_execution_time']:.2f} 秒")
+                if 'steps' in sim_result:
+                    print(f"📊 完成步数: {len(sim_result['steps'])}")
+
+            print(f"📁 数据保存位置: {Path(self.project_root) / 'Calself' / 'data'}")
             print()
             return 0
 
@@ -150,6 +241,9 @@ class CalferenceRunner:
             if "无法连接" in error_msg or "Connection" in error_msg:
                 print(f"💡 提示: 请先启动 Calself 微服务")
                 print(f"   运行: python run.py calself-service --port 8001")
+                print()
+                print("💡 或者使用缓存数据:")
+                print(f"   python run.py calself-sim --use-cache")
 
             return 1
 
@@ -459,6 +553,11 @@ def main():
   python run.py calself-sim --duration 0.5   # 运行仿真（0.5小时）
   python run.py calself-sim --service-url http://localhost:8001  # 指定服务地址
 
+【Calself 卫星仿真（使用缓存数据）】
+  python run.py calself-sim --use-cache                # 列出所有可用的缓存数据
+  python run.py calself-sim --use-cache --company-id 0 # 加载 Starlink 的缓存数据
+  python run.py calself-sim --use-cache --company-id 1 # 加载 OneWeb 的缓存数据
+
 【RAG 数据准备】
   python run.py prepare-rag                   # 准备RAG数据
   python run.py download-model                # 下载embedding模型
@@ -496,7 +595,7 @@ def main():
     )
 
     # Calself 仿真
-    calself_parser = subparsers.add_parser("calself-sim", help="运行 Calself 卫星仿真")
+    calself_parser = subparsers.add_parser("calself-sim", help="运行 Calself 卫星仿真或加载缓存数据")
     calself_parser.add_argument(
         "--duration",
         type=float,
@@ -514,6 +613,17 @@ def main():
         type=str,
         default="http://localhost:8001",
         help="Calself 服务地址（默认 http://localhost:8001）"
+    )
+    calself_parser.add_argument(
+        "--use-cache",
+        action="store_true",
+        help="使用缓存的静态数据而不运行新仿真"
+    )
+    calself_parser.add_argument(
+        "--company-id",
+        type=int,
+        default=None,
+        help="指定公司ID（仅在--use-cache时有效）"
     )
 
     # RAG 数据准备
@@ -580,7 +690,9 @@ def main():
         return runner.run_calself_sim(
             duration_hours=args.duration,
             step=args.step,
-            service_url=args.service_url
+            service_url=args.service_url,
+            use_cache=args.use_cache,
+            company_id=args.company_id
         )
     elif args.command == "prepare-rag":
         return runner.prepare_rag_data()
