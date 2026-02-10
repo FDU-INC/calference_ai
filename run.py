@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/mnt/data/yjh/anaconda3/envs/itu/bin/python3.10
 # -*- coding: utf-8 -*-
 """
 Calference 项目主运行脚本
@@ -297,11 +297,11 @@ class CalferenceRunner:
             print()
 
             cmd = [
-                "uvicorn",
+                sys.executable,
+                "-m", "uvicorn",
                 "Calself.server:app",
                 "--host", host,
-                "--port", str(port),
-                "--reload"
+                "--port", str(port)
             ]
 
             subprocess.run(cmd, cwd=str(self.project_root))
