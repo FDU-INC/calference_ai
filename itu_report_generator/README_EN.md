@@ -271,7 +271,7 @@ Welcome to submit Issues and Pull Requests!
 
 ## Contact
 
-- Institution: Fudan University Space Internet Research Institute
+- Institution: SPACENET - Fudan University Space Internet Research Institute
 - Project: ITU Interference Analysis Report Generator
 
 ---

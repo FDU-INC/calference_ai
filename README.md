@@ -1,6 +1,6 @@
 # Calference - 卫星干扰分析与报告生成系统
 
-> **复旦大学空间互联网研究院**  
+> **SPACENET** - 复旦大学空间互联网研究院  
 > 卫星干扰智能分析与合规性评估平台
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -550,14 +550,14 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 
 ## 🙏 致谢
 
-- 复旦大学空间互联网研究院
+- SPACENET - 复旦大学空间互联网研究院
 - AutoGen 团队（多智能体框架）
 - ITU（国际电信联盟，标准文档）
 - 智谱 AI / Anthropic（LLM 支持）
 
 ## 📞 联系我们
 
-- **研究机构**: 复旦大学空间互联网研究院
+- **研究机构**: SPACENET - 复旦大学空间互联网研究院
 - **问题反馈**: [GitHub Issues](https://github.com/your-org/Calference/issues)
 - **邮件**: support@example.com
 
@@ -580,4 +580,4 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 
 ---
 
-**Made with ❤️ by FDU Space Internet Lab**
+**Made with ❤️ by SPACENET**

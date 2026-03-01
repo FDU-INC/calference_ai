@@ -1,6 +1,6 @@
 # Calference - Satellite Interference Analysis and Report Generation System
 
-> **Fudan University Space Internet Research Institute**  
+> **SPACENET** - Fudan University Space Internet Research Institute  
 > Intelligent Satellite Interference Analysis and Compliance Assessment Platform
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -551,14 +551,14 @@ See the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Fudan University Space Internet Research Institute
+- SPACENET - Fudan University Space Internet Research Institute
 - AutoGen Team (Multi-Agent Framework)
 - ITU (International Telecommunication Union, Standard Documents)
 - Zhipu AI / Anthropic (LLM Support)
 
 ## 📞 Contact
 
-- **Research Institution**: Fudan University Space Internet Research Institute
+- **Research Institution**: SPACENET - Fudan University Space Internet Research Institute
 - **Issue Reporting**: [GitHub Issues](https://github.com/your-org/Calference/issues)
 - **Email**: support@example.com
 
@@ -581,5 +581,5 @@ See the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Made with ❤️ by FDU Space Internet Lab**
+**Made with ❤️ by SPACENET**
 
