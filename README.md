@@ -234,14 +234,6 @@ python init.py --auto                   # 自动初始化
 python init.py --check                  # 仅检查环境
 ```
 
-### 5. 综合使用示例 (`examples_comprehensive.py`)
-
-交互式示例脚本，演示所有主要功能：
-
-```bash
-python examples_comprehensive.py        # 启动交互式菜单
-```
-
 ## 📖 文档
 
 - **快速入门**: [QUICKSTART.md](QUICKSTART.md) - 5分钟快速开始指南

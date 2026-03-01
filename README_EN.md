@@ -234,14 +234,6 @@ python init.py --auto                   # Automatic initialization
 python init.py --check                  # Environment check only
 ```
 
-### 5. Comprehensive Usage Example (`examples_comprehensive.py`)
-
-Interactive example script demonstrating all main features:
-
-```bash
-python examples_comprehensive.py        # Launch interactive menu
-```
-
 ## 📖 Documentation
 
 - **Quick Start**: [QUICKSTART.md](QUICKSTART.md) - 5-minute quick start guide
