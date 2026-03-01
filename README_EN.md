@@ -25,33 +25,7 @@ Calference is a professional satellite interference analysis and report generati
 
 ## 🏗️ System Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Calference System                     │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ┌─────────────┐    ┌──────────────────────────────┐  │
-│  │  Frontend   │◄──►│  ITU Report Generator        │  │
-│  │     UI      │    │  - 4-Agent Dialogue Arch      │  │
-│  └─────────────┘    │  - RAG Retrieval              │  │
-│                     │  - Multi-format Output         │  │
-│                     └──────────────────────────────┘  │
-│                                ▲                       │
-│                                │                       │
-│  ┌─────────────────────────────┼───────────────────┐  │
-│  │      Calself Service       │                   │  │
-│  │  (Satellite Interference   │                   │  │
-│  │   Simulation - Closed Core) │                   │  │
-│  └─────────────────────────────┼───────────────────┘  │
-│                                │                       │
-│                     ┌──────────▼──────────┐           │
-│                     │   API Client         │           │
-│                     │   - REST Wrapper     │           │
-│                     │   - Error Handling   │           │
-│                     └─────────────────────┘           │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
+![Calference System Architecture](image/README_EN/system_architecture.png)
 
 ### Open Source Notice
 
