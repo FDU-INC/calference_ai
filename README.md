@@ -1,7 +1,8 @@
 # Calference - 卫星干扰分析与报告生成系统
 
 > **SPACENET** - 复旦大学空间互联网研究院  
-> 卫星干扰智能分析与合规性评估平台
+> 卫星干扰智能分析与合规性评估平台  
+> **开发者**: yangjh
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -411,6 +412,7 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 ## 🙏 致谢
 
 - SPACENET - 复旦大学空间互联网研究院
+- **开发者**: yangjh
 - AutoGen 团队（多智能体框架）
 - ITU（国际电信联盟，标准文档）
 - 智谱 AI / Anthropic（LLM 支持）
@@ -440,4 +442,4 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 
 ---
 
-**Made with ❤️ by SPACENET**
+**Made with ❤️ by SPACENET | 开发者: yangjh**
