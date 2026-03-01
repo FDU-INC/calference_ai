@@ -25,18 +25,15 @@
 ├── src/                     # 核心代码目录
 │   ├── itu_file_rag.py     # 文件系统RAG实现
 │   ├── prepare_data.py     # 数据准备脚本
-│   └── aisofc_agents.py    # 多智能体系统
-├── data/
-│   ├── itu_standards_txt/  # ITU标准文档（txt格式）
-│   ├── chunks.jsonl        # 文本chunks（自动生成）
-│   ├── embeddings.npy      # 向量数据（自动生成）
-│   ├── total/              # 输入图片目录
-│   └── output_reports/     # 输出报告目录
-├── demo_v1.py              # 单智能体示例
-├── demo_v2.py              # 多智能体示例
+│   └── download_embedding_model.py  # 模型下载脚本
+├── frontend/                # Web 前端
+│   ├── api.py              # FastAPI 服务
+│   └── static/             # 静态文件
+├── itu_interference_analyzer.py  # 主程序（4智能体对话式）
+├── report_service.py       # 服务接口封装
 ├── config.py               # 配置文件
+├── agent_config.py         # 智能体配置
 ├── requirements.txt        # 依赖包列表
-├── MIGRATION.md            # 迁移说明文档
 └── README.md               # 本文档
 ```
 
@@ -53,14 +50,18 @@ pip install -r requirements.txt
 首次使用需要生成RAG数据文件：
 
 ```bash
-python src/prepare_data.py
+# 方式一：使用统一运行脚本（推荐）
+python run.py prepare-rag
+
+# 方式二：直接运行脚本
+python itu_report_generator/src/prepare_data.py
 ```
 
 这将：
-- 读取 `data/itu_standards_txt/` 中的ITU标准文档
+- 读取项目根目录 `data/rag/` 或模块内 `data/itu_standards_txt/` 中的ITU标准文档
 - 分割成文本chunks
 - 生成embeddings向量
-- 保存到 `data/chunks.jsonl` 和 `data/embeddings.npy`
+- 保存到 `data/rag/chunks.jsonl` 和 `data/rag/embeddings.npy`
 
 **注意**：此步骤只需运行一次，除非更新了ITU标准文档。
 
@@ -98,8 +99,15 @@ export LLM_MODEL_NAME="glm-4v-flash"
 ### 4. 运行示例
 
 ```bash
-# 命令行 demo：使用 demo.py 生成单张图片的报告
-python demo.py
+# 方式一：使用统一运行脚本（推荐）
+python run.py itu-report
+
+# 方式二：直接运行主程序
+python itu_report_generator/itu_interference_analyzer.py
+
+# 方式三：启动 Web API 服务（默认端口 8001）
+python run.py web-api
+# 然后访问 http://127.0.0.1:8001
 ```
 
 ## 使用方法
@@ -107,7 +115,7 @@ python demo.py
 ### 单张图片分析
 
 ```python
-from src.itu_file_rag import get_itu_file_rag_instance
+from itu_report_generator.src.itu_file_rag import get_itu_file_rag_instance
 
 # 初始化RAG系统
 rag = get_itu_file_rag_instance()
@@ -119,9 +127,17 @@ results = rag.search("EPFD limit requirements", top_k=3)
 references = rag.format_references_for_prompt(results)
 ```
 
-### 批量分析
+### 使用 Web API
 
-修改 `demo_v1.py` 或 `demo_v2.py` 中的 `image_path` 变量，指向你的图片目录。
+启动 Web API 服务后，可以通过浏览器或 HTTP 请求生成报告：
+
+```bash
+# 启动服务
+python run.py web-api
+
+# 访问 http://127.0.0.1:8001
+# 在 Web 界面中选择图片并生成报告
+```
 
 ## 配置说明
 
@@ -131,10 +147,10 @@ references = rag.format_references_for_prompt(results)
 from pathlib import Path
 import os
 
-# 基础路径
-BASE_DIR = Path(__file__).parent
-INPUT_IMAGE_DIR = str(BASE_DIR / "data" / "total")
-OUTPUT_REPORT_DIR = str(BASE_DIR / "data" / "output_reports")
+# 基础路径（项目根目录）
+BASE_DIR = Path(__file__).parent.parent
+INPUT_IMAGE_DIR = str(BASE_DIR / "data" / "input")
+OUTPUT_REPORT_DIR = str(BASE_DIR / "output_reports")
 
 # LLM 配置（默认使用 GLM-4V Flash，可通过环境变量覆盖）
 LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "glm-4v-flash")
@@ -145,7 +161,7 @@ LLM_API_KEY = os.getenv(
 )
 
 # RAG 配置：文件系统 RAG（无需 MongoDB）
-RAG_DATA_DIR = str(BASE_DIR / "data")
+RAG_DATA_DIR = str(BASE_DIR / "data" / "rag")
 RAG_CHUNKS_FILE = "chunks.jsonl"
 RAG_EMBEDDINGS_FILE = "embeddings.npy"
 RAG_EMBEDDING_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"
@@ -180,9 +196,8 @@ NumPy数组，形状：`(num_chunks, embedding_dim)`
 
 ## 多语言支持
 
-- 通过 `--lang en` 参数可生成**全英文**版 Word 分析报告
-- 不加 `--lang` 或 `--lang zh`，则生成**中文**报告
-- 报告结构、专业术语均自动适配目标语言
+- 报告默认生成**英文**版本（符合 ITU 标准规范）
+- 报告结构、专业术语均符合 ITU 标准格式
 
 ## 主要流程说明
 
@@ -225,18 +240,18 @@ python demo.py
 ## 常见问题
 
 ### Q: 提示"数据未加载"怎么办？
-A: 运行 `python src/prepare_data.py` 生成数据文件。
+A: 运行 `python run.py prepare-rag` 或 `python itu_report_generator/src/prepare_data.py` 生成数据文件。
 
 ### Q: 如何添加新的ITU标准文档？
 A: 
-1. 将txt文件放入 `data/itu_standards_txt/`
-2. 重新运行 `python src/prepare_data.py`
+1. 将txt文件放入项目根目录 `data/rag/itu_standards_txt/` 或模块内 `itu_report_generator/data/itu_standards_txt/`
+2. 重新运行 `python run.py prepare-rag`
 
 ### Q: 支持哪些图片格式？
 A: 支持 PNG, JPG, JPEG 等常见格式。
 
 ### Q: 如何自定义报告模板？
-A: 修改 `demo_v1.py` 或 `demo_v2.py` 中的 `build_prompt()` 函数。
+A: 修改 `agent_config.py` 中的智能体配置，或修改 `itu_interference_analyzer.py` 中的 prompt 构建逻辑。
 
 ## 技术栈
 

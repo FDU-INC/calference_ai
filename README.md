@@ -85,13 +85,17 @@ Calference11.3/
 │   └── service.py                     # 服务接口封装
 │
 ├── itu_report_generator/              # 📊 报告生成器（开源）
-│   ├── demo.py                        # 主程序（4智能体分段式）
+│   ├── itu_interference_analyzer.py   # 主程序（4智能体对话式）
 │   ├── report_service.py              # 服务接口
 │   ├── config.py                      # 配置文件
 │   ├── src/                           # 源代码
-│   │   └── itu_file_rag.py            # RAG 检索模块
+│   │   ├── itu_file_rag.py            # RAG 检索模块（文件系统）
+│   │   ├── prepare_data.py            # 数据准备脚本
+│   │   └── download_embedding_model.py # 模型下载脚本
 │   ├── frontend/                      # Web 前端
-│   └── data/                          # 数据目录
+│   │   ├── api.py                     # FastAPI 服务
+│   │   └── static/                    # 静态文件
+│   └── data/                          # 数据目录（模块级，可选）
 │
 ├── docs/                              # 📖 文档
 │   └── USER_MANUAL.md                 # 详细使用手册
@@ -203,11 +207,11 @@ python run.py prepare-rag
 # 下载 embedding 模型
 python run.py download-model
 
-# 启动 Web API 服务
-python run.py web-api --host 127.0.0.1 --port 8000
+# 启动 Web API 服务（默认端口 8001）
+python run.py web-api
 
-# 启动 Calself 仿真服务
-python run.py calself-service --host 127.0.0.1 --port 8001
+# 启动 Calself 仿真服务（默认端口 8000，仅限开发者）
+python run.py calself-service
 
 # 显示项目状态
 python run.py status
@@ -274,8 +278,8 @@ chmod +x quickstart.sh
 # 运行 Calself 仿真
 ./quickstart.sh calself-sim --duration 0.5
 
-# 启动 Web 服务
-./quickstart.sh web-api --port 8000
+# 启动 Web 服务（默认端口 8001）
+./quickstart.sh web-api
 
 # 显示项目状态
 ./quickstart.sh status
@@ -367,24 +371,22 @@ python examples_comprehensive.py        # 启动交互式菜单
 
 ```python
 from pathlib import Path
-from itu_report_generator.report_service import generate_report_segmented
+from itu_report_generator.report_service import generate_report
 
 # 生成报告
-result = await generate_report_segmented(
-    image_path=Path("data/total/oneweb_total_earth_cinr.png"),
+result = await generate_report(
+    image_path=Path("data/input/oneweb_total_earth_cinr.png"),
     use_rag=True  # 启用 RAG 检索
 )
 
 print(f"报告已生成: {result['markdown_path']}")
 ```
 
-**报告包含 6 个主要段落：**
-1. Basic Information - 基础信息
-2. Data Analysis - 数据分析
-3. Evidence Summary - 证据汇总
-4. Conclusions and Recommendations - 结论与建议
-5. Compliance Considerations - 合规性考量
-6. Appendix: Metadata - 附录
+**报告生成流程：**
+1. Parser Agent - 解析图片信息
+2. Analysis Agent - 分析干扰数据
+3. Review Agent - 审查分析结果
+4. Report Agent - 生成最终报告（Markdown + Word）
 
 ### 2. Calself 仿真服务调用
 
@@ -436,13 +438,13 @@ Error 1 for tle 20 at time 2026-02-10 15:57:00.360973
 集成 ITU 标准文档，自动检索相关标准：
 
 ```python
-from src.itu_file_rag import get_itu_file_rag_instance
+from itu_report_generator.src.itu_file_rag import get_itu_file_rag_instance
 
 rag = get_itu_file_rag_instance()
 results = rag.search("CINR threshold limit", top_k=3)
 
 for result in results:
-    print(f"文档: {result['document']}")
+    print(f"来源: {result['source']}")
     print(f"相关度: {result['score']:.3f}")
     print(f"内容: {result['text'][:200]}...")
 ```
@@ -451,31 +453,27 @@ for result in results:
 
 ### 多智能体架构
 
-报告生成器采用 4智能体分段式架构：
+报告生成器采用 4智能体对话式架构：
 
 ```python
-Agent 1 (section1_agent)
-    ↓ 生成 Basic Information (§1)
+Parser Agent (parser_agent)
+    ↓ 解析图片信息，提取结构化数据
     
-Agent 2 (section2_agent)
-    ↓ 生成 Data Analysis (§2)
+Analysis Agent (analysis_agent)
+    ↓ 分析干扰数据，生成分析结果
     
-Agent 3 (section34_agent)
-    ↓ 生成 Evidence + Conclusions (§3-4)
+Review Agent (review_agent)
+    ↓ 审查分析结果，确保准确性
     
-Agent 4 (section56_agent)
-    ↓ 生成 Compliance + Appendix (§5-6)
-    
-    ↓ 手动拼接
-    
-完整报告 (Markdown + Word)
+Report Agent (report_agent)
+    ↓ 生成最终报告（Markdown + Word）
 ```
 
 **优势：**
 - ✅ 每个智能体专注于特定任务
-- ✅ 避免"智能体偷懒"问题
-- ✅ 格式统一可控
-- ✅ 输出质量高（5000+ 字符）
+- ✅ 通过对话协作提升质量
+- ✅ 自动追踪数据流和审计日志
+- ✅ 输出高质量专业报告
 
 ### 自定义 LLM 后端
 
