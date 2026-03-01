@@ -417,12 +417,6 @@ See the [LICENSE](LICENSE) file for details.
 - ITU (International Telecommunication Union, Standard Documents)
 - Zhipu AI / Anthropic (LLM Support)
 
-## 📞 Contact
-
-- **Research Institution**: SPACENET - Fudan University Space Internet Research Institute
-- **Issue Reporting**: [GitHub Issues](https://github.com/your-org/Calference/issues)
-- **Email**: support@example.com
-
 ---
 
 ## 🔖 Version History

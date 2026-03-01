@@ -417,12 +417,6 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 - ITU（国际电信联盟，标准文档）
 - 智谱 AI / Anthropic（LLM 支持）
 
-## 📞 联系我们
-
-- **研究机构**: SPACENET - 复旦大学空间互联网研究院
-- **问题反馈**: [GitHub Issues](https://github.com/your-org/Calference/issues)
-- **邮件**: support@example.com
-
 ---
 
 ## 🔖 版本历史
