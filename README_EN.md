@@ -46,7 +46,7 @@ Calference is a professional satellite interference analysis and report generati
 ## 📁 Project Structure
 
 ```
-Calference11.3/
+Calference v1.0/
 ├── examples/                          # 📚 Usage Examples
 │   ├── example_calself_usage.py       # Calself Service Usage Example
 │   ├── example_itu_report.py          # ITU Report Generation Example
@@ -79,8 +79,6 @@ Calference11.3/
 ├── LICENSE                            # GPL-3.0 License
 └── README.md                          # This File
 ```
-
-For detailed project structure, see [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
 
 ## 🚀 Quick Start
 
@@ -335,7 +333,6 @@ python examples_comprehensive.py        # Launch interactive menu
 
 - **Quick Start**: [QUICKSTART.md](QUICKSTART.md) - 5-minute quick start guide
 - **Command Reference**: [COMMANDS.md](COMMANDS.md) - Complete command reference card
-- **Project Structure**: [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) - Detailed project structure description
 - **User Manual**: [docs/USER_MANUAL.md](docs/USER_MANUAL.md) - Detailed user manual
 
 ## 📊 Main Features
@@ -482,7 +479,6 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 
 - **Usage Examples**: [examples/README.md](examples/README.md)
 - **Detailed User Manual**: [docs/USER_MANUAL.md](docs/USER_MANUAL.md)
-- **Project Structure**: [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
 - **API Documentation**: [docs/api.md](docs/api.md) (Coming soon)
 
 ### Environment Configuration

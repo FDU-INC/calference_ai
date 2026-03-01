@@ -46,7 +46,7 @@ Calference 是一个专业的卫星干扰分析与报告生成系统，旨在帮
 ## 📁 项目结构
 
 ```
-Calference11.3/
+Calference v1.0/
 ├── examples/                          # 📚 使用示例
 │   ├── example_calself_usage.py       # Calself 服务使用示例
 │   ├── example_itu_report.py          # ITU 报告生成示例
@@ -79,8 +79,6 @@ Calference11.3/
 ├── LICENSE                            # GPL-3.0 许可证
 └── README.md                          # 本文件
 ```
-
-详细的项目结构说明请参见 [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
 
 ## 🚀 快速开始
 
@@ -335,7 +333,6 @@ python examples_comprehensive.py        # 启动交互式菜单
 
 - **快速入门**: [QUICKSTART.md](QUICKSTART.md) - 5分钟快速开始指南
 - **命令参考**: [COMMANDS.md](COMMANDS.md) - 完整命令参考卡片
-- **项目结构**: [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) - 详细项目结构说明
 - **使用手册**: [docs/USER_MANUAL.md](docs/USER_MANUAL.md) - 详细使用手册
 
 ## 📊 主要功能
@@ -482,7 +479,6 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 
 - **使用示例**: [examples/README.md](examples/README.md)
 - **详细使用手册**: [docs/USER_MANUAL.md](docs/USER_MANUAL.md)
-- **项目结构**: [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
 - **API 文档**: [docs/api.md](docs/api.md)（即将推出）
 
 ### 环境配置
