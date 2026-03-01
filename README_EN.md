@@ -236,9 +236,7 @@ python init.py --check                  # Environment check only
 
 ## 📖 Documentation
 
-- **Quick Start**: [QUICKSTART.md](QUICKSTART.md) - 5-minute quick start guide
-- **Command Reference**: [COMMANDS.md](COMMANDS.md) - Complete command reference card
-- **User Manual**: [docs/USER_MANUAL.md](docs/USER_MANUAL.md) - Detailed user manual
+For detailed usage instructions, please refer to the examples in the `examples/` directory and the inline documentation in the source code.
 
 ## 📊 Main Features
 
@@ -271,21 +269,21 @@ Call satellite interference simulation service via REST API:
 
 ```python
 from datetime import datetime
-from calself_service import get_service
+from calself_client import CalselfClient
 
-# Initialize service
-service = get_service("http://localhost:8000")
+# Initialize client
+client = CalselfClient(base_url="http://localhost:8000")
 
 # Run simulation
-result = service.run_simulation(
+result = client.run_simulation(
     start_time=datetime(2024, 12, 16, 0, 0, 0),
     duration_hours=0.1,
     step=2
 )
 
 # Get results
-files = service.get_inference_files(company_id=1)
-data = service.load_inference_file(1, files["1"][0])
+files = client.get_inference_files(company_id=1)
+data = client.load_inference_file(1, files["1"][0])
 ```
 
 #### ⚠️ About TLE Error Messages
@@ -375,15 +373,12 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 ### Quick Reference
 
 - **Quick Reference Card**: [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - Most commonly used commands quick reference
-- **Quick Start**: [QUICKSTART.md](QUICKSTART.md) - 5-minute quick start guide
-- **Command Reference**: [COMMANDS.md](COMMANDS.md) - Complete command reference card
 - **Script Summary**: [SCRIPTS_SUMMARY.md](SCRIPTS_SUMMARY.md) - Detailed description of all run scripts
 - **Setup Checklist**: [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md) - Project setup verification checklist
 
 ### Detailed Documentation
 
 - **Usage Examples**: [examples/README.md](examples/README.md)
-- **Detailed User Manual**: [docs/USER_MANUAL.md](docs/USER_MANUAL.md)
 - **API Documentation**: [docs/api.md](docs/api.md) (Coming soon)
 
 ### Environment Configuration

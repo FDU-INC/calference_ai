@@ -236,9 +236,7 @@ python init.py --check                  # 仅检查环境
 
 ## 📖 文档
 
-- **快速入门**: [QUICKSTART.md](QUICKSTART.md) - 5分钟快速开始指南
-- **命令参考**: [COMMANDS.md](COMMANDS.md) - 完整命令参考卡片
-- **使用手册**: [docs/USER_MANUAL.md](docs/USER_MANUAL.md) - 详细使用手册
+详细使用说明请参考 `examples/` 目录中的示例代码和源代码中的内联文档。
 
 ## 📊 主要功能
 
@@ -271,21 +269,21 @@ print(f"报告已生成: {result['markdown_path']}")
 
 ```python
 from datetime import datetime
-from calself_service import get_service
+from calself_client import CalselfClient
 
-# 初始化服务
-service = get_service("http://localhost:8000")
+# 初始化客户端
+client = CalselfClient(base_url="http://localhost:8000")
 
 # 运行仿真
-result = service.run_simulation(
+result = client.run_simulation(
     start_time=datetime(2024, 12, 16, 0, 0, 0),
     duration_hours=0.1,
     step=2
 )
 
 # 获取结果
-files = service.get_inference_files(company_id=1)
-data = service.load_inference_file(1, files["1"][0])
+files = client.get_inference_files(company_id=1)
+data = client.load_inference_file(1, files["1"][0])
 ```
 
 #### ⚠️ 关于 TLE 错误信息
@@ -375,15 +373,12 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 ### 快速参考
 
 - **快速参考卡片**: [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - 最常用命令速查表
-- **快速入门**: [QUICKSTART.md](QUICKSTART.md) - 5分钟快速开始指南
-- **命令参考**: [COMMANDS.md](COMMANDS.md) - 完整命令参考卡片
 - **脚本总结**: [SCRIPTS_SUMMARY.md](SCRIPTS_SUMMARY.md) - 所有运行脚本的详细说明
 - **初始化检查清单**: [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md) - 项目设置验证清单
 
 ### 详细文档
 
 - **使用示例**: [examples/README.md](examples/README.md)
-- **详细使用手册**: [docs/USER_MANUAL.md](docs/USER_MANUAL.md)
 - **API 文档**: [docs/api.md](docs/api.md)（即将推出）
 
 ### 环境配置
