@@ -370,20 +370,9 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 
 ## 📖 Documentation
 
-### Quick Reference
-
-- **Quick Reference Card**: [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - Most commonly used commands quick reference
-- **Script Summary**: [SCRIPTS_SUMMARY.md](SCRIPTS_SUMMARY.md) - Detailed description of all run scripts
-- **Setup Checklist**: [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md) - Project setup verification checklist
-
-### Detailed Documentation
-
-- **Usage Examples**: [examples/README.md](examples/README.md)
-- **API Documentation**: [docs/api.md](docs/api.md) (Coming soon)
-
-### Environment Configuration
-
-- **Environment Variable Example**: [.env.example](.env.example) - Copy and edit this file to configure environment variables
+For detailed usage instructions, please refer to:
+- **Usage Examples**: [examples/README.md](examples/README.md) - Example code and usage patterns
+- **Source Code**: Check inline documentation in the source code for API details
 
 ## 🤝 Contributing
 

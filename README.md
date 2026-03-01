@@ -370,20 +370,9 @@ OUTPUT_REPORT_DIR = "data/output_reports"
 
 ## 📖 文档
 
-### 快速参考
-
-- **快速参考卡片**: [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - 最常用命令速查表
-- **脚本总结**: [SCRIPTS_SUMMARY.md](SCRIPTS_SUMMARY.md) - 所有运行脚本的详细说明
-- **初始化检查清单**: [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md) - 项目设置验证清单
-
-### 详细文档
-
-- **使用示例**: [examples/README.md](examples/README.md)
-- **API 文档**: [docs/api.md](docs/api.md)（即将推出）
-
-### 环境配置
-
-- **环境变量示例**: [.env.example](.env.example) - 复制并编辑此文件配置环境变量
+详细使用说明请参考：
+- **使用示例**: [examples/README.md](examples/README.md) - 示例代码和使用模式
+- **源代码**: 查看源代码中的内联文档了解 API 详情
 
 ## 🤝 贡献指南
 
