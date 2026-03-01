@@ -94,7 +94,7 @@ Calference v1.0/
 ```bash
 # 1. 克隆项目
 git clone <repository_url>
-cd Calference11.3
+cd calference_ai
 
 # 2. 创建虚拟环境（推荐）
 conda create -n itu python=3.10
@@ -115,7 +115,7 @@ python run.py itu-report
 ```bash
 # 1. 克隆项目
 git clone <repository_url>
-cd Calference11.3
+cd calference_ai
 
 # 2. 创建虚拟环境（推荐）
 conda create -n itu python=3.10
