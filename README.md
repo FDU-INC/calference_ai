@@ -194,71 +194,7 @@ python run.py example itu_report
 python run.py example calself_usage
 ```
 
-#### 方式二：使用 Makefile（快速命令）
-
-项目提供了 Makefile，可以用简洁的命令运行各项功能：
-
-```bash
-# 查看所有可用命令
-make help
-
-# 完整项目设置（安装依赖+准备数据）
-make setup
-
-# 生成 ITU 干扰报告
-make itu-report
-
-# 运行 Calself 卫星仿真
-make calself-sim
-
-# 准备 RAG 数据
-make prepare-rag
-
-# 下载 embedding 模型
-make download-model
-
-# 启动 Web API 服务
-make web-api
-
-# 启动 Calself 仿真服务
-make calself-service
-
-# 运行示例
-make example-itu
-make example-calself
-
-# 显示项目状态
-make status
-
-# 清理临时文件
-make clean
-```
-
-#### 方式三：使用快速启动脚本
-
-项目提供了 `quickstart.sh` 脚本，支持 Linux/macOS：
-
-```bash
-# 添加执行权限
-chmod +x quickstart.sh
-
-# 查看帮助
-./quickstart.sh help
-
-# 生成 ITU 干扰报告
-./quickstart.sh itu-report
-
-# 运行 Calself 仿真
-./quickstart.sh calself-sim --duration 0.5
-
-# 启动 Web 服务（默认端口 8001）
-./quickstart.sh web-api
-
-# 显示项目状态
-./quickstart.sh status
-```
-
-#### 方式四：直接运行示例脚本
+#### 方式二：直接运行示例脚本
 
 ```bash
 # 使用默认示例图片
@@ -288,30 +224,7 @@ python run.py web-api                   # 启动 Web 服务
 python run.py status                    # 显示项目状态
 ```
 
-### 2. Makefile 快速命令
-
-简洁的 Makefile 命令，适合频繁使用：
-
-```bash
-make help                               # 查看所有命令
-make setup                              # 完整项目设置
-make itu-report                         # 生成报告
-make web-api                            # 启动 Web 服务
-make clean                              # 清理临时文件
-```
-
-### 3. 快速启动脚本 (`quickstart.sh`)
-
-Shell 脚本，支持 Linux/macOS：
-
-```bash
-chmod +x quickstart.sh
-./quickstart.sh help                    # 查看帮助
-./quickstart.sh itu-report              # 生成报告
-./quickstart.sh web-api --port 8000     # 启动服务
-```
-
-### 4. 项目初始化脚本 (`init.py`)
+### 2. 项目初始化脚本 (`init.py`)
 
 一键初始化项目，自动安装依赖和准备数据：
 

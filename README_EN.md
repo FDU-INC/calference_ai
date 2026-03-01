@@ -194,71 +194,7 @@ python run.py example itu_report
 python run.py example calself_usage
 ```
 
-#### Method 2: Using Makefile (Quick Commands)
-
-The project provides a Makefile for concise commands:
-
-```bash
-# View all available commands
-make help
-
-# Complete project setup (install dependencies + prepare data)
-make setup
-
-# Generate ITU interference report
-make itu-report
-
-# Run Calself satellite simulation
-make calself-sim
-
-# Prepare RAG data
-make prepare-rag
-
-# Download embedding model
-make download-model
-
-# Start Web API service
-make web-api
-
-# Start Calself simulation service
-make calself-service
-
-# Run examples
-make example-itu
-make example-calself
-
-# Show project status
-make status
-
-# Clean temporary files
-make clean
-```
-
-#### Method 3: Using Quick Start Script
-
-The project provides `quickstart.sh` script for Linux/macOS:
-
-```bash
-# Add execute permission
-chmod +x quickstart.sh
-
-# View help
-./quickstart.sh help
-
-# Generate ITU interference report
-./quickstart.sh itu-report
-
-# Run Calself simulation
-./quickstart.sh calself-sim --duration 0.5
-
-# Start Web service (default port 8001)
-./quickstart.sh web-api
-
-# Show project status
-./quickstart.sh status
-```
-
-#### Method 4: Directly Run Example Scripts
+#### Method 2: Directly Run Example Scripts
 
 ```bash
 # Use default example image
@@ -288,30 +224,7 @@ python run.py web-api                   # Start Web service
 python run.py status                    # Show project status
 ```
 
-### 2. Makefile Quick Commands
-
-Concise Makefile commands for frequent use:
-
-```bash
-make help                               # View all commands
-make setup                              # Complete project setup
-make itu-report                         # Generate report
-make web-api                            # Start Web service
-make clean                              # Clean temporary files
-```
-
-### 3. Quick Start Script (`quickstart.sh`)
-
-Shell script for Linux/macOS:
-
-```bash
-chmod +x quickstart.sh
-./quickstart.sh help                    # View help
-./quickstart.sh itu-report              # Generate report
-./quickstart.sh web-api --port 8000     # Start service
-```
-
-### 4. Project Initialization Script (`init.py`)
+### 2. Project Initialization Script (`init.py`)
 
 One-click project initialization, automatically installs dependencies and prepares data:
 
