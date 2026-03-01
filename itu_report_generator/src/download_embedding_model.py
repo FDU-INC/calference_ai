@@ -33,18 +33,28 @@ import os
 import sys
 from pathlib import Path
 
-os.environ['HTTP_PROXY'] = 'http://10.192.54.148:7897'
-os.environ['HTTPS_PROXY'] = 'http://10.192.54.148:7897'
+# 代理设置：用于下载/加载 HuggingFace 模型（SentenceTransformer）
+# 注意：同时设置大小写环境变量，兼容不同库/系统读取方式
+DEFAULT_PROXY_URL = "http://10.192.54.148:7897"
+os.environ.setdefault("http_proxy", DEFAULT_PROXY_URL)
+os.environ.setdefault("https_proxy", DEFAULT_PROXY_URL)
+os.environ.setdefault("HTTP_PROXY", DEFAULT_PROXY_URL)
+os.environ.setdefault("HTTPS_PROXY", DEFAULT_PROXY_URL)
 
 # 将 itu_report_generator 目录添加到 Python 路径
 current_dir = Path(__file__).resolve().parent
-project_root = current_dir.parent
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
+module_dir = current_dir.parent
+repo_root = module_dir.parent
+if str(repo_root) not in sys.path:
+    sys.path.insert(0, str(repo_root))
 
 from sentence_transformers import SentenceTransformer
 
-from config import LOCAL_MODELS_DIR, RAG_EMBEDDING_MODEL
+# 优先使用包内绝对导入；兼容脚本运行则回退到同目录导入
+try:
+    from itu_report_generator.config import LOCAL_MODELS_DIR, RAG_EMBEDDING_MODEL
+except Exception:
+    from config import LOCAL_MODELS_DIR, RAG_EMBEDDING_MODEL
 
 
 def main() -> None:

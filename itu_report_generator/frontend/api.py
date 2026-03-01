@@ -27,18 +27,31 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from report_service import generate_report
-from config import (
+from itu_report_generator.report_service import generate_report
+from itu_report_generator.config import (
     LLM_API_KEY,
     LLM_BASE_URL,
     LLM_MODEL_NAME,
 )
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-OUTPUT_DIR = DATA_DIR / "output_reports"
+# 路径约定（非常重要）：
+# - 项目根目录：<repo>/Calference11.3
+# - ITU 模块目录：<repo>/Calference11.3/itu_report_generator
+# - 项目级数据目录：<repo>/Calference11.3/data
+# - 项目级输出目录：<repo>/Calference11.3/output_reports
+#
+# 之前 BASE_DIR 指向 itu_report_generator/，导致：
+# - 输出实际写到项目根 output_reports/ 时，relative_to(BASE_DIR) 会抛异常
+# - /data 静态挂载指向模块内 data/，但 RAG/输入图片可能在项目根 data/
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+MODULE_DIR = Path(__file__).resolve().parent.parent
+
+BASE_DIR = PROJECT_ROOT
+DATA_DIR = PROJECT_ROOT / "data"
+OUTPUT_DIR = PROJECT_ROOT / "output_reports"
+# 上传文件统一落到项目级 data/ 下，保证能通过 /data 静态挂载访问
 UPLOAD_DIR = DATA_DIR / "uploaded"
-SAMPLE_DIR = DATA_DIR / "total"
+SAMPLE_DIR = DATA_DIR / "input"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -57,6 +70,7 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
+app.mount("/output_reports", StaticFiles(directory=OUTPUT_DIR), name="output_reports")
 
 
 def _list_images(folder: Path) -> List[Dict]:
@@ -122,7 +136,12 @@ async def generate(
         else:
             if not image_path:
                 raise HTTPException(status_code=400, detail="请提供图片路径")
-            target_path = (BASE_DIR / image_path).resolve()
+            # 允许：
+            # - 绝对路径
+            # - 相对项目根目录（推荐），例如 data/input/xxx.png
+            # - 兼容旧前端返回的相对路径（基于 BASE_DIR）
+            p = Path(image_path)
+            target_path = p.resolve() if p.is_absolute() else (BASE_DIR / p).resolve()
             if not target_path.exists():
                 raise HTTPException(
                     status_code=404, detail=f"图片未找到: {target_path}"

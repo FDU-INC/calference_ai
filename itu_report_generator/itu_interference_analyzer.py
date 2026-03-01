@@ -38,7 +38,7 @@ from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.messages import MultiModalMessage
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 
-from config import (
+from itu_report_generator.config import (
     LLM_MODEL_NAME,
     LLM_BASE_URL,
     LLM_API_KEY,
@@ -48,7 +48,7 @@ from config import (
     OUTPUT_METADATA_DIR,
     OUTPUT_DATAFLOW_DIR,
 )
-from agent_config import (
+from itu_report_generator.agent_config import (
     AgentConfigBuilder,
     DataFlowManager,
     AgentSequenceValidator,

@@ -28,11 +28,21 @@
 """
 
 import json
+import os
 import numpy as np
 from pathlib import Path
 from typing import List, Dict
-from sentence_transformers import SentenceTransformer
 from datetime import datetime
+
+# 代理设置：用于下载/加载 HuggingFace 模型（SentenceTransformer）
+# 注意：同时设置大小写环境变量，兼容不同库/系统读取方式
+DEFAULT_PROXY_URL = "http://10.192.54.148:7897"
+os.environ.setdefault("http_proxy", DEFAULT_PROXY_URL)
+os.environ.setdefault("https_proxy", DEFAULT_PROXY_URL)
+os.environ.setdefault("HTTP_PROXY", DEFAULT_PROXY_URL)
+os.environ.setdefault("HTTPS_PROXY", DEFAULT_PROXY_URL)
+
+from sentence_transformers import SentenceTransformer
 
 
 # 配置

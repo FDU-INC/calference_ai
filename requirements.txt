@@ -21,3 +21,4 @@ sgp4>=2.21
 torch>=2.0.0
 transformers>=4.40.0
 uvicorn>=0.24.0
+python-multipart>=0.0.6

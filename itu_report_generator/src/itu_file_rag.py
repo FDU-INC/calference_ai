@@ -31,6 +31,15 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import numpy as np
+
+# 代理设置：用于下载/加载 HuggingFace 模型（SentenceTransformer）
+# 注意：同时设置大小写环境变量，兼容不同库/系统读取方式
+DEFAULT_PROXY_URL = "http://10.192.54.148:7897"
+os.environ.setdefault("http_proxy", DEFAULT_PROXY_URL)
+os.environ.setdefault("https_proxy", DEFAULT_PROXY_URL)
+os.environ.setdefault("HTTP_PROXY", DEFAULT_PROXY_URL)
+os.environ.setdefault("HTTPS_PROXY", DEFAULT_PROXY_URL)
+
 from sentence_transformers import SentenceTransformer
 
 
@@ -280,13 +289,12 @@ def get_itu_file_rag_instance(data_dir: Optional[str] = None) -> Optional[ITUFil
             # 尝试从配置文件导入
             if data_dir is None:
                 try:
-                    import sys
-                    from pathlib import Path
-                    # 添加项目根目录到路径
-                    project_root = Path(__file__).parent.parent
-                    if str(project_root) not in sys.path:
-                        sys.path.insert(0, str(project_root))
-                    from config import RAG_DATA_DIR
+                    # 优先使用包内绝对导入（用于 Web API/作为库调用）
+                    try:
+                        from itu_report_generator.config import RAG_DATA_DIR
+                    except Exception:
+                        # 兼容脚本直接运行场景（python itu_file_rag.py）
+                        from config import RAG_DATA_DIR
                     data_dir = RAG_DATA_DIR
                 except (ImportError, AttributeError):
                     # 如果配置文件中没有，使用默认值
